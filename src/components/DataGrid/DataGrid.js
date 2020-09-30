@@ -77,6 +77,8 @@ export const DataGrid = memo(forwardRef(({
   focusedRowKey,
   wordWrapEnabled,
 
+  loadPanelShading,
+
   children,
   ...props
 }, ref) => {
@@ -105,6 +107,15 @@ export const DataGrid = memo(forwardRef(({
     }
   }, [summaryKey, memoColumns]);
 
+  const additionalProps = {};
+  if (loadPanelShading) {
+    additionalProps.loadPanel = {
+      enabled: true,
+      shading: true,
+      shadingColor: 'rgba(0, 0, 0, 0.1)',
+    }
+  }
+
   return (
     <MemoizedDataGrid
       style={style}
@@ -130,6 +141,7 @@ export const DataGrid = memo(forwardRef(({
       wordWrapEnabled={wordWrapEnabled}
       focusedRowKey={focusedRowKey}
       {...props}
+      {...additionalProps}
     >
       <Scrolling
         mode={scrollingMode}
@@ -304,6 +316,8 @@ DataGrid.propTypes = {
   defaultFocusedRowKey: any,
   /** wordWrapEnabled */
   wordWrapEnabled: bool,
+  /** loadPanelShading */
+  loadPanelShading: bool,
   /** focusedRowKey */
   focusedRowKey: any
 };
@@ -348,6 +362,7 @@ DataGrid.defaultProps = {
   hoverStateEnabled: false,
   focusedRowEnabled: false,
   onSelectionChanged: () => {},
-  wordWrapEnabled: false
+  wordWrapEnabled: false,
+  loadPanelShading: false
 
 };

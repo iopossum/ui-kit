@@ -266,16 +266,16 @@
     }
   },
   "dist\\js\\components.min.js": {
-    "bundled": 81486,
-    "minified": 43875,
-    "gzipped": 13002,
+    "bundled": 83718,
+    "minified": 45229,
+    "gzipped": 13406,
     "treeshaked": {
       "rollup": {
-        "code": 32852,
-        "import_statements": 2841
+        "code": 34022,
+        "import_statements": 2921
       },
       "webpack": {
-        "code": 40599
+        "code": 41920
       }
     }
   },
@@ -406,16 +406,16 @@
     }
   },
   "dist\\js\\components\\Autosize.min.js": {
-    "bundled": 3913,
-    "minified": 2215,
-    "gzipped": 879,
+    "bundled": 3954,
+    "minified": 2249,
+    "gzipped": 894,
     "treeshaked": {
       "rollup": {
-        "code": 1939,
-        "import_statements": 199
+        "code": 1969,
+        "import_statements": 216
       },
       "webpack": {
-        "code": 3037
+        "code": 3069
       }
     }
   },
@@ -500,6 +500,34 @@
       },
       "webpack": {
         "code": 1049
+      }
+    }
+  },
+  "dist\\js\\components\\Button.min.js": {
+    "bundled": 3570,
+    "minified": 2121,
+    "gzipped": 893,
+    "treeshaked": {
+      "rollup": {
+        "code": 1839,
+        "import_statements": 255
+      },
+      "webpack": {
+        "code": 2981
+      }
+    }
+  },
+  "dist\\js\\components\\DataGrid.min.js": {
+    "bundled": 17017,
+    "minified": 10207,
+    "gzipped": 3416,
+    "treeshaked": {
+      "rollup": {
+        "code": 9177,
+        "import_statements": 756
+      },
+      "webpack": {
+        "code": 10600
       }
     }
   }
