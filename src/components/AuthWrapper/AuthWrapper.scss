@@ -1,0 +1,20 @@
+.auth-wrapper {
+  display: flex !important;
+  align-items: center;
+  align-self: center;
+  animation-duration: 0.5s;
+  animation-name: slidein;
+  transition: top 1s ease-out 0.5s;
+  & > .card {
+    .card__header {
+      text-transform: uppercase;
+      text-align: center;
+    }
+  }
+  &__form {
+    width: 100%
+  }
+  &__remember {
+    margin-top: 10px;
+  }
+}

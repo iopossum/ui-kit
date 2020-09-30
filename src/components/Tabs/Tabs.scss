@@ -1,0 +1,12 @@
+.tabs {
+  &_autosize {
+    display: flex;
+    flex: 1;
+  }
+}
+
+.dx-tabs {
+  .dx-tab {
+    padding: 4px;
+  }
+}

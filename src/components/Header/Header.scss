@@ -1,0 +1,13 @@
+.header {
+  display: flex;
+  padding: 10px 0 10px 10px;
+  justify-content: space-between;
+  color: #242424;
+  min-height: 36px;
+  &_no-children {
+    justify-content: flex-end;
+  }
+  .dx-button {
+    height: 36px;
+  }
+}
