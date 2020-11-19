@@ -129,3 +129,46 @@ export const Autosize = () => {
   );
 };
 
+export const Banded = () => {
+  const dataSource = useDataSource({
+    load: () => data
+  });
+  const attrs = {
+    id: 'data-grid',
+    showBorders: boolean("showBorders", true),
+    repaintChangesOnly: boolean("repaintChangesOnly", true),
+    allowColumnReordering: boolean("allowColumnReordering", true),
+    allowColumnResizing: boolean("allowColumnResizing", true),
+    columnResizingMode: select('columnResizingMode', DataGrid.propTypesConstants.columnResizingMode, DataGrid.defaultProps.columnResizingMode),
+    columnMinWidth: number('columnMinWidth', 50),
+    onRowClick: () => alert('cell clicked'),
+    columns: [
+      { caption: 'one', columns },
+      { caption: 'two', columns },
+    ],
+    scrollingMode: select('scrollingMode', DataGrid.propTypesConstants.scrollingMode, DataGrid.defaultProps.scrollingMode),
+    allowExport: boolean("allowExport", true),
+    exportFilename: text("exportFilename", 'Выгрузка'),
+    allowExportSelectedData: boolean("allowExportSelectedData", true),
+    customizeExcelCell: () => {},
+    allowSelection: boolean("allowSelection", false),
+    selectionMode: select('selectionMode', DataGrid.propTypesConstants.selectionMode, DataGrid.defaultProps.selectionMode),
+    allowSorting: boolean("allowSorting", true),
+    sortingMode: select('sortingMode', DataGrid.propTypesConstants.sortingMode, DataGrid.defaultProps.sortingMode),
+    allowFilterRow: boolean("allowFilterRow", true),
+    allowHeaderFilter: boolean("allowHeaderFilter", true),
+    allowColumnChooser: boolean("allowColumnChooser", true),
+    allowColumnFixing: boolean("allowColumnFixing", true),
+    allowSummaryCount: boolean("allowSummaryCount", true),
+    allowStateStoring: boolean("allowStateStoring", false),
+    showRowLines: boolean("showRowLines", true),
+    height: number("height", undefined),
+    dataSource,
+    stateStoringName: 'test',
+    showColumnLines: true,
+    rowAlternationEnabled: true
+  };
+  return (
+    <DataGrid {...attrs} />
+  );
+};

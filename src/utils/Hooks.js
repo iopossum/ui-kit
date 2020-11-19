@@ -94,6 +94,7 @@ export const useDataSource = ({
   abortUpdate = false,
   abortInsert = false,
   abortRemove = false,
+  paginate,
   ...props
 }) => {
 
@@ -139,6 +140,7 @@ export const useDataSource = ({
       } : props.byKey,
       loadMode: loadMode || 'processed'
     }),
+    paginate
   }));
 
   return dataSource.current;

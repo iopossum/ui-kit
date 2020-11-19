@@ -96,14 +96,24 @@ export const DataGrid = memo(forwardRef(({
 
   const onOptionChanged = useCallback(({ name, fullName, component, value }) => {
     if (name === 'columns') {
-      const index = fullName.replace(/[^0-9]/g, '');
-      const column = component.columnOption(parseInt(index, 10));
-      setMemoColumns(memoColumns.map(v => {
-        if (v.dataField === column.dataField) {
-          v.visible = value;
+      const splits = fullName.split('.').filter(v => v.indexOf('columns') > -1);
+      let columnContainer = memoColumns;
+      splits.forEach(v => {
+        const index = parseInt(v.replace(/[^0-9]/g, ''), 10);
+        columnContainer = memoColumns[index];
+        if (columnContainer && columnContainer.columns && columnContainer.columns.length) {
+          columnContainer = columnContainer.columns;
         }
-        return v;
-      }));
+      });
+      if (columnContainer && columnContainer.dataField) {
+        const column = component.columnOption(columnContainer.dataField);
+        setMemoColumns(memoColumns.map(v => {
+          if (v.dataField === column.dataField) {
+            v.visible = value;
+          }
+          return v;
+        }));
+      }
     }
   }, [summaryKey, memoColumns]);
 
