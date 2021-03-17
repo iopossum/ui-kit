@@ -52,7 +52,7 @@ Button.propTypes = {
   /** loading */
   loading: bool,
   /** text */
-  text: string,
+  text: oneOfType([object, string]),
   /** texts */
   texts: array,
   /** type */

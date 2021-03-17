@@ -72,8 +72,8 @@ export const Sidebar = ({
       .filter(v => v.displayOnSidebar).map(v => {
         return ({
           ...v,
-          expanded: v.expanded || location.pathname === v.path,
-          selected: location.pathname === v.path,
+          expanded: v.expanded || location.pathname.startsWith(v.path),
+          selected: location.pathname.startsWith(v.path),
           children: v.children ? v.children.map(c => ({...c, path: `${v.path}${c.path}`, selected: location.pathname === `${v.path}${c.path}`})) : []
         });
       });
@@ -81,7 +81,7 @@ export const Sidebar = ({
       array.push({title: 'Выход', iconComponent: <PowerSettingsNew />, onClick: onLogout});
     }
     return array;
-  }, [routes, location.pathname]);
+  }, [routes]);
 
   useEffect(() => {
     setRoutesDataSource(enchantedRoutes);

@@ -78,6 +78,8 @@ export const DataGrid = memo(forwardRef(({
   wordWrapEnabled,
 
   loadPanelShading,
+  totalCountRef,
+  remoteTotalCount,
 
   children,
   ...props
@@ -125,6 +127,19 @@ export const DataGrid = memo(forwardRef(({
       shadingColor: 'rgba(0, 0, 0, 0.1)',
     }
   }
+
+  const totalCountAttrs = useMemo(() => {
+    const attrs = {
+      displayFormat: 'Всего: {0}',
+      alignment: "left",
+      column: summaryKey,
+      summaryType: 'count',
+    }
+    if (remoteTotalCount) {
+      attrs.customizeText = (e) => `${totalCountRef.current} записей`;
+    }
+    return attrs;
+  }, [allowSummaryCount, summaryKey, remoteTotalCount]);
 
   return (
     <MemoizedDataGrid
@@ -187,7 +202,7 @@ export const DataGrid = memo(forwardRef(({
 
       { allowSummaryCount && summaryKey ? (
         <Summary>
-          <TotalItem displayFormat={'Всего: {0}'} alignment="left" column={summaryKey} summaryType={'count'}/>
+          <TotalItem {...totalCountAttrs} />
         </Summary>
       ) : null}
 
@@ -329,7 +344,10 @@ DataGrid.propTypes = {
   /** loadPanelShading */
   loadPanelShading: bool,
   /** focusedRowKey */
-  focusedRowKey: any
+  focusedRowKey: any,
+
+  totalCountRef: object,
+  remoteTotalCount: bool
 };
 
 DataGrid.defaultProps = {
@@ -373,6 +391,7 @@ DataGrid.defaultProps = {
   focusedRowEnabled: false,
   onSelectionChanged: () => {},
   wordWrapEnabled: false,
-  loadPanelShading: false
+  loadPanelShading: false,
 
+  remoteTotalCount: false
 };

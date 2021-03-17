@@ -74,6 +74,14 @@ export const put = async (data) => {
   return await request({...data, options: config});
 };
 
+export const patch = async (data) => {
+  const {body, opts} = data;
+  const config = options('PATCH');
+  Object.assign(config, opts || {});
+  config.body = JSON.stringify(body);
+  return await request({...data, options: config});
+};
+
 export const post = async (data) => {
   const {body, opts} = data;
   const config = options('POST');
@@ -103,7 +111,7 @@ export const abortAll = () => {
   }
 };
 
-const request = async ({url, options, noAbort, abortName, abortController, cache}) => {
+export const request = async ({url, options, noAbort, abortName, abortController, cache}) => {
   if (cache && cache[url]) {
     return cache[url];
   }

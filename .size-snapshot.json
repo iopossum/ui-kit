@@ -126,9 +126,9 @@
     }
   },
   "dist\\js\\utils.min.js": {
-    "bundled": 21702,
-    "minified": 11857,
-    "gzipped": 4054,
+    "bundled": 22654,
+    "minified": 12340,
+    "gzipped": 4076,
     "treeshaked": {
       "rollup": {
         "code": 728,
@@ -252,30 +252,30 @@
     }
   },
   "dist\\js\\components\\Sidebar.min.js": {
-    "bundled": 9200,
-    "minified": 5669,
+    "bundled": 9197,
+    "minified": 5678,
     "gzipped": 2202,
     "treeshaked": {
       "rollup": {
-        "code": 4947,
+        "code": 4956,
         "import_statements": 567
       },
       "webpack": {
-        "code": 6358
+        "code": 6367
       }
     }
   },
   "dist\\js\\components.min.js": {
-    "bundled": 84216,
-    "minified": 45419,
-    "gzipped": 13463,
+    "bundled": 84787,
+    "minified": 45718,
+    "gzipped": 13565,
     "treeshaked": {
       "rollup": {
-        "code": 34214,
+        "code": 34487,
         "import_statements": 2921
       },
       "webpack": {
-        "code": 42112
+        "code": 42437
       }
     }
   },
@@ -504,30 +504,30 @@
     }
   },
   "dist\\js\\components\\Button.min.js": {
-    "bundled": 3570,
-    "minified": 2121,
-    "gzipped": 893,
+    "bundled": 3591,
+    "minified": 2141,
+    "gzipped": 898,
     "treeshaked": {
       "rollup": {
-        "code": 1839,
+        "code": 1846,
         "import_statements": 255
       },
       "webpack": {
-        "code": 2981
+        "code": 3013
       }
     }
   },
   "dist\\js\\components\\DataGrid.min.js": {
-    "bundled": 17515,
-    "minified": 10397,
-    "gzipped": 3482,
+    "bundled": 18068,
+    "minified": 10667,
+    "gzipped": 3590,
     "treeshaked": {
       "rollup": {
-        "code": 9369,
+        "code": 9626,
         "import_statements": 756
       },
       "webpack": {
-        "code": 10792
+        "code": 11077
       }
     }
   }
