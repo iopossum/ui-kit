@@ -80,6 +80,7 @@ export const DataGrid = memo(forwardRef(({
   loadPanelShading,
   totalCountRef,
   remoteTotalCount,
+  totalCountColumn,
 
   children,
   ...props
@@ -89,11 +90,12 @@ export const DataGrid = memo(forwardRef(({
   const cookieName = useCookiePrefix(stateStoringName);
 
   const summaryKey = useMemo(() => {
-    if (!allowSummaryCount) {
-      return '';
+    let result = ''
+    if (!allowSummaryCount || !memoColumns.length) {
+      return result;
     }
     const filtered = memoColumns.filter(v => v.visible);
-    return filtered.length ? filtered[0].dataField : '';
+    return filtered.length ? filtered[0].dataField : memoColumns[0].dataField;
   }, [allowSummaryCount, memoColumns]);
 
   const onOptionChanged = useCallback(({ name, fullName, component, value }) => {
@@ -132,14 +134,14 @@ export const DataGrid = memo(forwardRef(({
     const attrs = {
       displayFormat: 'Всего: {0}',
       alignment: "left",
-      column: summaryKey,
+      column: totalCountColumn || summaryKey,
       summaryType: 'count',
     }
     if (remoteTotalCount) {
       attrs.customizeText = (e) => `${totalCountRef.current} записей`;
     }
     return attrs;
-  }, [allowSummaryCount, summaryKey, remoteTotalCount]);
+  }, [allowSummaryCount, summaryKey, remoteTotalCount, totalCountColumn]);
 
   return (
     <MemoizedDataGrid
@@ -168,9 +170,11 @@ export const DataGrid = memo(forwardRef(({
       {...props}
       {...additionalProps}
     >
-      <Scrolling
-        mode={scrollingMode}
-      />
+      { !props.scrolling && (
+        <Scrolling
+          mode={scrollingMode}
+        />
+      )}
       { allowExport && (
         <Export
           enabled={true}
@@ -347,7 +351,8 @@ DataGrid.propTypes = {
   focusedRowKey: any,
 
   totalCountRef: object,
-  remoteTotalCount: bool
+  remoteTotalCount: bool,
+  totalCountColumn: string
 };
 
 DataGrid.defaultProps = {
