@@ -203,3 +203,42 @@ export const success = (message) => {
 export const warning = (message) => {
    buildToast(message, 'warning');
 };
+
+export const makeDebounce = (fn, { wait, immediate }) => {
+  let _timeout = null;
+  return {
+    cancel: () => {
+      clearTimeout(_timeout);
+    },
+    debounce: function () {
+      const later = () => {
+        fn.apply(this, arguments);
+      }
+      if (immediate) {
+        later();
+      } else {
+        clearTimeout(_timeout);
+        _timeout = setTimeout(later, wait || 0);
+      }
+    }
+  };
+};
+
+export const makeAbortable = (promise) => {
+  let _reject = null;
+  return {
+    abort: () => {
+      _reject && _reject({ abort: true });
+    },
+    abortable: function () {
+      return new Promise(async (resolve, reject) => {
+        _reject = reject;
+        try {
+          resolve(await promise.apply(this, arguments));
+        } catch(e) {
+          _reject && _reject(e);
+        }
+      });
+    }
+  };
+};
