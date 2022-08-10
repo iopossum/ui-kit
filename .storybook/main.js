@@ -1,13 +1,25 @@
 const path = require('path');
 
 module.exports = {
-  addons: ['@storybook/addon-knobs/register'/*, '@storybook/addon-docs'*/],
+  addons: [/*'@storybook/addon-knobs/register', '@storybook/addon-postcss'*/],
   stories: ['../src/**/*.stories.js'],
+  framework: '@storybook/react',
+  core: {
+    builder: {
+      name: 'webpack5',
+      options: {
+        lazyCompilation: true,
+      },
+    },
+  },
+  features: {
+    storyStoreV7: true,
+  },
   webpackFinal: async (config, { configType }) => {
     // `configType` has a value of 'DEVELOPMENT' or 'PRODUCTION'
     // You can change the configuration based on that.
     // 'PRODUCTION' is used when building the static version of storybook.
-
+    
     // Make whatever fine-grained changes you need
     config.module.rules.push({
       test: /\.scss/,
@@ -23,8 +35,7 @@ module.exports = {
       test: /\.css/,
       use: [
         'style-loader',
-        'css-loader',
-        'postcss-loader'
+        'css-loader'
       ],
       include: path.resolve(__dirname, '../node_modules/devextreme'),
     });

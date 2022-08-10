@@ -266,16 +266,16 @@
     }
   },
   "dist\\js\\components.min.js": {
-    "bundled": 84992,
-    "minified": 45819,
-    "gzipped": 13590,
+    "bundled": 85012,
+    "minified": 45833,
+    "gzipped": 13595,
     "treeshaked": {
       "rollup": {
-        "code": 34579,
+        "code": 34594,
         "import_statements": 2921
       },
       "webpack": {
-        "code": 42536
+        "code": 42551
       }
     }
   },
@@ -518,16 +518,16 @@
     }
   },
   "dist\\js\\components\\DataGrid.min.js": {
-    "bundled": 18273,
-    "minified": 10768,
-    "gzipped": 3613,
+    "bundled": 18293,
+    "minified": 10782,
+    "gzipped": 3619,
     "treeshaked": {
       "rollup": {
-        "code": 9718,
+        "code": 9733,
         "import_statements": 756
       },
       "webpack": {
-        "code": 11176
+        "code": 11191
       }
     }
   }

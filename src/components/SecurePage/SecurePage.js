@@ -43,7 +43,7 @@ export const SecurePage = ({
         />}
         open={sidebarOpened}
         onSetOpen={() => setSidebarOpened(false)}
-        styles={{ sidebar: { overflowY: "initial" }, root: { position: 'initial' }, content: { width: 50 } }}
+        styles={{ sidebar: { position: "fixed", zIndex: 3, overflow: 'hidden' }, root: { position: 'initial' }, content: { width: 50 } }}
       >
         { matches.small ? <SidebarToggle onClick={() => setSidebarOpened(true)} className="sidebar__toggle_mobile" /> : <div /> }
       </ReactSidebar>

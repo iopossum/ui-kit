@@ -8,6 +8,7 @@ import { withRouter, withInfo, routes, withStores } from '../../../.storybook/de
 import { useStores, useAppStoreMedia } from '../../stores';
 import { storiesOf } from '@storybook/react';
 import Button from 'devextreme-react/button';
+import {Footer} from "@components/Footer";
 
 const SecurePageStory = () => {
   const { matches } = useAppStoreMedia();
@@ -22,7 +23,8 @@ const SecurePageStory = () => {
       username={text("username", "")}
     >
       <div className="header"><Button icon="refresh" /></div>
-      <div className="content">Контент</div>
+      <div className="content">{ Array.from({ length: 100 }).map((v, i) => <div key={i}>{i}</div>) }</div>
+      <Footer />
     </SecurePage>
   );
 };

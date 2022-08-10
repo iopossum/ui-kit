@@ -6,17 +6,19 @@ import TreeView from 'devextreme-react/tree-view';
 import Button from 'devextreme-react/button';
 import { Capitalize } from '@components/Capitalize';
 import { Tooltip } from '@components/Tooltip';
+import { Autosize } from '@components/Autosize';
 import PowerSettingsNew from '@material-ui/icons/PowerSettingsNew';
 
 import './Sidebar.scss';
 
-const SidebarLink = ({ data, sidebar }) => {
+const SidebarLink = ({ data, sidebar, style }) => {
   return (
     <Tooltip
       className="navigation-item"
       position="right"
       disabled={sidebar !== 'sm'}
       tooltipContent={data.title}
+      style={style}
     >
       { data.icon || data.iconComponent ? (
         <i className={cn(`dx-icon`, {[data.icon]: !!data.icon, 'dx-icon-component': !!data.iconComponent})}>{data.iconComponent}</i>
@@ -78,7 +80,7 @@ export const Sidebar = ({
         });
       });
     if (showLogout){
-      array.push({title: 'Выход', iconComponent: <PowerSettingsNew />, onClick: onLogout});
+      // array.push({title: 'Выход', iconComponent: <PowerSettingsNew />, onClick: onLogout});
     }
     return array;
   }, [routes]);
@@ -113,21 +115,35 @@ export const Sidebar = ({
           { username }
         </div>
       )}
-      <TreeView
-        dataSource={routesDataSource}
-        expandEvent="click"
-        selectionMode="single"
-        itemsExpr="children"
-        keyExpr="path"
-        selectByClick={true}
-        elementAttr={{ class: 'sidebar__navigation' }}
-        hoverStateEnabled={false}
-        activeStateEnabled={false}
-        focusStateEnabled={false}
-        itemComponent={(props) => <SidebarLink {...props} sidebar={sidebar} />}
-        onItemClick={onClick}
-        onSelectionChanged={onSelectionChanged}
-      />
+      <div className="sidebar__navigation">
+        <Autosize
+          renderOnZero={false}
+          disableHeight={false}
+          disableWidth
+          component={({ height }) => (
+            <>
+              <TreeView
+                height={showLogout ? height - 40 : height}
+                dataSource={routesDataSource}
+                expandEvent="click"
+                selectionMode="single"
+                itemsExpr="children"
+                keyExpr="path"
+                selectByClick={true}
+                hoverStateEnabled={false}
+                activeStateEnabled={false}
+                focusStateEnabled={false}
+                itemComponent={(props) => <SidebarLink {...props} sidebar={sidebar} />}
+                onItemClick={onClick}
+                onSelectionChanged={onSelectionChanged}
+              />
+              { showLogout && (
+                <SidebarLink style={{ marginTop: 10 }} data={{title: 'Выход', iconComponent: <PowerSettingsNew />, onClick: onLogout}} sidebar={sidebar} />
+              ) }
+            </>
+          )}
+        />
+      </div>
     </nav>
 
   );
