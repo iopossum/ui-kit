@@ -1,4 +1,9 @@
 .ph-button {
+  &.icon {
+    .dx-button-content {
+      padding: 8px;
+    }
+  }
   .dx-button-content {
     padding: 7px 18px 8px;
   }

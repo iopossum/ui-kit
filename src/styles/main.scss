@@ -1,14 +1,22 @@
-@import '~devextreme/dist/css/dx.common.css';
-@import './tb.light.darkred.css';
+@import "~devextreme/dist/css/dx.common.css";
+@import "~devextreme/dist/css/dx.light.css";
 @import "toast";
 
 @import "./variables";
 
 @mixin placeholder {
-  &::-webkit-input-placeholder {@content}
-  &:-moz-placeholder           {@content}
-  &::-moz-placeholder          {@content}
-  &:-ms-input-placeholder      {@content}
+  &::-webkit-input-placeholder {
+    @content;
+  }
+  &:-moz-placeholder {
+    @content;
+  }
+  &::-moz-placeholder {
+    @content;
+  }
+  &:-ms-input-placeholder {
+    @content;
+  }
 }
 
 html {
@@ -16,22 +24,27 @@ html {
   body {
     margin: 0;
     padding: 0;
-    min-height: 100%;
+    min-height: 100vh;
+    display: flex !important;
     background-color: #ddd;
-    font-family: 'Segoe UI', 'Helvetica Neue', 'Trebuchet MS', 'Verdana';
-    input { @include placeholder {
-      color: $input-placeholder-color !important;
-    }}
+    font-family: "Segoe UI", "Helvetica Neue", "Trebuchet MS", "Verdana";
+    input {
+      @include placeholder {
+        color: $input-placeholder-color !important;
+      }
+    }
   }
 }
 
 .dx-widget {
-  font-family: 'Segoe UI', 'Helvetica Neue', 'Trebuchet MS', 'Verdana';
+  font-family: "Segoe UI", "Helvetica Neue", "Trebuchet MS", "Verdana";
 }
 
 #root {
   display: flex;
-  min-height: 100vh;
+  flex: 1;
+  height: auto;
+  min-height: 100%;
 }
 
 .link {

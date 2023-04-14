@@ -17,7 +17,7 @@
   background-color: #fff;
   border-radius: 3px;
   border: 1px solid #cfcfcf;
-  box-shadow: 0 1px 4px 0 rgba(0,0,0,.1);
+  box-shadow: 0 1px 4px 0 rgba(0, 0, 0, 0.1);
   &_flex1 {
     flex: 1;
     .card__body {
@@ -40,7 +40,10 @@
   }
   &__body {
     padding: 10px 20px;
+    position: relative;
     overflow: auto;
+    display: flex;
+    flex: 1;
   }
   &_no-body-padding {
     .card__body {
