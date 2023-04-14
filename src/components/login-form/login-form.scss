@@ -1,0 +1,22 @@
+.login {
+  .float-label {
+    margin-bottom: 0.9rem;
+  }  
+  &__submit {
+    display: flex;
+    justify-content: center;
+    text-transform: uppercase;
+    margin-top: 15px;
+    margin-bottom: 10px;
+    & > .dx-button-content {
+      padding: 10px 18px 8px;
+    }
+  }
+  &__reg {
+    text-decoration: none;
+    display: flex;
+    flex: 1;
+    justify-content: center;
+    margin: 15px 0 10px;
+  }
+}
