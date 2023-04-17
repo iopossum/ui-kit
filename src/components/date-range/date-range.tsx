@@ -6,8 +6,8 @@ import { usePopper } from 'react-popper';
 import cn from 'classnames';
 import { format } from 'date-fns';
 
-import { useOutsideClick } from '../../hooks/use-outside-click';
 import { Card } from '@components/card';
+import { useOutsideClick } from '@hooks/use-outside-click';
 import type { IWithStyles } from '@types';
 import { ru } from '@utils/locale';
 import { MOBILE_MAX_WIDTH } from '@utils/media';

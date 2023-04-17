@@ -12,7 +12,7 @@ import { Tooltip as DxTooltip } from 'devextreme-react/tooltip';
 import type { ITooltipOptions } from 'devextreme-react/tooltip';
 import { isEqual, keyBy } from 'lodash-es';
 
-import { useMergedState } from '../../hooks/use-merged-state';
+import { useMergedState } from '@hooks/use-merged-state';
 import type { IWithStyles } from '@types';
 import { success, warning, history } from '@utils/api';
 

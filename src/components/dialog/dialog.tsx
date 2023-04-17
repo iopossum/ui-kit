@@ -5,11 +5,11 @@ import React, { forwardRef, useMemo, PropsWithChildren, memo, FC } from 'react';
 import { Popup, IPopupOptions, IToolbarItemProps } from 'devextreme-react/popup';
 import ScrollView from 'devextreme-react/scroll-view';
 
-import type { IDialogHandle, IUseDialogProps } from '../../hooks/use-dialog';
-import { useDialog } from '../../hooks/use-dialog';
 import type { IButtonProps } from '@components/button';
+import type { IDialogHandle, IUseDialogProps } from '@hooks/use-dialog';
+import { useDialog } from '@hooks/use-dialog';
 
-export type { IDialogHandle, IDialogState } from '../../hooks/use-dialog';
+export type { IDialogHandle, IDialogState } from '@hooks/use-dialog';
 
 export interface IDialogProps<T = object>
   extends PropsWithChildren,

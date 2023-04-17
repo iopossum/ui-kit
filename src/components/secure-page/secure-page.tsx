@@ -4,10 +4,10 @@ import type { SidebarProps } from "react-sidebar";
 
 import cn from 'classnames';
 
-import { useMediaQuery } from '../../hooks/use-media-query';
 import { Page } from '@components/page';
 import { Sidebar, SidebarToggle, SIDEBAR_SIZE } from '@components/sidebar';
 import type { TSidebarSize, ISidebarProps } from '@components/sidebar';
+import { useMediaQuery } from '@hooks/use-media-query';
 import { getCookie, setCookie } from '@utils/cookie';
 
 import './secure-page.scss';

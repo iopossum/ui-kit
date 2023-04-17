@@ -1,6 +1,6 @@
 import React, { useCallback, useRef, useImperativeHandle } from 'react';
 
-import { useMergedState } from './use-merged-state';
+import { useMergedState } from '@hooks/use-merged-state';
 
 export interface IUseDialogProps<T> {
   ref: React.Ref<IDialogHandle<T>>;

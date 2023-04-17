@@ -2,7 +2,7 @@ import React, { useCallback, memo, forwardRef } from 'react';
 
 import DxTabPanel, { ITabPanelOptions } from 'devextreme-react/tab-panel';
 
-import { useMergedState } from '../../hooks/use-merged-state';
+import { useMergedState } from '@hooks/use-merged-state';
 import { getLSItem, setLSItem } from '@utils/local-storage';
 
 import './tab-panel.scss';

@@ -1,4 +1,4 @@
-import { useStores } from '@stores/index';
+import { useStores } from '@stores/context';
 import { getCookie, setCookie, removeCookie } from '@utils/cookie';
 
 export type SidebarSize = 'sm' | 'lg';

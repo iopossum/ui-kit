@@ -3,10 +3,11 @@ import { Link } from 'react-router-dom';
 
 import { ComponentMeta, ComponentStory } from '@storybook/react';
 
+import { useStores } from '@stores';
+
 import { withRouter, withStores, TSimpleStoreItem } from '@.storybook/decorators';
 import { AutoFormObservable, AutoForm, AutoFormMemo } from '@components/auto-form';
 import { Card } from '@components/card';
-import { useStores } from '@stores/index';
 
 const useSampleStoreItem = () => {
   const { SampleStore }: { SampleStore: any } = useStores();

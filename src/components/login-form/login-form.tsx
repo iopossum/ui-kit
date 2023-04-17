@@ -6,12 +6,13 @@ import Button from 'devextreme-react/button';
 import { useFormik } from 'formik';
 import type { FormikConfig } from 'formik';
 
-import type { IUseFormValidationCallback } from '../../hooks/use-form-validation-callback';
-import { useFormValidationCallback } from '../../hooks/use-form-validation-callback';
+import { useStores, IAppStore, IUserStore, IToken } from '@stores';
+
 import { AuthWrapper } from '@components/auth-wrapper';
 import { CheckBox } from '@components/checkbox';
 import { FloatLabelInput } from '@components/float-label-input';
-import { useStores, IAppStore, IUserStore, IToken } from '@stores/index';
+import type { IUseFormValidationCallback } from '@hooks/use-form-validation-callback';
+import { useFormValidationCallback } from '@hooks/use-form-validation-callback';
 import { IWithStyles, IField } from '@types';
 import { warning } from '@utils/api';
 import { getInitialValues, createValidation } from '@utils/formik';

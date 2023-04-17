@@ -2,7 +2,6 @@ import React, { forwardRef, useImperativeHandle, useState } from 'react';
 
 import { ComponentMeta, ComponentStory } from '@storybook/react';
 
-import { useDataSource } from '../../hooks/use-data-source';
 import { data, columns } from '@.storybook/decorators';
 import { DataGrid } from '@components/data-grid';
 import {
@@ -12,6 +11,7 @@ import {
   IDropDownBoxContentHandle,
   IDropDownBoxContentProps
 } from '@components/dropdown-table-box';
+import { useDataSource } from '@hooks/use-data-source';
 
 export default {
   title: 'DropDownTableBox',

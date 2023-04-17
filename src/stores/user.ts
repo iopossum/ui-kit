@@ -1,4 +1,4 @@
-import { useStores } from '@stores/index';
+import { useStores } from '@stores/context';
 import { get, post, errorHandler, IResponse } from '@utils/api';
 import { getCookie } from '@utils/cookie';
 

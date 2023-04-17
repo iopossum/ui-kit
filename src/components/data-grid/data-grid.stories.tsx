@@ -2,10 +2,10 @@ import React from 'react';
 
 import { ComponentMeta, ComponentStory } from '@storybook/react';
 
-import { useDataSource } from '../../hooks/use-data-source';
 import { data, columns } from '@.storybook/decorators';
 import { AutoSize } from '@components/auto-size';
 import { DataGrid, DataGridMemo, IDataGridProps } from '@components/data-grid';
+import { useDataSource } from '@hooks/use-data-source';
 
 export default {
   title: 'DataGrid',

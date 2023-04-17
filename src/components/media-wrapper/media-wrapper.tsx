@@ -1,7 +1,8 @@
 import React, { memo } from 'react';
 import Media from 'react-media';
 
-import { useAppStore } from '@stores/index';
+import { useAppStore } from '@stores';
+
 import { MEDIA_QUERIES } from '@utils/media';
 
 export const MediaWrapper = ({ children }: React.PropsWithChildren) => {

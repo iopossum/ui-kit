@@ -5,8 +5,8 @@ import DataSource from 'devextreme/data/data_source';
 import DxDropDownBox from 'devextreme-react/drop-down-box';
 import type { IDropDownBoxOptions } from 'devextreme-react/drop-down-box';
 
-import { useTimeoutWithRef } from '../../hooks/use-timeout';
 import type { IDataGridProps } from '@components/data-grid';
+import { useTimeoutWithRef } from '@hooks/use-timeout';
 
 type TOnOpened = NonNullable<IDropDownBoxOptions['onOpened']>;
 type TOnFocusOut = NonNullable<IDropDownBoxOptions['onFocusOut']>;

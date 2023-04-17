@@ -16,8 +16,9 @@
     "moduleResolution": "node",
     "paths": {
       "@utils/*": ["./src/utils/*"],
-      "@hooks": ["./src/hooks"],
-      "@stores/*": ["./src/stores/*"],      
+      "@hooks/*": ["./src/hooks/*"],
+      "@stores": ["./src/stores/index"],
+      "@stores/*": ["./src/stores/*"],
       "@components/*": ["./src/components/*"],
       "@types": ["./src/types/index"],
       "@.storybook/decorators": ["./.storybook/decorators"]

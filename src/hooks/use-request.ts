@@ -1,9 +1,8 @@
 import { useCallback } from 'react';
 
+import { useAbortController } from '@hooks/use-abort-controller';
+import { useMergedState } from '@hooks/use-merged-state';
 import type { IResponse } from '@utils/api';
-
-import { useAbortController } from './use-abort-controller';
-import { useMergedState } from './use-merged-state';
 
 interface IUseRequestState<T> {
   loading: boolean;

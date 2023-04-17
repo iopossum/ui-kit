@@ -1,7 +1,8 @@
 import { useCallback } from 'react';
 import { useHistory } from 'react-router-dom';
 
-import { useStores, createAppStore } from '@stores/index';
+import { useStores, createAppStore } from '@stores';
+
 import { logout } from '@utils/api';
 
 interface IUseLogout {

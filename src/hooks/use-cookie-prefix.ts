@@ -1,4 +1,4 @@
-import { useStores, createAppStore } from '@stores/index';
+import { useStores, createAppStore } from '@stores';
 
 interface IUseCookiePrefix {
   (name: string): string;
