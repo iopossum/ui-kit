@@ -33,10 +33,10 @@ const input = './src/index.ts';
 
 const aliasProps = {
   entries: [
-    { find: '@components', replacement: `${pkg.name}/dist/components` },
-    { find: '@utils', replacement: `${pkg.name}/dist/utils` },
-    { find: '@stores', replacement: `${pkg.name}/dist/stores` },
-    { find: '@hooks', replacement: `${pkg.name}/dist/hooks` },
+    { find: '@components', replacement: `${pkg.name}/components` },
+    { find: '@utils', replacement: `${pkg.name}/utils` },
+    { find: '@stores', replacement: `${pkg.name}/stores` },
+    { find: '@hooks', replacement: `${pkg.name}/hooks` },
   ]
 };
 
@@ -100,7 +100,7 @@ const buildFiles = (folder) => {
 const config = [{
   input,
   output: [    
-    { file: pkg.main, format: 'cjs', sourcemap: false, name: 'core' },    
+    { file: `dist/${pkg.main}`, format: 'cjs', sourcemap: false, name: 'core' },    
   ],
   plugins: [
     externals(),
@@ -119,7 +119,7 @@ const config = [{
 {
   input,
   output: [
-    { file: pkg.module, format: 'esm', sourcemap: false, assetFileNames: "[name][extname]", }
+    { file: `dist/${pkg.module}`, format: 'esm', sourcemap: false, assetFileNames: "[name][extname]", }
   ],
   plugins: [
     alias(aliasProps),

@@ -1,21 +1,19 @@
 {
   "name": "@pharmasoft/core",
-  "version": "2.0.1",
+  "version": "2.0.4",
   "description": "",
-  "main": "dist/cjs/index.js",
-  "module": "dist/index.js",
-  "types": "dist/index.d.ts",
+  "main": "cjs/index.js",
+  "module": "index.js",
+  "types": "index.d.ts",
   "scripts": {
     "storybook": "start-storybook",
     "prettier-format": "prettier 'src/**/*.ts' --write",
-    "lint": "eslint src --resolve-plugins-relative-to . src --ext ts,tsx --fix",
-    "version": "npm --no-git-tag-version version patch",
-    "build": "node --max-old-space-size=16192 node_modules/rollup/dist/bin/rollup -c"
-  },
-  "files": [
-    "dist",
-    "package.json"
-  ],
+    "lint": "eslint src --resolve-plugins-relative-to . src --ext ts,tsx --fix",    
+    "build": "node --max-old-space-size=16192 node_modules/rollup/dist/bin/rollup -c",
+    "prepub": "copy package.json dist",
+    "pub": "cd dist && npm publish",
+    "postpub": "cd dist && del package.json"
+  },  
   "author": "",
   "license": "ISC",
   "resolutions": {
