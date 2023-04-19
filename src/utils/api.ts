@@ -80,7 +80,7 @@ export const initLocales = (): void => {
   locale('ru');
 };
 
-export const history = createBrowserHistory();
+export const history: ReturnType<typeof createBrowserHistory> = createBrowserHistory();
 
 export const getErrorMessages = (res: IResponse<IResponseErrorBody>, message?: string): string[] => {
   let messages: Array<string | undefined> = [];

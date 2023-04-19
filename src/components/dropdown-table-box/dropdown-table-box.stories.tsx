@@ -9,7 +9,7 @@ import {
   DropDownTableBoxMemo,
   IDropDownBoxProps,
   IDropDownBoxContentHandle,
-  IDropDownBoxContentProps
+  IDropDownBoxContentProps,
 } from '@components/dropdown-table-box';
 import { useDataSource } from '@hooks/use-data-source';
 

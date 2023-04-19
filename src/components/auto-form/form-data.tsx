@@ -1,4 +1,3 @@
-
 import React, { useMemo, memo, forwardRef, FC } from 'react';
 
 import Form, { GroupItem, SimpleItem } from 'devextreme-react/form';
@@ -131,7 +130,7 @@ const FormDataWithRef: IFormDataWithRef = forwardRef(
         readOnly={false}
         showColonAfterLabel={true}
         showValidationSummary={false}
-        onFieldDataChanged={(e) => {          
+        onFieldDataChanged={(e) => {
           if (typeof e.value !== 'undefined') {
             const b = {} as Record<keyof T, T[keyof T]>;
             b[e.dataField as keyof T] = e.value;

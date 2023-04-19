@@ -25,7 +25,10 @@ export const Footer = ({ className, style, yearFrom, yearTo, label, children, on
   );
   return (
     <div ref={ref} style={style} className={cn('page-footer', { [className as string]: !!className })}>
-      {children}<span>© {yearFrom}-{yearTo} {label}</span>
+      {children}
+      <span>
+        © {yearFrom}-{yearTo} {label}
+      </span>
     </div>
   );
 };

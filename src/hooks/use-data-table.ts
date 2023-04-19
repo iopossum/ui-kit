@@ -10,7 +10,6 @@ import type { ParseConfig as CsvParseConfig } from 'papaparse';
 import { errorHandler } from '@utils/api';
 import { readCSV, readXLS } from '@utils/file';
 
-
 interface IUseDataTable {
   (props: {
     editable?: boolean;

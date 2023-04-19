@@ -11,16 +11,10 @@ export default {
   args: {},
 } as ComponentMeta<typeof AuthWrapper>;
 
-const Template: ComponentStory<typeof AuthWrapper> = (args) => (
-  <AuthWrapper {...args}>
-    контент
-  </AuthWrapper>
-);
+const Template: ComponentStory<typeof AuthWrapper> = (args) => <AuthWrapper {...args}>контент</AuthWrapper>;
 
 const TemplateMemo: ComponentStory<typeof AuthWrapperMemo> = (args) => (
-  <AuthWrapperMemo {...args}>
-    контент
-  </AuthWrapperMemo>
+  <AuthWrapperMemo {...args}>контент</AuthWrapperMemo>
 );
 
 export const Basic = Template.bind({});

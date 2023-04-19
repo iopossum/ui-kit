@@ -1,26 +1,19 @@
-import React from "react";
+import React from 'react';
 
 import AbortController from 'abort-controller';
-
 
 type ReactText = string | number;
 type ReactChild = React.ReactElement | ReactText;
 
-type ReactNodeArray = Array<ReactNode>
+type ReactNodeArray = Array<ReactNode>;
 type ReactFragment = object | ReactNodeArray;
 
-export type ReactNode =
-  | ReactChild
-  | ReactFragment
-  | React.ReactPortal
-  | boolean
-  | null
-  | undefined;
+export type ReactNode = ReactChild | ReactFragment | React.ReactPortal | boolean | null | undefined;
 
 export interface IField<T> {
   field: keyof T;
   defaultValue: T[keyof T];
-  value?: T[keyof T];  
+  value?: T[keyof T];
   required?: boolean;
   pattern?: RegExp;
   invalid?: boolean;
@@ -40,6 +33,8 @@ export interface IAbortController {
 }
 
 export interface IRoute {
+  authorization?: boolean;
+  roles?: string[];
   path?: string;
   displayOnSidebar?: boolean;
   expanded?: boolean;
@@ -47,5 +42,5 @@ export interface IRoute {
   title?: string;
   icon?: string;
   iconComponent?: React.ReactElement;
-  onClick?: React.MouseEventHandler<HTMLDivElement>
+  onClick?: React.MouseEventHandler<HTMLDivElement>;
 }

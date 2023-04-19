@@ -19,7 +19,7 @@ export default {
 
 type Test = {
   test: string;
-}
+};
 
 const DialogWrapper = (props: IDialogProps) => {
   const ref = useRef<IDialogHandle<Test>>(null);
@@ -29,7 +29,7 @@ const DialogWrapper = (props: IDialogProps) => {
       <Button
         text="open"
         onClick={async () => {
-          const data = await ref.current?.open({ text: 'asdasd' });          
+          const data = await ref.current?.open({ text: 'asdasd' });
           alert(JSON.stringify(data, null, 2));
         }}
       />

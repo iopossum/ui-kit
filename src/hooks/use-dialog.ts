@@ -37,7 +37,10 @@ export const useDialog = <T = IDialogState>({
   onDecline,
 }: IUseDialogProps<T>) => {
   type UnionT = Partial<T> & IDialogState;
-  const dialogRef = useRef<IDialogRefs<UnionT>>({ resolve: null, reject: null });
+  const dialogRef = useRef<IDialogRefs<UnionT>>({
+    resolve: null,
+    reject: null,
+  });
   const { state, setMergedState } = useMergedState<UnionT>({
     visible: false,
     text: textFromProps,

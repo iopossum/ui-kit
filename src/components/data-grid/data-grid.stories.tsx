@@ -58,7 +58,15 @@ const TemplateAutoSize: ComponentStory<typeof DataGrid> = (args: IDataGridProps)
   const dataSource = useDataSource({
     load: () => data,
   });
-  return <AutoSize<IDataGridProps> component={DataGrid} {...args} onKeyDown={() => ''} dataSource={dataSource} columns={columns}/>;
+  return (
+    <AutoSize<IDataGridProps>
+      component={DataGrid}
+      {...args}
+      onKeyDown={() => ''}
+      dataSource={dataSource}
+      columns={columns}
+    />
+  );
 };
 
 export const Basic = Template.bind({});

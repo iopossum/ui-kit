@@ -1,4 +1,3 @@
-
 import React, { memo } from 'react';
 
 import cn from 'classnames';
@@ -27,9 +26,12 @@ export const Button = (props: IButtonProps) => {
     <DxButton
       hint={hint || text}
       disabled={disabled || loading}
-      className={cn('ph-button', { [className as string]: !!className, 'icon': !!rest.icon })}
+      className={cn('ph-button', {
+        [className as string]: !!className,
+        icon: !!rest.icon,
+      })}
       {...rest}
-    > 
+    >
       {!rest.icon && (
         <>
           <LoadIndicator className="button-indicator" visible={loading} />

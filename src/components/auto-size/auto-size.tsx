@@ -10,7 +10,7 @@ export type TAutoSizeProps<T = object> = IWithStyles &
   Omit<AutoSizerProps, 'children'> &
   T & {
     component: React.FC<T & TSizePartial>;
-    renderOnZero?: boolean;    
+    renderOnZero?: boolean;
   };
 
 export type TSize = Size;
@@ -36,7 +36,7 @@ export const AutoSize: IAutoSizeComponent = forwardRef(
             if ((!height && !width) || (props.disableWidth && !height) || (props.disableHeight && !width)) {
               return <span />;
             }
-          }          
+          }
           return createElement(component, {
             ref,
             autoWidth: width,

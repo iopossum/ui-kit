@@ -12,11 +12,19 @@ export default {
 
 type Test = {
   test: string;
-}
+};
 
 const TabComponent: ITabPanelItemProps<Test>['component'] = ({ padding, minHeight, maxHeight }) => {
   return (
-    <div style={{ border: '1px solid red', padding, minHeight, maxHeight, height: maxHeight }}>
+    <div
+      style={{
+        border: '1px solid red',
+        padding,
+        minHeight,
+        maxHeight,
+        height: maxHeight,
+      }}
+    >
       {JSON.stringify({ padding, minHeight, maxHeight })}
     </div>
   );

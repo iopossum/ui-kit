@@ -1,5 +1,3 @@
-
-
 import React, { forwardRef, useMemo, PropsWithChildren, memo, FC } from 'react';
 
 import { Popup, IPopupOptions, IToolbarItemProps } from 'devextreme-react/popup';

@@ -14,29 +14,25 @@ export default {
         <Story />
       </Card>
     ),
-  ]
+  ],
 } as ComponentMeta<typeof FloatLabelInput>;
 
 const Template: ComponentStory<typeof FloatLabelInput> = (args) => {
   const [value, setValue] = useState('');
-  return (
-    <FloatLabelInput {...args} value={value} onChange={e => setValue(e.target.value)} />
-  )
+  return <FloatLabelInput {...args} value={value} onChange={(e) => setValue(e.target.value)} />;
 };
 
 const TemplateMemo: ComponentStory<typeof FloatLabelInputMemo> = (args) => {
   const [value, setValue] = useState('');
-  return (
-    <FloatLabelInputMemo {...args} value={value} onChange={e => setValue(e.target.value)} />
-  )
+  return <FloatLabelInputMemo {...args} value={value} onChange={(e) => setValue(e.target.value)} />;
 };
 
 export const Basic = Template.bind({});
 Basic.args = {
-  placeholder: 'asd'
+  placeholder: 'asd',
 };
 
 export const Memo = TemplateMemo.bind({});
 Memo.args = {
-  placeholder: 'asd'
+  placeholder: 'asd',
 };

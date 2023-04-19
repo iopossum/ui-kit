@@ -37,6 +37,7 @@ const aliasProps = {
     { find: '@utils', replacement: `${pkg.name}/utils` },
     { find: '@stores', replacement: `${pkg.name}/stores` },
     { find: '@hooks', replacement: `${pkg.name}/hooks` },
+    { find: '@types', replacement: `${pkg.name}/types` },
   ]
 };
 
@@ -61,6 +62,8 @@ const postcssProps = {
 
 const external = (id) => ['@pharmasoft'].includes(id.split('/')[0]);
 
+const externalDts = (id) => ['@pharmasoft'].includes(id.split('/')[0]) || /\.(scss|css)$/.test(id);
+
 const buildFiles = (folder) => {
   const isComponent = folder === 'components';
   const files = fs.readdirSync(path.join(__dirname, `/src/${folder}`));  
@@ -83,15 +86,23 @@ const buildFiles = (folder) => {
           }),
           terser(),
           typescript2({...typescriptProps, tsconfigOverride: {compilerOptions: {declaration: false, declarationDir: undefined, sourceMap: false, emitDeclarationOnly: false}}}),        
-          json(),
+          json(),          
         ],
         external,
       });
       config.push({
         input: isComponent ? `dist/types/${folder}/${files[i]}/index.d.ts` : `dist/types/${folder}/${files[i].replace(/ts$/, 'd.ts')}`,
         output: [{ file: isComponent ? `dist/${folder}/${files[i]}/index.d.ts` : `dist/${folder}/${files[i].replace(/ts$/, 'd.ts')}`, format: "esm", sourcemap: false }],
-        plugins: [dts()],
-        external: [/\.(scss|css)$/],
+        plugins: [
+          alias(aliasProps),
+          dts({
+            compilerOptions: {
+              baseUrl: "src",
+              importHelpers: true,
+            },
+          }),          
+        ],
+        external: externalDts,
       });
     }    
   }
@@ -130,7 +141,7 @@ const config = [{
     styles(postcssProps),
     json(),
     cleanup(),
-    terser(),
+    terser(),    
     copy({
       targets: [        
         { src: 'src/styles/icons/**/*', dest: 'dist/assets/icons' },
@@ -152,7 +163,7 @@ const config = [{
     cleanup(),
     typescript(typescriptProps),    
     json(),
-    terser(),
+    terser(),    
   ],
   external,
 }, 
@@ -169,7 +180,7 @@ const config = [{
     cleanup(),
     typescript(typescriptProps),
     json(),
-    terser(),
+    terser(),    
   ],
   external,
 }, {
@@ -191,8 +202,21 @@ const config = [{
 }, {
   input: "dist/types/index.d.ts",
   output: [{ file: "dist/index.d.ts", format: "esm", sourcemap: false }],
-  plugins: [dts()],
-  external: [/\.(scss|css)$/],
+  plugins: [
+    alias(aliasProps),
+    dts({
+      compilerOptions: {
+        baseUrl: "src",
+        importHelpers: true,
+      },
+    }),
+    copy({
+      targets: [        
+        { src: 'dist/types/types/index.d.ts', dest: 'dist/types/' },
+      ]
+    })    
+  ],
+  external: externalDts,
 }];
 
 buildFiles('utils');

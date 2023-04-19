@@ -14,7 +14,10 @@ export const Header = ({ className, style, children }: IHeaderProps) => {
   return (
     <div
       style={style}
-      className={cn('header', { [className as string]: !!className, 'header_no-children': !children })}
+      className={cn('header', {
+        [className as string]: !!className,
+        'header_no-children': !children,
+      })}
     >
       {children}
     </div>

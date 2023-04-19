@@ -13,7 +13,9 @@ export default {
 } as ComponentMeta<typeof LoginForm>;
 
 const Template: ComponentStory<typeof LoginForm> = (args) => <LoginForm {...args} onSubmit={() => success('submit')} />;
-const TemplateMemo: ComponentStory<typeof LoginFormMemo> = (args) => <LoginFormMemo {...args} onSubmit={() => success('submit')} />;
+const TemplateMemo: ComponentStory<typeof LoginFormMemo> = (args) => (
+  <LoginFormMemo {...args} onSubmit={() => success('submit')} />
+);
 
 export const Basic = Template.bind({});
 Basic.args = {};

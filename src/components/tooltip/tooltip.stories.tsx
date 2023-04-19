@@ -10,13 +10,13 @@ export default {
 } as ComponentMeta<typeof Tooltip>;
 
 const Template: ComponentStory<typeof Tooltip> = (args) => (
-  <Tooltip placement='right' title={'qwe'} {...args} >
+  <Tooltip placement="right" title={'qwe'} {...args}>
     <div style={{ alignSelf: 'flex-start' }}>asd</div>
   </Tooltip>
 );
 
 const TemplateMemo: ComponentStory<typeof TooltipMemo> = (args) => (
-  <TooltipMemo placement='right' title={'qwe'} {...args} >
+  <TooltipMemo placement="right" title={'qwe'} {...args}>
     <div style={{ alignSelf: 'flex-start' }}>asd</div>
   </TooltipMemo>
 );

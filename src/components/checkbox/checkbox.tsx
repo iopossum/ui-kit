@@ -1,4 +1,3 @@
-
 import React, { memo, ChangeEvent } from 'react';
 
 import { CheckBox as DxCheckbox } from 'devextreme-react/check-box';

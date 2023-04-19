@@ -65,10 +65,7 @@ export const useSimpleForm = <T>(
       event.preventDefault?.();
       setInputs((inputs) => ({ ...inputs, submitted: true }));
       fields.forEach((v) => {
-        Object.assign(
-          inputs[v.field],
-          validateField(inputs[v.field]),
-        );
+        Object.assign(inputs[v.field], validateField(inputs[v.field]));
       });
       const isInvalid = Object.keys(inputs).some((key) => inputs[key as keyof T].invalid);
       if (!isInvalid) {

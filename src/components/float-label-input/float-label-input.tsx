@@ -1,4 +1,3 @@
-
 import React, { useState, memo } from 'react';
 
 import { Input } from 'antd';
@@ -26,7 +25,10 @@ export const FloatLabelInput = (props: IFloatLabelInputProps) => {
 
   return (
     <div
-      className={cn(['float-label', rest.size, rest.status], { focused: isOccupied, 'full-width': fullWidth })}
+      className={cn(['float-label', rest.size, rest.status], {
+        focused: isOccupied,
+        'full-width': fullWidth,
+      })}
       onBlur={() => setFocus(false)}
       onFocus={() => setFocus(true)}
     >

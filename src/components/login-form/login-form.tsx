@@ -56,7 +56,10 @@ export const LoginForm = ({
   onSubmit,
   onValidationFailed,
 }: ILoginFormProps) => {
-  const { AppStore, UserStore } = useStores<{ AppStore: IAppStore; UserStore: IUserStore<unknown> }>();
+  const { AppStore, UserStore } = useStores<{
+    AppStore: IAppStore;
+    UserStore: IUserStore<unknown>;
+  }>();
   const history = useHistory();
 
   const onSubmitFn = useCallback<FormikConfig<ILoginFormData>['onSubmit']>(

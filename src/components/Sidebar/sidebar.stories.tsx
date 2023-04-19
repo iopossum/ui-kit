@@ -8,48 +8,24 @@ import { Sidebar, SidebarMemo, TSidebarSize, ISidebarProps } from '@components/s
 export default {
   title: 'Sidebar',
   component: Sidebar,
-  decorators: [
-    withRouter
-  ]
+  decorators: [withRouter],
 } as ComponentMeta<typeof Sidebar>;
 
 const SidebarWrapper = (props: ISidebarProps) => {
   const [state, setState] = useState<TSidebarSize>('lg');
-  return (
-    <Sidebar
-      {...props}
-      sidebar={state}
-      routes={routes}
-      onChange={setState}
-    />
-  )
-}
+  return <Sidebar {...props} sidebar={state} routes={routes} onChange={setState} />;
+};
 
 const SidebarMemoWrapper = (props: ISidebarProps) => {
   const [state, setState] = useState<TSidebarSize>('lg');
-  return (
-    <SidebarMemo
-      {...props}
-      sidebar={state}
-      routes={routes}
-      onChange={setState}
-    />
-  )
-}
-
-const Template: ComponentStory<typeof Sidebar> = (args) => {  
-  return (
-    <SidebarWrapper
-      {...args}
-    />
-  )
+  return <SidebarMemo {...props} sidebar={state} routes={routes} onChange={setState} />;
 };
-const TemplateMemo: ComponentStory<typeof SidebarMemo> = (args) => {  
-  return (
-    <SidebarMemoWrapper
-      {...args}
-    />
-  )
+
+const Template: ComponentStory<typeof Sidebar> = (args) => {
+  return <SidebarWrapper {...args} />;
+};
+const TemplateMemo: ComponentStory<typeof SidebarMemo> = (args) => {
+  return <SidebarMemoWrapper {...args} />;
 };
 
 export const Basic = Template.bind({});

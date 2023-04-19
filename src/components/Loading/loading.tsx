@@ -13,7 +13,7 @@ export interface ILoadingAttrs extends BaseProps {
   global?: boolean;
 }
 
-export const loadingAttrs: ILoadingAttrs = {
+export const LOADING_GLOBAL_PROPS: ILoadingAttrs = {
   type: 'BallTriangle',
   height: 100,
   width: 100,
@@ -51,7 +51,12 @@ export interface ILoadingContainerProps extends IWithStyles {
 
 export const LoadingContainer = ({ className, style, loading, children }: ILoadingContainerProps) => {
   return (
-    <div className={cn('loading-container', { [className as string]: !!className })} style={style}>
+    <div
+      className={cn('loading-container', {
+        [className as string]: !!className,
+      })}
+      style={style}
+    >
       {loading && <Loading />}
       {children}
     </div>

@@ -90,9 +90,13 @@ export default {
   },
 } as ComponentMeta<typeof AutoForm>;
 
-const Template: ComponentStory<typeof AutoForm> = (args) => <AutoForm<TSimpleStoreItem> {...args} useItem={useSampleStoreItem} idKey='id' />;
+const Template: ComponentStory<typeof AutoForm> = (args) => (
+  <AutoForm<TSimpleStoreItem> {...args} useItem={useSampleStoreItem} idKey="id" />
+);
 
-const TemplateMemo: ComponentStory<typeof AutoFormMemo> = (args) => <AutoFormMemo<TSimpleStoreItem> {...args} useItem={useSampleStoreItem} />;
+const TemplateMemo: ComponentStory<typeof AutoFormMemo> = (args) => (
+  <AutoFormMemo<TSimpleStoreItem> {...args} useItem={useSampleStoreItem} />
+);
 
 const TemplateObservable: ComponentStory<typeof AutoFormObservable> = (args) => (
   <AutoFormObservable<TSimpleStoreItem> {...args} useItem={useSampleStoreItem} />

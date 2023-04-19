@@ -1,4 +1,3 @@
-
 import React, { useRef } from 'react';
 
 import { ComponentMeta, ComponentStory } from '@storybook/react';

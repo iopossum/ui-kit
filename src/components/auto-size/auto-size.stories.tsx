@@ -33,9 +33,7 @@ const Block: TAutoSizeProps<IBlock>['component'] = ({ autoHeight, autoWidth, tes
   );
 };
 
-const Template: ComponentStory<typeof AutoSize> = (args) => (
-  <AutoSize<IBlock> {...args} test={2} component={Block} />
-);
+const Template: ComponentStory<typeof AutoSize> = (args) => <AutoSize<IBlock> {...args} test={2} component={Block} />;
 
 const TemplateMemo: ComponentStory<typeof AutoSizeMemo> = (args) => (
   <AutoSizeMemo<IBlock> {...args} test={2} component={Block} />

@@ -23,7 +23,9 @@ import './auto-form.scss';
 
 type OnContentReady = NonNullable<IFormOptions['onContentReady']>;
 
-export interface IAutoFormProps<T = object> extends Omit<IFormDataProps<T>, 'style'>, IWithStyles {
+export interface IAutoFormProps<T = object>
+  extends Omit<IFormDataProps<T>, 'style' | 'filteredColumns' | 'onChange'>,
+    IWithStyles {
   idKey: keyof T;
   children?: React.ReactNode;
   autoRedirect?: boolean;
@@ -72,7 +74,7 @@ export const AutoForm = <T extends object>({
   const formRef = useRef<Form>(null);
 
   const handleSubmit = useCallback(
-    async (e: React.FormEvent<HTMLFormElement | HTMLDivElement>) => {      
+    async (e: React.FormEvent<HTMLFormElement | HTMLDivElement>) => {
       e.preventDefault();
       e.stopPropagation();
       const validator = formRef.current?.instance.validate();
