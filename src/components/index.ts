@@ -16,7 +16,6 @@ export * from './full-screen';
 export * from './header';
 export * from './loading';
 export * from './login-form';
-export * from './media-wrapper';
 export * from './page';
 export * from './portal';
 export * from './secure-page';

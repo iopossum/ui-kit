@@ -1,12 +1,10 @@
 import React, { useCallback, memo } from 'react';
-import { Link, useHistory } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 
 import cn from 'classnames';
 import Button from 'devextreme-react/button';
 import { useFormik } from 'formik';
 import type { FormikConfig } from 'formik';
-
-import { useStores, IAppStore, IUserStore, IToken } from '@stores';
 
 import { AuthWrapper } from '@components/auth-wrapper';
 import { CheckBox } from '@components/checkbox';
@@ -33,59 +31,22 @@ const fields: IField<ILoginFormData>[] = [
 
 const initialValues = getInitialValues<ILoginFormData>(fields);
 
-export interface ILoginFormProps extends IWithStyles {
-  loginField?: string;
-  passwordField?: string;
+export interface ILoginFormProps extends Pick<FormikConfig<ILoginFormData>, 'onSubmit'>, IWithStyles {
   hasRegLink?: boolean;
   regLink?: string;
-  loginLabel?: string;
-  defaultRedirectPath?: string;
-  onSubmit?: (e: ILoginFormData) => void;
+  loginLabel?: string;  
   onValidationFailed: IUseFormValidationCallback<ILoginFormData>['onValidationFailed'];
 }
 
 export const LoginForm = ({
   className,
   style,
-  loginField,
-  passwordField,
-  defaultRedirectPath,
   hasRegLink,
   regLink,
   loginLabel,
   onSubmit,
   onValidationFailed,
 }: ILoginFormProps) => {
-  const { AppStore, UserStore } = useStores<{
-    AppStore: IAppStore;
-    UserStore: IUserStore<unknown>;
-  }>();
-  const history = useHistory();
-
-  const onSubmitFn = useCallback<FormikConfig<ILoginFormData>['onSubmit']>(
-    async (values) => {
-      if (onSubmit) {
-        return onSubmit(values);
-      }
-      AppStore.loading = true;
-      try {
-        const data = await UserStore.login<unknown, IToken>({
-          [passwordField as string]: values.password,
-          [loginField as string]: values.login,
-        });
-        AppStore.token = data?.body as NonNullable<IToken>;
-        if (!values.remember) {
-          window.onbeforeunload = AppStore.removeToken;
-        }
-        await UserStore.profile();
-        if (defaultRedirectPath) {
-          history.push(defaultRedirectPath);
-        }
-      } catch (e) {}
-      AppStore.loading = false;
-    },
-    [onSubmit, UserStore, AppStore, history, passwordField, loginField, defaultRedirectPath],
-  );
 
   const handleValidationFailed = useCallback<IUseFormValidationCallback<ILoginFormData>['onValidationFailed']>(
     (values) => {
@@ -100,7 +61,7 @@ export const LoginForm = ({
   const { handleSubmit, handleChange, values, errors, validateForm } = useFormik<ILoginFormData>({
     initialValues,
     validate: createValidation<ILoginFormData>(fields),
-    onSubmit: onSubmitFn,
+    onSubmit,
   });
 
   const [handleSubmitWrapper] = useFormValidationCallback({
@@ -160,11 +121,8 @@ export const LoginForm = ({
   );
 };
 
-LoginForm.defaultProps = {
-  loginField: 'email',
-  passwordField: 'password',
-  loginLabel: 'Логин (e-mail)',
-  defaultRedirectPath: '/',
+LoginForm.defaultProps = {  
+  loginLabel: 'Логин (e-mail)',  
   regLink: '/reg',
 };
 

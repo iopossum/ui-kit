@@ -1,21 +1,18 @@
-import { useStores } from '@stores/context';
 import { getCookie, setCookie, removeCookie } from '@utils/cookie';
 
 export type SidebarSize = 'sm' | 'lg';
 export interface IAppStore {
-  _token: IToken | null;
-  _loading: boolean;
-  sidebar: SidebarSize;
-  cookiePrefix: string;
+  token: string | null;
   loading: boolean;
-  token: IToken;
-  removeToken: () => void;
-  setEntity: <T extends IAppStore>(name: keyof T, value: unknown) => void;
-  toggleSidebar: () => void;
-  getFooterHeight: () => number;
+  sidebar: SidebarSize;
+  cookiePrefix: string;  
   footer?: null | HTMLDivElement;
   userIdField?: string;
   matches?: Record<string, unknown>;
+  removeToken: () => void;  
+  setToken: (t: IToken) => void;
+  toggleSidebar: () => void;
+  getFooterHeight: () => number;  
 }
 
 export type AppStoreProps = {
@@ -28,32 +25,23 @@ export interface IToken {
   [s: string]: string;
 }
 
-export const createAppStore = <T extends AppStoreProps>(props: T) => {
+export const createAppStore = <T = {}>(props: T & AppStoreProps) => {
+  type TK = T & IAppStore;
   const { cookiePrefix, ...rest } = props;
-  const token = getCookie(`${cookiePrefix}token`);
+  const cookieToken = getCookie(`${cookiePrefix}token`);
   const cookieSidebar = getCookie(`${cookiePrefix}sidebar`);
   (window as typeof window & { cookiePrefix?: string }).cookiePrefix = cookiePrefix;
   const store: IAppStore = {
-    _token: token !== 'undefined' ? token : null,
-    _loading: false,
+    token: cookieToken !== 'undefined' ? cookieToken : null,
+    loading: false,
     sidebar: cookieSidebar !== 'undefined' ? cookieSidebar : 'lg',
     footer: null,
     cookiePrefix,
 
     matches: {},
-
-    get loading() {
-      return this._loading;
-    },
-    set loading(v) {
-      this._loading = v;
-    },
-
-    get token() {
-      return this._token as IToken;
-    },
-    set token(t: IToken) {
-      this._token = t;
+    
+    setToken: function (t: IToken) {
+      this.token = t.id;
       setCookie(`${cookiePrefix}token`, t.id);
       if (this.userIdField && t[this.userIdField]) {
         setCookie(`${cookiePrefix}user`, t[this.userIdField]);
@@ -61,16 +49,12 @@ export const createAppStore = <T extends AppStoreProps>(props: T) => {
     },
 
     removeToken: function () {
-      this._token = null;
+      this.token = null;
       removeCookie(`${cookiePrefix}token`);
       if (this.userIdField) {
         removeCookie(`${cookiePrefix}user`);
       }
-    },
-
-    setEntity: function (name, value) {
-      Object.assign(this, { [name]: value });
-    },
+    },    
 
     toggleSidebar: function () {
       this.sidebar = this.sidebar === 'lg' ? 'sm' : 'lg';
@@ -84,42 +68,8 @@ export const createAppStore = <T extends AppStoreProps>(props: T) => {
   return {
     ...store,
     ...rest,
-  };
-};
-
-export const useAppStore = () => {
-  const stores = useStores<{ AppStore: IAppStore }>();
-  return stores.AppStore;
-};
-
-export const useAppStoreLoading = () => {
-  const AppStore = useAppStore();
-  return {
-    loading: AppStore.loading,
-  };
-};
-
-export const useAppStoreToken = () => {
-  const AppStore = useAppStore();
-  return {
-    token: AppStore.token,
-  };
-};
-
-export const useAppStoreElements = () => {
-  const AppStore = useAppStore();
-  return {
-    sidebar: AppStore.sidebar,
-    footer: AppStore.footer,
-    setEntity: AppStore.setEntity.bind(AppStore),
-    toggleSidebar: AppStore.toggleSidebar.bind(AppStore),
-    getFooterHeight: AppStore.getFooterHeight.bind(AppStore),
-  };
-};
-
-export const useAppStoreMedia = () => {
-  const AppStore = useAppStore();
-  return {
-    matches: AppStore.matches,
+    setEntity: function <K = TK[keyof TK]>(name: keyof TK, value: K) {
+      Object.assign(this, { [name]: value });
+    },
   };
 };

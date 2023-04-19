@@ -6,8 +6,8 @@ import { createBrowserHistory } from 'history';
 
 import { getCookie } from '@utils/cookie';
 
-const UNKNOWN_ERROR_MESSAGE = 'Неверная конфигурация сервера';
-const UNAUTHORIZED_ERROR_MESSAGE = 'Доступ запрещен или истек срок токена авторизации';
+export const UNKNOWN_ERROR_MESSAGE = 'Неверная конфигурация сервера';
+export const UNAUTHORIZED_ERROR_MESSAGE = 'Доступ запрещен или истек срок токена авторизации';
 
 export interface IErrorHandlerCfg {
   showToast?: boolean;
@@ -172,7 +172,7 @@ export const request = async <T, K>(props: IRequestProps<T>): Promise<IResponse<
   let response = null;
   let parsedResponse = null;
   try {
-    response = await fetch(`${process.env.HOST}${url}`, rest as IRequestProps<T & URLSearchParams>);
+    response = await fetch(`${process.env.HOST || ''}${url}`, rest as IRequestProps<T & URLSearchParams>);
   } catch (err) {
     return Promise.reject({
       body: err,

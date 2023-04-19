@@ -1,12 +1,11 @@
-import { useStores } from '@stores/context';
 import { get, post, errorHandler, IResponse } from '@utils/api';
 import { getCookie } from '@utils/cookie';
 
 export interface IUserStore<IUser> {
   baseUrl: string;
-  _currentUser: IUser | null;
-  currentUser: IUser;
+  currentUser: IUser | null;  
   cookiePrefix?: string;
+  setCurrentUser: (u: IUser) => void;
   profile: () => void;
   login: <T, K>(e: T) => Promise<IResponse<K> | undefined>;
   reg: <T, K>(e?: T) => Promise<IResponse<K> | undefined>;
@@ -18,17 +17,14 @@ export type UserStoreProps = {
   baseUrl?: string;
 };
 
-export const createUserStore = <T extends UserStoreProps, IUser>(props?: T) => {
-  const { baseUrl = '/api/users', cookiePrefix = '', ...rest } = props || ({} as T);
+export const createUserStore = <T, IUser>(props?: T & UserStoreProps) => {
+  const { baseUrl = '/api/users', cookiePrefix = '', ...rest } = props || ({} as T & UserStoreProps);
   const store: IUserStore<IUser> = {
     baseUrl,
     cookiePrefix,
-    _currentUser: null,
-    get currentUser() {
-      return this._currentUser as IUser;
-    },
-    set currentUser(u) {
-      this._currentUser = u;
+    currentUser: null,
+    setCurrentUser(u) {
+      this.currentUser = u;
     },
     profile: async function () {
       const id = getCookie(`${this.cookiePrefix}user`);
@@ -64,23 +60,11 @@ export const createUserStore = <T extends UserStoreProps, IUser>(props?: T) => {
       }
     },
     hasRole: function (role, realmKey = 'realm') {
-      return this.currentUser && this.currentUser[realmKey as keyof IUser] === role;
+      return !!this.currentUser && this.currentUser[realmKey as keyof IUser] === role;
     },
   };
   return {
     ...store,
     ...rest,
-  };
-};
-
-export const useUserStore = <T>() => {
-  const stores = useStores<{ UserStore: IUserStore<T> }>();
-  return stores.UserStore;
-};
-
-export const useUserStoreProfile = <T>() => {
-  const store = useUserStore<T>();
-  return {
-    currentUser: store.currentUser,
   };
 };
