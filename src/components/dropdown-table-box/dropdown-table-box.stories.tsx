@@ -1,6 +1,6 @@
 import React, { forwardRef, useImperativeHandle, useState } from 'react';
 
-import { ComponentMeta, ComponentStory } from '@storybook/react';
+import { Meta, StoryObj } from '@storybook/react';
 
 import { data, columns } from '@.storybook/decorators';
 import { DataGrid } from '@components/data-grid';
@@ -23,7 +23,7 @@ export default {
       </div>
     ),
   ],
-} as ComponentMeta<typeof DropDownTableBox>;
+} as Meta<typeof DropDownTableBox>;
 
 const DropDownTableBoxContent = forwardRef<IDropDownBoxContentHandle, IDropDownBoxContentProps>(
   ({ searchExpr, searchValue, ...rest }, ref) => {
@@ -91,11 +91,15 @@ const DropDownTableBoxMemoWrapper = (props: IDropDownBoxProps) => {
   );
 };
 
-const Template: ComponentStory<typeof DropDownTableBox> = (args) => <DropDownTableBoxWrapper {...args} />;
-const TemplateMemo: ComponentStory<typeof DropDownTableBoxMemo> = (args) => <DropDownTableBoxMemoWrapper {...args} />;
+const Template = (props: IDropDownBoxProps) => <DropDownTableBoxWrapper {...props} />;
+const TemplateMemo = (props: IDropDownBoxProps) => <DropDownTableBoxMemoWrapper {...props} />;
 
-export const Basic = Template.bind({});
-Basic.args = {};
+export const Basic: StoryObj<typeof DropDownTableBox> = {
+  render: Template,
+  args: {}
+};
 
-export const Memo = TemplateMemo.bind({});
-Memo.args = {};
+export const Memo: StoryObj<typeof DropDownTableBoxMemo> = {
+  render: TemplateMemo,
+  args: {}
+};

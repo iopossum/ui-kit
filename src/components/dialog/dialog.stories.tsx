@@ -1,6 +1,6 @@
 import React, { useRef } from 'react';
 
-import { ComponentMeta, ComponentStory } from '@storybook/react';
+import { Meta, StoryObj } from '@storybook/react';
 
 import { Button } from '@components/button';
 import { Dialog, DialogMemo, IDialogProps, IDialogHandle } from '@components/dialog';
@@ -15,7 +15,7 @@ export default {
       </div>
     ),
   ],
-} as ComponentMeta<typeof Dialog>;
+} as Meta<typeof Dialog>;
 
 type Test = {
   test: string;
@@ -53,11 +53,15 @@ const DialogMemoWrapper = (props: IDialogProps) => {
   );
 };
 
-const Template: ComponentStory<typeof Dialog> = (args) => <DialogWrapper {...args} />;
-const TemplateMemo: ComponentStory<typeof DialogMemo> = (args) => <DialogMemoWrapper {...args} />;
+const Template = (props: IDialogProps) => <DialogWrapper {...props} />;
+const TemplateMemo = (props: IDialogProps) => <DialogMemoWrapper {...props} />;
 
-export const Basic = Template.bind({});
-Basic.args = {};
+export const Basic: StoryObj<typeof Dialog> = {
+  render: Template,
+  args: {}
+};
 
-export const Memo = TemplateMemo.bind({});
-Memo.args = {};
+export const Memo: StoryObj<typeof DialogMemo> = {
+  render: TemplateMemo,
+  args: {}
+};

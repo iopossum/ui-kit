@@ -1,15 +1,17 @@
 import React, { useState } from 'react';
 
-import { ComponentMeta, ComponentStory } from '@storybook/react';
+import { Meta, StoryObj } from '@storybook/react';
 
-import { withRouter, routes } from '@.storybook/decorators';
+import { withRouter } from 'storybook-addon-react-router-v6';
+
+import { routes } from '@.storybook/decorators';
 import { Sidebar, SidebarMemo, TSidebarSize, ISidebarProps } from '@components/sidebar';
 
 export default {
   title: 'Sidebar',
   component: Sidebar,
   decorators: [withRouter],
-} as ComponentMeta<typeof Sidebar>;
+} as Meta<typeof Sidebar>;
 
 const SidebarWrapper = (props: ISidebarProps) => {
   const [state, setState] = useState<TSidebarSize>('lg');
@@ -21,15 +23,19 @@ const SidebarMemoWrapper = (props: ISidebarProps) => {
   return <SidebarMemo {...props} sidebar={state} routes={routes} onChange={setState} />;
 };
 
-const Template: ComponentStory<typeof Sidebar> = (args) => {
-  return <SidebarWrapper {...args} />;
+const Template = (props: ISidebarProps) => {
+  return <SidebarWrapper {...props} />;
 };
-const TemplateMemo: ComponentStory<typeof SidebarMemo> = (args) => {
-  return <SidebarMemoWrapper {...args} />;
+const TemplateMemo = (props: ISidebarProps) => {
+  return <SidebarMemoWrapper {...props} />;
 };
 
-export const Basic = Template.bind({});
-Basic.args = {};
+export const Basic: StoryObj<typeof Sidebar> = {
+  render: Template,
+  args: {}
+};
 
-export const Memo = TemplateMemo.bind({});
-Memo.args = {};
+export const Memo: StoryObj<typeof SidebarMemo> = {
+  render: TemplateMemo,
+  args: {}
+};

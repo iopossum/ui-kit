@@ -1,41 +1,46 @@
 import React, { useRef } from 'react';
 
-import { ComponentMeta, ComponentStory } from '@storybook/react';
+import { Meta, StoryObj } from '@storybook/react';
+
 import Button from 'devextreme-react/button';
 
-import { FullScreen, FullScreenMemo, Zoom, IFullScreenHandle } from '@components/full-screen';
+import { FullScreen, FullScreenMemo, Zoom, IFullScreenHandle, IFullScreenProps } from '@components/full-screen';
 
 export default {
   title: 'FullScreen',
   component: FullScreen,
-} as ComponentMeta<typeof FullScreen>;
+} as Meta<typeof FullScreen>;
 
-const Template: ComponentStory<typeof FullScreen> = (args) => {
+const Template = (props: IFullScreenProps) => {
   const ref = useRef<IFullScreenHandle>(null);
   return (
     <div>
       <Button component={Zoom} onClick={() => ref.current?.open()} />
-      <FullScreen ref={ref} {...args}>
+      <FullScreen ref={ref} {...props}>
         text
       </FullScreen>
     </div>
   );
 };
 
-const TemplateMemo: ComponentStory<typeof FullScreenMemo> = (args) => {
+const TemplateMemo = (props: IFullScreenProps) => {
   const ref = useRef<IFullScreenHandle>(null);
   return (
     <div>
       <Button component={Zoom} onClick={() => ref.current?.open()} />
-      <FullScreenMemo ref={ref} {...args}>
+      <FullScreenMemo ref={ref} {...props}>
         text
       </FullScreenMemo>
     </div>
   );
 };
 
-export const Basic = Template.bind({});
-Basic.args = {};
+export const Basic: StoryObj<typeof FullScreen> = {
+  render: Template,
+  args: {}
+};
 
-export const Memo = TemplateMemo.bind({});
-Memo.args = {};
+export const Memo: StoryObj<typeof FullScreenMemo> = {
+  render: TemplateMemo,
+  args: {}
+};

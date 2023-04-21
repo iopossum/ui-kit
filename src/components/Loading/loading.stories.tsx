@@ -1,28 +1,34 @@
 import React from 'react';
 
-import { ComponentMeta, ComponentStory } from '@storybook/react';
+import { Meta, StoryObj } from '@storybook/react';
 
-import { Loading, LoadingContainer, LoadingContainerMemo } from '@components/loading';
+import { Loading, LoadingContainer, LoadingContainerMemo, ILoadingProps, ILoadingContainerProps } from '@components/loading';
 
 export default {
   title: 'Loading',
   component: Loading,
-} as ComponentMeta<typeof Loading>;
+} as Meta<typeof Loading>;
 
-const Template: ComponentStory<typeof Loading> = (args) => <Loading {...args} />;
+const Template = (props: ILoadingProps) => <Loading {...props} />;
 
-const TemplateContainer: ComponentStory<typeof LoadingContainer> = (args) => <LoadingContainer {...args} />;
-const TemplateContainerMemo: ComponentStory<typeof LoadingContainerMemo> = (args) => <LoadingContainerMemo {...args} />;
+const TemplateContainer = (props: ILoadingContainerProps) => <LoadingContainer {...props} />;
+const TemplateContainerMemo = (props: ILoadingContainerProps) => <LoadingContainerMemo {...props} />;
 
-export const Basic = Template.bind({});
-Basic.args = {};
-
-export const Container = TemplateContainer.bind({});
-Container.args = {
-  loading: true,
+export const Basic: StoryObj<typeof Loading> = {
+  render: Template,
+  args: {}
 };
 
-export const Memo = TemplateContainerMemo.bind({});
-Memo.args = {
-  loading: true,
+export const Container: StoryObj<typeof LoadingContainer> = {
+  render: TemplateContainer,
+  args: {
+    loading: true,
+  }
+};
+
+export const Memo: StoryObj<typeof LoadingContainer> = {
+  render: TemplateContainerMemo,
+  args: {
+    loading: true,
+  }
 };

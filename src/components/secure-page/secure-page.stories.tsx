@@ -1,22 +1,24 @@
 import React from 'react';
 
-import { ComponentMeta, ComponentStory } from '@storybook/react';
+import { Meta, StoryObj } from '@storybook/react';
 
-import { withRouter, routes } from '@.storybook/decorators';
+import { withRouter } from 'storybook-addon-react-router-v6';
+
+import { routes } from '@.storybook/decorators';
 import { Button } from '@components/button';
 import { Footer } from '@components/footer';
-import { SecurePage, SecurePageMemo } from '@components/secure-page';
+import { SecurePage, SecurePageMemo, ISecurePageProps } from '@components/secure-page';
 
 export default {
   title: 'SecurePage',
   component: SecurePage,
   decorators: [withRouter],
-} as ComponentMeta<typeof SecurePage>;
+} as Meta<typeof SecurePage>;
 
-const Template: ComponentStory<typeof SecurePage> = (args) => (
+const Template = (props: ISecurePageProps) => (
   <SecurePage
     username={'asd'}
-    {...args}
+    {...props}
     routes={routes}
     cookiePrefix="storybook"
     versionComponent={<>Build: 1.0.154</>}
@@ -33,10 +35,10 @@ const Template: ComponentStory<typeof SecurePage> = (args) => (
   </SecurePage>
 );
 
-const TemplateMemo: ComponentStory<typeof SecurePageMemo> = (args) => (
+const TemplateMemo = (props: ISecurePageProps) => (
   <SecurePageMemo
     username={'asd'}
-    {...args}
+    {...props}
     routes={routes}
     cookiePrefix="storybook"
     versionComponent={<>Build: 1.0.154</>}
@@ -53,8 +55,12 @@ const TemplateMemo: ComponentStory<typeof SecurePageMemo> = (args) => (
   </SecurePageMemo>
 );
 
-export const Basic = Template.bind({});
-Basic.args = {};
+export const Basic: StoryObj<typeof SecurePage> = {
+  render: Template,
+  args: {}
+};
 
-export const Memo = TemplateMemo.bind({});
-Memo.args = {};
+export const Memo: StoryObj<typeof SecurePageMemo> = {
+  render: TemplateMemo,
+  args: {}
+};

@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { ComponentMeta, ComponentStory } from '@storybook/react';
+import { Meta, StoryObj } from '@storybook/react';
 
 import { data, columns } from '@.storybook/decorators';
 import { AutoSize } from '@components/auto-size';
@@ -10,15 +10,22 @@ import { useDataSource } from '@hooks/use-data-source';
 export default {
   title: 'DataGrid',
   component: DataGrid,
-} as ComponentMeta<typeof DataGrid>;
+  decorators: [    
+    (Story) => (
+      <div style={{ display: 'flex', flex: 1 }}>
+        <Story />
+      </div>
+    ),
+  ],
+} as Meta<typeof DataGrid>;
 
-const Template: ComponentStory<typeof DataGrid> = (args) => {
+const Template = (props: IDataGridProps) => {
   const dataSource = useDataSource({
     load: () => data,
   });
   return (
     <DataGrid
-      {...args}
+      {...props}
       dataSource={dataSource}
       columns={columns}
       columnChooser={{
@@ -33,13 +40,13 @@ const Template: ComponentStory<typeof DataGrid> = (args) => {
   );
 };
 
-const TemplateMemo: ComponentStory<typeof DataGridMemo> = (args) => {
+const TemplateMemo = (props: IDataGridProps) => {
   const dataSource = useDataSource({
     load: () => data,
   });
   return (
     <DataGridMemo
-      {...args}
+      {...props}
       dataSource={dataSource}
       columns={columns}
       columnChooser={{
@@ -54,14 +61,14 @@ const TemplateMemo: ComponentStory<typeof DataGridMemo> = (args) => {
   );
 };
 
-const TemplateAutoSize: ComponentStory<typeof DataGrid> = (args: IDataGridProps) => {
+const TemplateAutoSize= (props: IDataGridProps) => {
   const dataSource = useDataSource({
     load: () => data,
   });
   return (
     <AutoSize<IDataGridProps>
       component={DataGrid}
-      {...args}
+      {...props}      
       onKeyDown={() => ''}
       dataSource={dataSource}
       columns={columns}
@@ -69,11 +76,17 @@ const TemplateAutoSize: ComponentStory<typeof DataGrid> = (args: IDataGridProps)
   );
 };
 
-export const Basic = Template.bind({});
-Basic.args = {};
+export const Basic: StoryObj<typeof DataGrid> = {
+  render: Template,
+  args: {}
+};
 
-export const Memo = TemplateMemo.bind({});
-Memo.args = {};
+export const Memo: StoryObj<typeof DataGridMemo> = {
+  render: TemplateMemo,
+  args: {}
+};
 
-export const AutoSizeGrid = TemplateAutoSize.bind({});
-AutoSizeGrid.args = {};
+export const AutoSizeGrid: StoryObj<typeof DataGrid> = {
+  render: TemplateAutoSize,
+  args: {}
+};

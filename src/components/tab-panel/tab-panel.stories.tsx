@@ -1,14 +1,14 @@
 import React from 'react';
 
-import { ComponentMeta, ComponentStory } from '@storybook/react';
+import { Meta, StoryObj } from '@storybook/react';
 
 import { TabPanel, TabPanelMemo } from '@components/tab-panel';
-import type { ITabPanelItemProps } from '@components/tab-panel';
+import type { ITabPanelItemProps, ITabPanelProps } from '@components/tab-panel';
 
 export default {
   title: 'TabPanel',
   component: TabPanel,
-} as ComponentMeta<typeof TabPanel>;
+} as Meta<typeof TabPanel>;
 
 type Test = {
   test: string;
@@ -49,20 +49,24 @@ const tabs: ITabPanelItemProps<Test>[] = [
   },
 ];
 
-const Template: ComponentStory<typeof TabPanel> = (args) => (
+const Template = (props: ITabPanelProps<Test>) => (
   <div>
-    <TabPanel<Test> {...args} dataSource={tabs} height={280} />
+    <TabPanel<Test> {...props} dataSource={tabs} height={280} />
   </div>
 );
 
-const TemplateMemo: ComponentStory<typeof TabPanelMemo> = (args) => (
+const TemplateMemo = (props: ITabPanelProps<Test>) => (
   <div>
-    <TabPanelMemo<Test> {...args} dataSource={tabs} height={280} />
+    <TabPanelMemo<Test> {...props} dataSource={tabs} height={280} />
   </div>
 );
 
-export const Basic = Template.bind({});
-Basic.args = {};
+export const Basic: StoryObj<typeof TabPanel<Test>> = {
+  render: Template,
+  args: {}
+};
 
-export const Memo = TemplateMemo.bind({});
-Memo.args = {};
+export const Memo: StoryObj<typeof TabPanelMemo<Test>> = {
+  render: TemplateMemo,
+  args: {}
+};

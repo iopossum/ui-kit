@@ -2,7 +2,6 @@ import AbortController from 'abort-controller';
 import { locale, loadMessages } from 'devextreme/localization';
 import ruMessages from 'devextreme/localization/messages/ru.json';
 import notify from 'devextreme/ui/notify';
-import { createBrowserHistory } from 'history';
 
 import { getCookie } from '@utils/cookie';
 
@@ -49,8 +48,8 @@ export interface IRequestCfg {
   abortName?: string;
   abortController?: InstanceType<typeof AbortController>;
   cached?: Record<string, unknown>;
-  isText?: boolean;
-  autoLogout?: boolean;
+  isText?: boolean;  
+  host?: string;
 }
 
 export interface IRequestProps<T> extends Omit<Partial<Request>, 'cache' | 'body'>, IRequestCfg {
@@ -60,8 +59,8 @@ export interface IRequestProps<T> extends Omit<Partial<Request>, 'cache' | 'body
 
 export type NotifyType = 'info' | 'error' | 'success' | 'warning';
 
-const options = (method: Request['method']) => {
-  const headers = new Headers();
+const options = (method: Request['method'], h?: [string, string][]) => {
+  const headers = new Headers(h);
   headers.append('Content-type', 'application/json');
   const cookiePrefix = (window as typeof window & { cookiePrefix?: string }).cookiePrefix || '';
   const token = getCookie(`${cookiePrefix}token`);
@@ -79,8 +78,6 @@ export const initLocales = (): void => {
   loadMessages(ruMessages);
   locale('ru');
 };
-
-export const history: ReturnType<typeof createBrowserHistory> = createBrowserHistory();
 
 export const getErrorMessages = (res: IResponse<IResponseErrorBody>, message?: string): string[] => {
   let messages: Array<string | undefined> = [];
@@ -156,7 +153,7 @@ export const abortAll = (): void => {
 };
 
 export const request = async <T, K>(props: IRequestProps<T>): Promise<IResponse<K>> => {
-  const { url, abortable, abortName, abortController, cached, isText, autoLogout, ...rest } = props;
+  const { url, abortable, abortName, abortController, cached, isText, host, ...rest } = props;
   if (cached && cached[url]) {
     return cached[url] as Promise<IResponse<K>>;
   }
@@ -172,7 +169,7 @@ export const request = async <T, K>(props: IRequestProps<T>): Promise<IResponse<
   let response = null;
   let parsedResponse = null;
   try {
-    response = await fetch(`${process.env.HOST || ''}${url}`, rest as IRequestProps<T & URLSearchParams>);
+    response = await fetch(`${host || process.env.HOST || ''}${url}`, rest as IRequestProps<T & URLSearchParams>);
   } catch (err) {
     return Promise.reject({
       body: err,
@@ -193,8 +190,7 @@ export const request = async <T, K>(props: IRequestProps<T>): Promise<IResponse<
 
   if (!response.status || response.status >= 400) {
     if (response.status === 401) {
-      abortAll();
-      autoLogout && logout(history);
+      abortAll();      
       return Promise.reject({
         body: parsedResponse || new Error(UNAUTHORIZED_ERROR_MESSAGE),
         response,
@@ -209,13 +205,6 @@ export const request = async <T, K>(props: IRequestProps<T>): Promise<IResponse<
     cached[url] = { body: parsedResponse, response };
   }
   return Promise.resolve({ body: parsedResponse, response });
-};
-
-export const logout = (history: ReturnType<typeof createBrowserHistory>, loginPath?: string): void => {
-  loginPath = loginPath || '/login';
-  if (history.location.pathname !== loginPath) {
-    history.push(loginPath);
-  }
 };
 
 export const buildToast = (message: string, type: NotifyType = 'info'): void => {

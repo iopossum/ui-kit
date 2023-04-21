@@ -12,12 +12,12 @@ import { getCookie, setCookie } from '@utils/cookie';
 
 import './secure-page.scss';
 
-export interface ISecurePage extends PropsWithChildren, Omit<ISidebarProps, 'sidebar'> {
+export interface ISecurePageProps extends PropsWithChildren, Omit<ISidebarProps, 'sidebar'> {
   cookiePrefix: string;
   reactSidebarProps: SidebarProps;
 }
 
-export const SecurePage = ({ className, style, cookiePrefix, children, reactSidebarProps, ...props }: ISecurePage) => {
+export const SecurePage = ({ className, style, cookiePrefix, children, reactSidebarProps, ...props }: ISecurePageProps) => {
   const [sidebar, setSidebar] = useState<TSidebarSize>(() => {
     const fromCookie = getCookie(`${cookiePrefix}sidebar`);
     return fromCookie && SIDEBAR_SIZE.indexOf(fromCookie) > -1 ? fromCookie : SIDEBAR_SIZE[0];

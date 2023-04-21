@@ -1,5 +1,5 @@
 import React, { useCallback, useState, useMemo, useEffect, memo } from 'react';
-import { useLocation, useHistory } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 
 import PoweroffOutlined from '@ant-design/icons/PoweroffOutlined';
 import cn from 'classnames';
@@ -51,7 +51,7 @@ export const Sidebar = ({
   ...rest
 }: ISidebarProps) => {
   const location = useLocation();
-  const { push } = useHistory();
+  const navigate = useNavigate();
 
   const [routesDataSource, setRoutesDataSource] = useState<IRoute[]>([]);
 
@@ -66,11 +66,11 @@ export const Sidebar = ({
             onFollowRoute(itemData as IRoute);
             return;
           }
-          setTimeout(() => push(itemData.path), 0);
+          setTimeout(() => navigate(itemData.path), 0);
         }
       }
     },
-    [push, onFollowRoute],
+    [navigate, onFollowRoute],
   );
 
   const ItemComponent = useCallback<NonNullable<ITreeViewOptions['itemComponent']>>(
@@ -159,7 +159,7 @@ export const Sidebar = ({
                     className="custom"
                     data={{
                       title: 'Выход',
-                      iconComponent: <PoweroffOutlined />,
+                      iconComponent: <PoweroffOutlined />,                      
                       onClick: onLogout,
                     }}
                     allowTooltip={sidebar !== 'sm'}

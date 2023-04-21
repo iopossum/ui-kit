@@ -8,7 +8,7 @@ import type { IWithStyles, IRoute } from '@types';
 
 export interface ISidebarLinkProps extends IWithStyles {
   allowTooltip: boolean;
-  data: IRoute;
+  data: Omit<IRoute, 'path'>;
 }
 
 export const SidebarLink = ({ data, allowTooltip, style, className }: ISidebarLinkProps) => {

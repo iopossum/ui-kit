@@ -34,13 +34,18 @@
             "position": "before"
           },
           {
+            "pattern": "@storybook/react",
+            "group": "builtin",
+            "position": "before"            
+          },
+          {
             "pattern": "@components/**",
             "group": "parent"            
           },        
           {
             "pattern": "@types",
             "group": "parent"            
-          },
+          },        
           {
             "pattern": "@.storybook/*",
             "group": "parent"            

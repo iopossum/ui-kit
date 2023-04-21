@@ -8,8 +8,8 @@ export interface IAppStore {
   cookiePrefix: string;  
   footer?: null | HTMLDivElement;
   userIdField?: string;
-  matches?: Record<string, unknown>;
-  removeToken: () => void;  
+  matches?: Record<string, unknown>;  
+  logout: () => void;
   setToken: (t: IToken) => void;
   toggleSidebar: () => void;
   getFooterHeight: () => number;  
@@ -18,6 +18,7 @@ export interface IAppStore {
 export type AppStoreProps = {
   cookiePrefix: string;
   userIdField?: string;
+  loginPath?: string;
 };
 
 export interface IToken {
@@ -27,7 +28,7 @@ export interface IToken {
 
 export const createAppStore = <T = {}>(props: T & AppStoreProps) => {
   type TK = T & IAppStore;
-  const { cookiePrefix, ...rest } = props;
+  const { cookiePrefix, loginPath = '/login', ...rest } = props;
   const cookieToken = getCookie(`${cookiePrefix}token`);
   const cookieSidebar = getCookie(`${cookiePrefix}sidebar`);
   (window as typeof window & { cookiePrefix?: string }).cookiePrefix = cookiePrefix;
@@ -48,12 +49,15 @@ export const createAppStore = <T = {}>(props: T & AppStoreProps) => {
       }
     },
 
-    removeToken: function () {
-      this.token = null;
-      removeCookie(`${cookiePrefix}token`);
-      if (this.userIdField) {
-        removeCookie(`${cookiePrefix}user`);
-      }
+    logout: function () {
+      if (window.location.pathname !== loginPath) {
+        this.token = null;
+        removeCookie(`${cookiePrefix}token`);
+        if (this.userIdField) {
+          removeCookie(`${cookiePrefix}user`);
+        }        
+        window.location.replace(loginPath);        
+      }      
     },    
 
     toggleSidebar: function () {

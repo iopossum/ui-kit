@@ -18,6 +18,7 @@ export * from './loading';
 export * from './login-form';
 export * from './page';
 export * from './portal';
+export * from './prompt';
 export * from './secure-page';
 export * from './sidebar';
 export * from './tab-panel';

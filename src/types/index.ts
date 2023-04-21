@@ -33,9 +33,9 @@ export interface IAbortController {
 }
 
 export interface IRoute {
+  path: string;
   authorization?: boolean;
-  roles?: string[];
-  path?: string;
+  roles?: string[];  
   displayOnSidebar?: boolean;
   expanded?: boolean;
   children?: IRoute[];

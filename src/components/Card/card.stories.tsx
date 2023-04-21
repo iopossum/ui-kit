@@ -1,9 +1,10 @@
 import React from 'react';
 
-import { ComponentMeta, ComponentStory } from '@storybook/react';
+import { Meta, StoryObj } from '@storybook/react';
 
-import { withRouter } from '@.storybook/decorators';
-import { Card, CardMemo, BackLink, CardContainer } from '@components/card';
+import { withRouter } from 'storybook-addon-react-router-v6';
+
+import { Card, CardMemo, BackLink, CardContainer, ICardProps, ICardContainerProps } from '@components/card';
 
 export default {
   title: 'Card',
@@ -16,19 +17,19 @@ export default {
       </div>
     ),
   ],
-} as ComponentMeta<typeof Card>;
+} as Meta<typeof Card>;
 
-const Template: ComponentStory<typeof Card> = (args) => <Card {...args}>Контент</Card>;
-const TemplateMemo: ComponentStory<typeof CardMemo> = (args) => <CardMemo {...args}>Контент</CardMemo>;
+const Template = (props: ICardProps) => <Card {...props}>Контент</Card>;
+const TemplateMemo = (props: ICardProps) => <CardMemo {...props}>Контент</CardMemo>;
 
-const TemplateWithBackLink: ComponentStory<typeof Card> = (args) => (
-  <Card {...args} header={<BackLink />}>
+const TemplateWithBackLink = (props: ICardProps) => (
+  <Card {...props} header={<BackLink />}>
     Контент
   </Card>
 );
 
-const TemplateCardContainer: ComponentStory<typeof CardContainer> = (args) => (
-  <CardContainer {...args}>
+const TemplateCardContainer = (props: ICardContainerProps) => (
+  <CardContainer {...props}>
     <Card className={'card_flex1'} header="заголовок">
       Контент
     </Card>
@@ -36,21 +37,29 @@ const TemplateCardContainer: ComponentStory<typeof CardContainer> = (args) => (
   </CardContainer>
 );
 
-export const Basic = Template.bind({});
-Basic.args = {
-  header: 'Заголовок',
+export const Basic: StoryObj<typeof Card> = {
+  render: Template,
+  args: {
+    header: 'Заголовок',
+  }
 };
 
-export const Memo = TemplateMemo.bind({});
-Memo.args = {
-  header: 'Заголовок',
+export const Memo: StoryObj<typeof CardMemo> = {
+  render: TemplateMemo,
+  args: {
+    header: 'Заголовок',
+  }
 };
 
-export const WithBackLink = TemplateWithBackLink.bind({});
-WithBackLink.storyName = 'Basic with back link';
-WithBackLink.args = {};
+export const WithBackLink: StoryObj<typeof Card> = {
+  render: TemplateWithBackLink,
+  name: 'Basic with back link',
+  args: {}
+};
 
-export const Container = TemplateCardContainer.bind({});
-Container.args = {
-  direction: 'column',
+export const Container: StoryObj<typeof CardContainer> = {
+  render: TemplateCardContainer,
+  args: {
+    direction: 'column',
+  }
 };

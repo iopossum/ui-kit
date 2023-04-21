@@ -1,43 +1,6 @@
-import React from "react";
-import { Router, Route, Redirect, Switch } from "react-router-dom";
-import { useLocalObservable } from "mobx-react-lite";
-import { createMemoryHistory } from "history";
-
-import { createUserStore, createAppStore, storeContext } from "@stores/index";
-
-const history = createMemoryHistory({
-  initialEntries: ["/"],
-});
-
 export type TSimpleStoreItem = {
   id: number;
 }
-
-export const withStores = (story: () => React.ReactNode) => {
-  const createStore = () => ({
-    UserStore: createUserStore(),
-    AppStore: createAppStore({ cookiePrefix: "sb" }),
-    SampleStore: {
-      currentItem: { id: 1 },
-    },
-  });
-  const StoresProvider = ({ children }: { children: React.ReactNode }) => {
-    const store = useLocalObservable(createStore);
-    return (
-      <storeContext.Provider value={store}>{children}</storeContext.Provider>
-    );
-  };
-  return <StoresProvider>{story()}</StoresProvider>;
-};
-
-export const withRouter = (story: () => React.ReactNode) => (
-  <Router history={history}>
-    <Switch>
-      <Route path="/" render={() => story()} />
-      <Redirect to={"/"} />
-    </Switch>
-  </Router>
-);
 
 export const routes = [
   {

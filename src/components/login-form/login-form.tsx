@@ -111,7 +111,7 @@ export const LoginForm = ({
           stylingMode="outlined"
           useSubmitBehavior
         />
-        {hasRegLink && (
+        {hasRegLink && !!regLink && (
           <Link to={regLink} className="login__reg">
             Регистрация
           </Link>

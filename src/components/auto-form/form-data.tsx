@@ -101,7 +101,7 @@ export interface IFormDataProps<T = object> extends IFormOptions {
   data: Partial<T>;
   grouped?: boolean;
   dataPropCanChanged?: string | string[];
-  onChange: (e: Record<keyof T, T[keyof T]>) => void;
+  onChange?: (e: Record<keyof T, T[keyof T]>) => void;
 }
 
 export type FormDataHandle = Form;
@@ -134,7 +134,7 @@ const FormDataWithRef: IFormDataWithRef = forwardRef(
           if (typeof e.value !== 'undefined') {
             const b = {} as Record<keyof T, T[keyof T]>;
             b[e.dataField as keyof T] = e.value;
-            onChange(b);
+            onChange?.(b);
           }
         }}
         minColWidth={233}

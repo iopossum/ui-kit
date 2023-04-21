@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 
-import { ComponentMeta, ComponentStory } from '@storybook/react';
+import { Meta, StoryObj } from '@storybook/react';
 
 import { Card } from '@components/card';
-import { CheckBox, CheckBoxMemo } from '@components/checkbox';
+import { CheckBox, CheckBoxMemo, ICheckBoxProps } from '@components/checkbox';
 
 export default {
   title: 'CheckBox',
@@ -15,26 +15,30 @@ export default {
       </Card>
     ),
   ],
-} as ComponentMeta<typeof CheckBox>;
+} as Meta<typeof CheckBox>;
 
-const Template: ComponentStory<typeof CheckBox> = (args) => {
+const Template = (props: ICheckBoxProps) => {
   const [value, setValue] = useState(false);
-  return <CheckBox {...args} value={value} name="name" onChange={(e) => setValue(e.target.checked)} />;
+  return <CheckBox {...props} value={value} name="name" onChange={(e) => setValue(e.target.checked)} />;
 };
 
-const TemplateMemo: ComponentStory<typeof CheckBoxMemo> = (args) => {
+const TemplateMemo = (props: ICheckBoxProps) => {
   const [value, setValue] = useState(false);
-  return <CheckBoxMemo {...args} value={value} name="name" onChange={(e) => setValue(e.target.checked)} />;
+  return <CheckBoxMemo {...props} value={value} name="name" onChange={(e) => setValue(e.target.checked)} />;
 };
 
-export const Basic = Template.bind({});
-Basic.args = {
-  label: 'asd',
-  className: 'test',
+export const Basic: StoryObj<typeof CheckBox> = {
+  render: Template,
+  args: {
+    label: 'asd',
+    className: 'test',
+  }
 };
 
-export const Memo = TemplateMemo.bind({});
-Memo.args = {
-  label: 'asd',
-  className: 'test',
+export const Memo: StoryObj<typeof CheckBoxMemo> = {
+  render: TemplateMemo,
+  args: {
+    label: 'asd',
+    className: 'test',
+  }
 };

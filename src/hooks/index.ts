@@ -4,7 +4,6 @@ export * from './use-data-source';
 export * from './use-data-table';
 export * from './use-dialog';
 export * from './use-form-validation-callback';
-export * from './use-logout';
 export * from './use-media-query';
 export * from './use-merged-state';
 export * from './use-outside-click';

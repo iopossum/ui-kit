@@ -1,6 +1,6 @@
 import React, { Component, ErrorInfo, ReactNode } from 'react';
 
-interface IProps {
+export interface IErrorBoundaryProps {
   children?: ReactNode;
 }
 
@@ -9,7 +9,7 @@ interface IState {
   errorInfo: ErrorInfo | null;
 }
 
-export class ErrorBoundary extends Component<IProps, IState> {
+export class ErrorBoundary extends Component<IErrorBoundaryProps, IState> {
   public state: IState = {
     error: null,
     errorInfo: null,

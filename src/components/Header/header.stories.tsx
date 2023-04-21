@@ -1,19 +1,23 @@
 import React from 'react';
 
-import { ComponentMeta, ComponentStory } from '@storybook/react';
+import { Meta, StoryObj } from '@storybook/react';
 
-import { Header, HeaderMemo } from '@components/header';
+import { Header, HeaderMemo, IHeaderProps } from '@components/header';
 
 export default {
   title: 'Header',
   component: Header,
-} as ComponentMeta<typeof Header>;
+} as Meta<typeof Header>;
 
-const Template: ComponentStory<typeof Header> = (args) => <Header {...args} />;
-const TemplateMemo: ComponentStory<typeof HeaderMemo> = (args) => <HeaderMemo {...args} />;
+const Template = (props: IHeaderProps) => <Header {...props} />;
+const TemplateMemo = (props: IHeaderProps) => <HeaderMemo {...props} />;
 
-export const Basic = Template.bind({});
-Basic.args = {};
+export const Basic: StoryObj<typeof Header> = {
+  render: Template,
+  args: {}
+};
 
-export const Memo = TemplateMemo.bind({});
-Memo.args = {};
+export const Memo: StoryObj<typeof HeaderMemo> = {
+  render: TemplateMemo,
+  args: {}
+};
