@@ -169,6 +169,20 @@
     "screenfull": "6.0.2",
     "universal-cookie": "7.0.2"
   },
+  "browserslist": {
+    "production": [
+      "IE 10",
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "IE 10",
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  },
   "prettier": {
     "singleQuote": true,
     "trailingComma": "all",
