@@ -1,10 +1,18 @@
-@import "~devextreme/dist/css/dx.common.css";
-@import "~devextreme/dist/css/dx.light.css";
+@import '~devextreme/dist/css/dx.common.css';
+@import '~devextreme/dist/css/dx.light.css';
 
-#storybook-docs, #storybook-root {
-  flex: 1;  
+#storybook-docs,
+#storybook-root {
+  flex: 1;
 }
 
-#storybook-root {  
+#storybook-root {
   display: flex;
+  min-height: 99.5vh;
+  max-width: 99.5vw;
+}
+
+body.dx-device-desktop {
+  padding: 0 !important;
+  min-height: 100vh;
 }

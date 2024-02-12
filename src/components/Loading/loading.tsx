@@ -1,8 +1,8 @@
 import React, { memo } from 'react';
+import type { BaseProps } from 'react-loader-spinner';
 import * as ReactLoaderSpinner from 'react-loader-spinner';
 
 import cn from 'classnames';
-import type { BaseProps } from 'react-loader-spinner/dist/type';
 
 import type { IWithStyles } from '@types';
 

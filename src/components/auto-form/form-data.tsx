@@ -62,7 +62,7 @@ const getAttrs = (v: IFormItem) => {
   if (v.patternType) {
     switch (v.patternType) {
       case 'email':
-        attrs.validationRules.push({
+        attrs.validationRules?.push({
           type: 'email',
           message: 'Неверный формат',
         });
@@ -70,7 +70,7 @@ const getAttrs = (v: IFormItem) => {
     }
   }
   if (v.required) {
-    attrs.validationRules.push({
+    attrs.validationRules?.push({
       type: 'required',
       message: 'Не заполнено поле',
     });
@@ -107,9 +107,9 @@ export interface IFormDataProps<T = object> extends IFormOptions {
 export type FormDataHandle = Form;
 
 interface IFormDataWithRef extends FC<IFormDataProps<object>> {
-  <T extends object>(props: IFormDataProps<T> & React.RefAttributes<Form>): ReturnType<
-    React.ForwardRefRenderFunction<Form, IFormDataProps<T>>
-  >;
+  <T extends object>(
+    props: IFormDataProps<T> & React.RefAttributes<Form>,
+  ): ReturnType<React.ForwardRefRenderFunction<Form, IFormDataProps<T>>>;
 }
 
 const FormDataWithRef: IFormDataWithRef = forwardRef(
@@ -143,7 +143,7 @@ const FormDataWithRef: IFormDataWithRef = forwardRef(
         {Object.keys(groups).length > 0
           ? Object.keys(groups).map((key) => {
               return (
-                <GroupItem key={key} caption={key !== 'undefined' ? key : null}>
+                <GroupItem key={key} caption={key !== 'undefined' ? key : undefined}>
                   {groups[key].map((v) => {
                     const attrs = getAttrs(v);
                     return <SimpleItem {...attrs} key={v.dataField} />;

@@ -1,4 +1,4 @@
-@import "../../styles/variables";
+@import '../../styles/variables';
 
 .sidebar {
   display: flex;
@@ -52,15 +52,17 @@
           justify-content: center;
           font-size: 12px;
           padding: 2px 3px;
-          margin-left: 2px;
         }
+      }
+      .dx-treeview-expander-icon-stub {
+        width: 0.5rem !important;
       }
       .dx-treeview-item-content {
         padding-left: 0;
       }
       .dx-treeview-node {
         .dx-treeview-toggle-item-visibility {
-          right: 0;
+          margin-right: 2px;
         }
         .dx-treeview-node-container-opened {
           .dx-treeview-node {
@@ -72,7 +74,7 @@
         .dx-treeview-item {
           padding-right: 15px;
           display: flex;
-          justify-content: center;          
+          justify-content: center;
         }
       }
     }
@@ -91,7 +93,7 @@
       transition: all 0.4s ease-out;
       opacity: 1;
     }
-    background: url('./assets/img/logo-pharma-soft.png');
+    background: url('./assets/img/logo.svg');
     background-size: contain;
     background-repeat: no-repeat;
     width: 120px;
@@ -154,10 +156,24 @@
     .dx-treeview-item-content {
       display: flex;
       align-items: center;
-      padding-left: 10px;           
+      padding-left: 10px;
     }
     .dx-treeview-node {
       padding-left: 0;
+      .dx-treeview-item {
+        gap: 0;
+      }
+      .dx-treeview-toggle-item-visibility {
+        width: 1rem;
+      }
+      .dx-treeview-expander-icon-stub {
+        width: 1rem;
+      }
+      &:not(.dx-treeview-node-is-leaf) > .dx-treeview-item {
+        .dx-treeview-toggle-item-visibility {
+          height: 1rem;
+        }
+      }
       &.dx-state-selected {
         & > .dx-treeview-item {
           background-color: #d5d8e0;

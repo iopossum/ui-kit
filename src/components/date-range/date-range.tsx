@@ -5,11 +5,12 @@ import { usePopper } from 'react-popper';
 
 import cn from 'classnames';
 import { format } from 'date-fns';
+import { ru } from 'date-fns/locale';
 
 import { Card } from '@components/card';
 import { useOutsideClick } from '@hooks/use-outside-click';
 import type { IWithStyles } from '@types';
-import { ru } from '@utils/locale';
+// import { ru } from '@utils/locale';
 import { MOBILE_MAX_WIDTH } from '@utils/media';
 
 import './date-range.scss';

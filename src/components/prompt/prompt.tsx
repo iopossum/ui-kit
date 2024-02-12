@@ -1,5 +1,5 @@
 import React, { memo } from 'react';
-import { unstable_useBlocker as useBlocker } from 'react-router-dom';
+import { useBlocker } from 'react-router-dom';
 
 export interface IPromptProps {
   when: boolean;

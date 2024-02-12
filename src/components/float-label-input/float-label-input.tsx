@@ -37,7 +37,7 @@ export const FloatLabelInput = (props: IFloatLabelInputProps) => {
         {required}
       </label>
       <div className="input-container">
-        <Input defaultValue={value} bordered={false} value={value} {...rest} />
+        <Input variant="borderless" value={value} {...rest} />
         <fieldset>
           <legend>
             <span>

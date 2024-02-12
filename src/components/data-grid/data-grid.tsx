@@ -1,7 +1,8 @@
 import React, { forwardRef, useMemo, memo, useState, useCallback } from 'react';
 
+import type { Column } from 'devextreme/ui/data_grid';
 import { DataGrid as DevexpressDataGrid } from 'devextreme-react/data-grid';
-import type { IDataGridOptions, IColumnProps } from 'devextreme-react/data-grid';
+import type { IDataGridOptions } from 'devextreme-react/data-grid';
 
 import type { IWithStyles } from '@types';
 
@@ -10,8 +11,8 @@ import './data-grid.scss';
 type OnOptionChanged = NonNullable<IDataGridOptions['onOptionChanged']>;
 
 export interface IDataGridProps extends Omit<IDataGridOptions, 'style' | 'columns'>, IWithStyles {
+  columns: Column[];
   dataSource: IDataGridOptions['dataSource'];
-  columns: IColumnProps[];
   stateStoringName?: string;
   loadPanelShading?: boolean;
   summaryColumn?: string;
@@ -26,11 +27,11 @@ export const DataGrid = forwardRef<DataGridHandle, IDataGridProps>((props, ref) 
 
   const multipleTotalSummary = summary?.totalItems && summary.totalItems.length > 1;
 
-  const [summaryColumnKey, setSummaryColumnKey] = useState<string | null>(() => {
-    if (multipleTotalSummary || !columns.length) {
+  const [summaryColumnKey, setSummaryColumnKey] = useState<string | null | undefined>(() => {
+    if (multipleTotalSummary || !columns?.length) {
       return null;
     }
-    let filtered: IColumnProps[] = [];
+    let filtered: Column[] = [];
     if (summaryColumn) {
       filtered = columns.filter((v) => v.dataField === summaryColumn);
       if (filtered[0]?.visible) {
@@ -55,12 +56,12 @@ export const DataGrid = forwardRef<DataGridHandle, IDataGridProps>((props, ref) 
       const { name, fullName, component, value } = e;
       if (name === 'columns') {
         const splits = fullName.split('.').filter((v) => v.indexOf('columns') > -1);
-        let columnContainer!: IColumnProps;
+        let columnContainer!: Column;
         splits.forEach((v) => {
           const index = parseInt(v.replace(/[^0-9]/g, ''), 10);
           columnContainer = columns[index];
           if (columnContainer && columnContainer.columns && columnContainer.columns.length) {
-            columnContainer = columnContainer.columns;
+            columnContainer = columnContainer.columns[0] as Column;
           }
         });
         if (columnContainer?.dataField) {
@@ -68,7 +69,7 @@ export const DataGrid = forwardRef<DataGridHandle, IDataGridProps>((props, ref) 
           const column = component.columnOption(columnContainer.dataField);
           if (summaryColumnKey === column.dataField) {
             if (!value) {
-              const visibleColumns: IColumnProps[] = component.state().columns.filter((v: IColumnProps) => v.visible);
+              const visibleColumns: Column[] = component.state().columns.filter((v: Column) => v.visible);
               if (visibleColumns.length) {
                 setSummaryColumnKey(visibleColumns[0].dataField);
               }

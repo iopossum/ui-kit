@@ -75,7 +75,7 @@ export const Sidebar = ({
 
   const ItemComponent = useCallback<NonNullable<ITreeViewOptions['itemComponent']>>(
     (props) => {
-      return <SidebarLink {...props} allowTooltip={sidebar !== 'sm'} />;
+      return <SidebarLink {...props} allowTooltip={sidebar === 'sm'} />;
     },
     [sidebar],
   );
@@ -155,15 +155,17 @@ export const Sidebar = ({
                   {...rest}
                 />
                 {showLogout && (
-                  <SidebarLink
-                    className="custom"
-                    data={{
-                      title: 'Выход',
-                      iconComponent: <PoweroffOutlined />,                      
-                      onClick: onLogout,
-                    }}
-                    allowTooltip={sidebar !== 'sm'}
-                  />
+                  <div style={{ position: 'relative' }}>
+                    <SidebarLink
+                      className="custom"
+                      data={{
+                        title: 'Выход',
+                        iconComponent: <PoweroffOutlined />,
+                        onClick: onLogout,
+                      }}
+                      allowTooltip={sidebar === 'sm'}
+                    />
+                  </div>
                 )}
                 {!!versionComponent && <div className="version">{versionComponent}</div>}
               </>

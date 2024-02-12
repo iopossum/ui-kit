@@ -48,7 +48,7 @@ export interface IRequestCfg {
   abortName?: string;
   abortController?: InstanceType<typeof AbortController>;
   cached?: Record<string, unknown>;
-  isText?: boolean;  
+  isText?: boolean;
   host?: string;
 }
 
@@ -158,7 +158,7 @@ export const request = async <T, K>(props: IRequestProps<T>): Promise<IResponse<
     return cached[url] as Promise<IResponse<K>>;
   }
   const abortKey = abortName || url;
-  if (abortable) {
+  if (abortable || abortController) {
     if (abortControllers[abortKey]) {
       abortControllers[abortKey].abort();
     }
@@ -190,7 +190,7 @@ export const request = async <T, K>(props: IRequestProps<T>): Promise<IResponse<
 
   if (!response.status || response.status >= 400) {
     if (response.status === 401) {
-      abortAll();      
+      abortAll();
       return Promise.reject({
         body: parsedResponse || new Error(UNAUTHORIZED_ERROR_MESSAGE),
         response,
@@ -229,7 +229,7 @@ export const buildToast = (message: string, type: NotifyType = 'info'): void => 
     maxWidth: 300,
     type,
     displayTime: 5000,
-    elementAttr: { class: 'toast' },
+    wrapperAttr: { class: 'toast' },
   });
 };
 

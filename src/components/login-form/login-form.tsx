@@ -1,19 +1,16 @@
 import React, { useCallback, memo } from 'react';
+import { useForm, SubmitHandler, SubmitErrorHandler } from 'react-hook-form';
 import { Link } from 'react-router-dom';
 
 import cn from 'classnames';
-import Button from 'devextreme-react/button';
-import { useFormik } from 'formik';
-import type { FormikConfig } from 'formik';
 
 import { AuthWrapper } from '@components/auth-wrapper';
+import { Button } from '@components/button';
 import { CheckBox } from '@components/checkbox';
 import { FloatLabelInput } from '@components/float-label-input';
-import type { IUseFormValidationCallback } from '@hooks/use-form-validation-callback';
-import { useFormValidationCallback } from '@hooks/use-form-validation-callback';
 import { IWithStyles, IField } from '@types';
 import { warning } from '@utils/api';
-import { getInitialValues, createValidation } from '@utils/formik';
+import { getInitialValues, getFieldsMap } from '@utils/form';
 
 import './login-form.scss';
 
@@ -24,18 +21,21 @@ interface ILoginFormData {
 }
 
 const fields: IField<ILoginFormData>[] = [
-  { field: 'login', defaultValue: '', required: true },
-  { field: 'password', defaultValue: '', required: true },
-  { field: 'remember', defaultValue: true, required: false },
+  { field: 'login', defaultValue: '', rules: { required: true } },
+  { field: 'password', defaultValue: '', rules: { required: true } },
+  { field: 'remember', defaultValue: true, rules: { required: false } },
 ];
 
 const initialValues = getInitialValues<ILoginFormData>(fields);
 
-export interface ILoginFormProps extends Pick<FormikConfig<ILoginFormData>, 'onSubmit'>, IWithStyles {
+const fieldsMap = getFieldsMap<ILoginFormData>(fields);
+
+export interface ILoginFormProps extends IWithStyles {
   hasRegLink?: boolean;
   regLink?: string;
-  loginLabel?: string;  
-  onValidationFailed: IUseFormValidationCallback<ILoginFormData>['onValidationFailed'];
+  loginLabel?: string;
+  onSubmit: SubmitHandler<ILoginFormData>;
+  onValidationFailed?: SubmitErrorHandler<ILoginFormData>;
 }
 
 export const LoginForm = ({
@@ -47,8 +47,7 @@ export const LoginForm = ({
   onSubmit,
   onValidationFailed,
 }: ILoginFormProps) => {
-
-  const handleValidationFailed = useCallback<IUseFormValidationCallback<ILoginFormData>['onValidationFailed']>(
+  const handleValidationFailed = useCallback<SubmitErrorHandler<ILoginFormData>>(
     (values) => {
       if (onValidationFailed) {
         return onValidationFailed(values);
@@ -58,57 +57,67 @@ export const LoginForm = ({
     [onValidationFailed],
   );
 
-  const { handleSubmit, handleChange, values, errors, validateForm } = useFormik<ILoginFormData>({
-    initialValues,
-    validate: createValidation<ILoginFormData>(fields),
-    onSubmit,
-  });
-
-  const [handleSubmitWrapper] = useFormValidationCallback({
-    validateForm,
+  const {
+    register,
+    formState: { errors, isSubmitting },
     handleSubmit,
-    onValidationFailed: handleValidationFailed,
+    setValue,
+    watch,
+  } = useForm<ILoginFormData>({
+    defaultValues: initialValues,
+    mode: 'onBlur',
+    values: fields.reduce((sum, v) => {
+      sum[v.field] = v.defaultValue;
+      return sum;
+    }, Object.create({})),
   });
 
   return (
     <AuthWrapper className={cn('login', { [className as string]: !!className })} style={style} header="Авторизация">
-      <form noValidate onSubmit={handleSubmitWrapper}>
+      <form noValidate onSubmit={handleSubmit(onSubmit, handleValidationFailed)}>
         <FloatLabelInput
-          name="login"
           label={loginLabel}
           required
           status={errors.login && 'error'}
-          value={values.login}
+          value={watch('login')}
+          {...register('login', fieldsMap['login'].rules)}
           autoComplete="login"
           autoFocus
           size="large"
           fullWidth
-          onChange={handleChange}
+          onChange={(e) =>
+            setValue('login', e.target.value, { shouldValidate: true, shouldDirty: true, shouldTouch: true })
+          }
         />
         <FloatLabelInput
-          name="password"
           label="Пароль"
           type="password"
           required
           fullWidth
           size="large"
           status={errors.password && 'error'}
-          value={values.password}
+          value={watch('password')}
+          {...register('password', fieldsMap['password'].rules)}
           autoComplete="password"
-          onChange={handleChange}
+          onChange={(e) =>
+            setValue('password', e.target.value, { shouldValidate: true, shouldDirty: true, shouldTouch: true })
+          }
         />
         <CheckBox
-          value={values.remember}
-          name="remember"
-          onChange={handleChange}
+          value={watch('remember')}
+          {...register('remember', fieldsMap['remember'].rules)}
           label="Запомнить"
           className="login__remember"
+          onChange={(e) =>
+            setValue('remember', e.target.checked, { shouldValidate: true, shouldDirty: true, shouldTouch: true })
+          }
         />
         <Button
           text="Войти"
           type="default"
           elementAttr={{ class: 'login__submit' }}
           stylingMode="outlined"
+          loading={isSubmitting}
           useSubmitBehavior
         />
         {hasRegLink && !!regLink && (
@@ -121,8 +130,8 @@ export const LoginForm = ({
   );
 };
 
-LoginForm.defaultProps = {  
-  loginLabel: 'Логин (e-mail)',  
+LoginForm.defaultProps = {
+  loginLabel: 'Логин (e-mail)',
   regLink: '/reg',
 };
 

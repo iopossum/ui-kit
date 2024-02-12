@@ -3,10 +3,10 @@ import { getCookie } from '@utils/cookie';
 
 export interface IUserStore<IUser> {
   baseUrl: string;
-  currentUser: IUser | null;  
+  currentUser: IUser | null;
   cookiePrefix?: string;
   setCurrentUser: (u: IUser) => void;
-  profile: () => void;
+  profile: () => Promise<void>;
   login: <T, K>(e: T) => Promise<IResponse<K> | undefined>;
   reg: <T, K>(e?: T) => Promise<IResponse<K> | undefined>;
   hasRole: (role: string, realmKey: string) => boolean;

@@ -1,44 +1,45 @@
 export type TSimpleStoreItem = {
   id: number;
-}
+};
 
 export const routes = [
   {
-    title: "Аптеки",
-    path: "/reports",
+    title: 'Аптеки',
+    path: '/reports',
     displayOnSidebar: true,
     abstract: true,
-    children: [{ title: "Отчеты", path: "/reports", displayOnSidebar: true }],
+    children: [{ title: 'Отчеты', path: '/reports', displayOnSidebar: true }],
   },
   {
-    title: "Статистика",
-    path: "/stats",
+    title: 'Статистика',
+    path: '/stats',
     displayOnSidebar: true,
-    icon: "dx-icon-chart",
+    icon: 'dx-icon-chart',
   },
   {
-    title: "Тест",
-    path: "/test",
-    displayOnSidebar: true,
-  },
-  {
-    title: "Тест",
-    path: "/test2",
+    title: 'Тест',
+    path: '/test',
     displayOnSidebar: true,
   },
   {
-    title: "Тест",
-    path: "/test3",
+    title: 'Тест',
+    path: '/test2',
+    displayOnSidebar: true,
+    children: [{ title: 'Отчеты', path: '/reports', displayOnSidebar: true }],
+  },
+  {
+    title: 'Тест',
+    path: '/test3',
     displayOnSidebar: true,
   },
   {
-    title: "Тест",
-    path: "/test4",
+    title: 'Тест',
+    path: '/test4',
     displayOnSidebar: true,
   },
   {
-    title: "Тест",
-    path: "/test5",
+    title: 'Тест',
+    path: '/test5',
     displayOnSidebar: true,
   },
 ];

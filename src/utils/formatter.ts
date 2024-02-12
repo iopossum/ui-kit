@@ -1,10 +1,7 @@
-import { add, format } from 'date-fns';
+import { add } from 'date-fns';
 import type { LoadOptions } from 'devextreme/data';
 import type { SelectedFilterOperation } from 'devextreme/ui/data_grid';
 import type { IColumnProps } from 'devextreme-react/data-grid';
-import { reduce } from 'lodash-es';
-
-import type { IField } from '@types';
 
 export interface IFullName {
   lastName: string;
@@ -24,11 +21,15 @@ interface IOrder {
   desc: string;
 }
 
-export const formatDate = (date: Date, dateFormat: string) => {
-  if (!date) {
-    return date;
+export const prettyNumber = (num?: number | string) => {
+  if (!num) {
+    return num;
   }
-  return format(date, dateFormat);
+  const floatValue = parseFloat(num as string);
+  if (!isNaN(floatValue) && floatValue < 1000) {
+    return num;
+  }
+  return String(num).replace(/(\d)(?=(\d\d\d)+([^\d]|$))/g, '$1 ');
 };
 
 export const toFixed = (value: number, digits: number) => {
@@ -36,6 +37,32 @@ export const toFixed = (value: number, digits: number) => {
   const fixedValue = value ? value.toFixed(digits) : '0';
   return parseFloat(fixedValue);
 };
+
+export const getPercentDigits = (value: number) => {
+  let digits = 0;
+  if (value) {
+    if (value < 10) {
+      digits = 2;
+    } else if (value < 100) {
+      digits = 1;
+    }
+  }
+  return digits;
+};
+
+export const prettyNumberFixed = (value?: number, digits?: number) => {
+  let result: string | undefined;
+  if (typeof value !== 'undefined') {
+    result = value?.toFixed(digits);
+    if (digits! > 0) {
+      result = result.replace(/\.0+$/, '');
+    }
+  }
+  return prettyNumber(result);
+};
+
+export const prettyNumberFixedPercent = (value?: number, digits?: number) =>
+  value && prettyNumberFixed(value, digits || getPercentDigits(value));
 
 export const pluralize = (num: number, array: string[]) => {
   num = toFixed(num, 0);
@@ -221,21 +248,3 @@ export const replaceFilterExpression = function (
 ) {
   return [this.dataFieldOriginal, selectedFilterOperations, value];
 };
-
-export const getFormValues = <T>(inputs: Record<keyof T, IField<T>>) => {
-  return reduce(
-    inputs,
-    (result, value, key) => {
-      if (!value.skippable) {
-        result[key as keyof T] = value.value;
-      }
-      return result;
-    },
-    {} as Record<keyof T, T[keyof T] | undefined>,
-  );
-};
-
-export const replaceRegexpE = (v: string) => v.replace(/е/gi, '(е|ё)');
-
-export const emailRegExp =
-  /^(([^<>()[]\\.,;:\s@"]+(\.[^<>()[]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
