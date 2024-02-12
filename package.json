@@ -15,6 +15,7 @@
     "prepub": "copy package.json dist",
     "pub": "cd dist && npm publish",
     "postpub": "cd dist && del package.json",
+    "postinstall": "husky",
     "prepare": "husky"
   },
   "author": "imikhayloff@gmail.com",
