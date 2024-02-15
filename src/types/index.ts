@@ -1,5 +1,6 @@
 import React from 'react';
 import { RegisterOptions } from 'react-hook-form';
+import { RouteObject } from 'react-router-dom';
 
 import AbortController from 'abort-controller';
 import type { LoadOptions } from 'devextreme/data';
@@ -34,13 +35,13 @@ export interface IAbortController {
   abortController?: InstanceType<typeof AbortController>;
 }
 
-export interface IRoute {
+export interface IRoute<T = string> extends Omit<RouteObject, 'children'> {
   path: string;
   authorization?: boolean;
-  roles?: string[];
+  roles?: T[];
   displayOnSidebar?: boolean;
   expanded?: boolean;
-  children?: IRoute[];
+  children?: RouteObject[];
   title?: string;
   icon?: string;
   iconComponent?: React.ReactElement;

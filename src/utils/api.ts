@@ -43,6 +43,8 @@ export interface IResponse<T> extends IResponseAdditional {
   body: T;
 }
 
+export interface IResponseError extends IResponse<IResponseErrorBody> {}
+
 export interface IRequestCfg {
   abortable?: boolean;
   abortName?: string;
@@ -100,8 +102,8 @@ export const getErrorMessages = (res: IResponse<IResponseErrorBody>, message?: s
     } else if (res.body.message || message) {
       messages = [res.body.message || message];
     }
-  } else if (message || res.message) {
-    messages = [message || res.message];
+  } else if (res.message || message) {
+    messages = [res.message || message];
   }
   return messages.filter(Boolean) as string[];
 };
