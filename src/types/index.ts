@@ -38,6 +38,7 @@ export interface IAbortController {
 export interface IRoute<T = string> extends Omit<RouteObject, 'children'> {
   path: string;
   authorization?: boolean;
+  abstract?: boolean;
   roles?: T[];
   displayOnSidebar?: boolean;
   expanded?: boolean;
