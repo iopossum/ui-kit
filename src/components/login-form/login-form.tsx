@@ -14,7 +14,7 @@ import { getInitialValues, getFieldsMap } from '@utils/form';
 
 import './login-form.scss';
 
-interface ILoginFormData {
+export interface ILoginFormData {
   login: string;
   password: string;
   remember: boolean;

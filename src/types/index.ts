@@ -41,7 +41,7 @@ export interface IRoute<T = string> extends Omit<RouteObject, 'children'> {
   roles?: T[];
   displayOnSidebar?: boolean;
   expanded?: boolean;
-  children?: RouteObject[];
+  children?: IRoute<T>[];
   title?: string;
   icon?: string;
   iconComponent?: React.ReactElement;
