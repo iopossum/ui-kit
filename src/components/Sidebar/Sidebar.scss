@@ -18,7 +18,7 @@
   &_sm {
     width: 60px;
     .sidebar__header {
-      justify-content: center;
+      justify-content: space-around;
     }
     .sidebar__toggle {
       justify-content: space-around;
@@ -58,7 +58,7 @@
         }
       }
       .dx-treeview-expander-icon-stub {
-        width: 0.5rem !important;
+        width: 0.1rem !important;
       }
       .dx-treeview-item-content {
         padding-left: 0;
@@ -66,7 +66,7 @@
       }
       .dx-treeview-node {
         .dx-treeview-toggle-item-visibility {
-          margin-right: -7px;
+          margin-right: -0.9rem;
         }
         .dx-treeview-node-container-opened {
           .dx-treeview-node {

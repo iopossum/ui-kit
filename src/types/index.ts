@@ -52,22 +52,28 @@ export interface IRoute<T = string> extends Omit<RouteObject, 'children'> {
 export interface ILoopbackFilter<T> {
   where?: Partial<TLoopbackFilterWhere<T>> | Partial<TLoopbackFilterWhereWithCondition<T>>;
   fields?: Partial<Record<keyof T, boolean>>;
+  order?: string[];
   limit?: number;
   skip?: number;
 }
 
 export interface ILoopbackWhereCondition {
-  eq?: string | number;
-  gte?: string;
+  eq?: string | null;
+  neq?: string | null;
   lt?: string;
+  lte?: string;
+  gt?: string;
+  gte?: string;
+  like?: string;
+  nlike?: string;
   between?: string[];
-  inq?: (string | number | null)[];
+  inq?: (string | null)[];
   regexp?: string;
 }
 
-type TWithCondition<T> = Partial<{ [K in keyof T]: ILoopbackWhereCondition }>;
+export type TWithCondition<T> = Partial<{ [K in keyof T]: ILoopbackWhereCondition }>;
 
-type TAndOr<T> =
+export type TAndOr<T> =
   | Partial<T>
   | TWithCondition<T>
   | {
