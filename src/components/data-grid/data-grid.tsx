@@ -18,9 +18,9 @@ export interface IDataGridProps extends Omit<IDataGridOptions, 'style' | 'column
   summaryColumn?: string;
 }
 
-export type DataGridHandle = DevexpressDataGrid;
+export type TDataGridHandle = DevexpressDataGrid;
 
-export const DataGrid = forwardRef<DataGridHandle, IDataGridProps>((props, ref) => {
+export const DataGrid = forwardRef<TDataGridHandle, IDataGridProps>((props, ref) => {
   const { columns, stateStoringName, loadPanelShading, children, summaryColumn, onOptionChanged, ...rest } = props;
   let { loadPanel, stateStoring } = rest;
   const { summary } = rest;
