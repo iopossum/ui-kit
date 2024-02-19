@@ -165,6 +165,7 @@ export const convertDataGridOptions = <T = {}>(
   const query: ILoopbackFilter<T> = {
     limit: take || 20,
     skip: skip || 0,
+    where: {},
   };
   if (isLoadingAll) {
     delete query.limit;

@@ -15,7 +15,6 @@ export interface IDialogProps<T = object>
     Omit<IPopupOptions, 'onHiding'> {
   submitText?: string;
   declineText?: string;
-  showButtons?: boolean;
   showSubmitButton?: boolean;
   showDeclineButton?: boolean;
   destroyOnHide?: boolean;
@@ -24,9 +23,9 @@ export interface IDialogProps<T = object>
 }
 
 export interface IDialogComponent extends FC<IDialogProps<object>> {
-  <T extends object>(props: IDialogProps<T> & React.RefAttributes<IDialogHandle<T>>): ReturnType<
-    React.ForwardRefRenderFunction<IDialogHandle<T>, IDialogProps<T>>
-  >;
+  <T extends object>(
+    props: IDialogProps<T> & React.RefAttributes<IDialogHandle<T>>,
+  ): ReturnType<React.ForwardRefRenderFunction<IDialogHandle<T>, IDialogProps<T>>>;
 }
 
 export const Dialog: IDialogComponent = forwardRef(
@@ -38,7 +37,6 @@ export const Dialog: IDialogComponent = forwardRef(
       onSubmit,
       onDecline,
       onHiding,
-      showButtons,
       showDeclineButton,
       showSubmitButton,
       destroyOnHide,
@@ -61,7 +59,7 @@ export const Dialog: IDialogComponent = forwardRef(
 
     const toolbarItems = useMemo(() => {
       const result: Array<IToolbarItemProps> = [];
-      if (showButtons) {
+      if (showDeclineButton || showSubmitButton) {
         if (showDeclineButton) {
           result.push({
             widget: 'dxButton',
@@ -96,7 +94,6 @@ export const Dialog: IDialogComponent = forwardRef(
     }, [
       showSubmitButton,
       showDeclineButton,
-      showButtons,
       handleSubmit,
       handleDecline,
       state.loading,

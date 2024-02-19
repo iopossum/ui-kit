@@ -1,19 +1,18 @@
-import React, { useCallback, useRef, useImperativeHandle } from 'react';
-
-import { useMergedState } from '@hooks/use-merged-state';
+import React, { useCallback, useRef, useImperativeHandle, useState, MouseEvent, Dispatch, SetStateAction } from 'react';
 
 export interface IUseDialogProps<T> {
   ref: React.Ref<IDialogHandle<T>>;
   text?: string;
+  resetStateOnHide?: boolean;
   onHiding?: () => void;
-  onSubmit?: (e: React.MouseEventHandler, state: Partial<T> & IDialogState) => void;
+  onSubmit?: (e: MouseEvent, state: Partial<T> & IDialogState) => void;
   onDecline?: () => void;
 }
 
 export interface IDialogHandle<T = object> {
   open: (props?: Partial<T> & IDialogState) => Promise<Partial<T> & IDialogState>;
   getState: () => Partial<T> & IDialogState;
-  setState: (data: Partial<T> & IDialogState) => void;
+  setState: Dispatch<SetStateAction<Partial<T> & IDialogState>>;
   close: () => void;
   resolve: () => void;
 }
@@ -32,6 +31,7 @@ interface IDialogRefs<T> {
 export const useDialog = <T = IDialogState>({
   ref,
   text: textFromProps,
+  resetStateOnHide,
   onHiding,
   onSubmit,
   onDecline,
@@ -41,7 +41,7 @@ export const useDialog = <T = IDialogState>({
     resolve: null,
     reject: null,
   });
-  const { state, setMergedState } = useMergedState<UnionT>({
+  const [state, setState] = useState<UnionT>({
     visible: false,
     text: textFromProps,
   } as UnionT);
@@ -51,20 +51,24 @@ export const useDialog = <T = IDialogState>({
       onHiding();
       return;
     }
-    setMergedState({ visible: false } as UnionT);
+    if (resetStateOnHide) {
+      setState({ visible: false } as UnionT);
+    } else {
+      setState((prev) => ({ ...prev, visible: false }) as UnionT);
+    }
     dialogRef.current.reject && dialogRef.current.reject();
-  }, [onHiding, setMergedState]);
+  }, [onHiding, resetStateOnHide]);
 
   const handleSubmit = useCallback(
-    (e: React.MouseEventHandler) => {
+    (e: MouseEvent, v: Partial<T> & IDialogState) => {
       if (onSubmit) {
-        onSubmit(e, state as UnionT);
+        onSubmit(e, v);
         return;
       }
-      dialogRef.current.resolve && dialogRef.current.resolve(state);
+      dialogRef.current.resolve && dialogRef.current.resolve(v);
       handleHiding();
     },
-    [onSubmit, handleHiding, state],
+    [onSubmit, handleHiding],
   );
 
   const handleDecline = useCallback(() => {
@@ -79,28 +83,26 @@ export const useDialog = <T = IDialogState>({
   useImperativeHandle(
     ref,
     () => ({
-      open: async (props) => {
-        if (props) {
-          setMergedState(Object.assign(props, { visible: true }));
-        }
+      open: async (props = {}) => {
+        setState((prev) => ({ ...prev, ...props, visible: true }));
         return new Promise((resolve, reject) => {
           dialogRef.current.resolve = resolve;
           dialogRef.current.reject = reject;
         });
       },
       getState: () => state,
-      setState: (data) => setMergedState(data),
+      setState,
       close: handleHiding,
       resolve: () => {
         dialogRef.current.resolve && dialogRef.current.resolve(state);
         handleHiding();
       },
     }),
-    [state, setMergedState, handleHiding],
+    [state, handleHiding],
   );
   return {
     state,
-    setMergedState,
+    setState,
     handleHiding,
     handleSubmit,
     handleDecline,

@@ -35,9 +35,9 @@ export interface IDropDownBoxProps<T = object> extends Omit<IDropDownBoxOptions,
 }
 
 export interface IDropDownTableBoxComponent extends FC<IDropDownBoxProps<object>> {
-  <T extends object>(props: IDropDownBoxProps<T> & React.RefAttributes<IDropDownBoxHandle>): ReturnType<
-    React.ForwardRefRenderFunction<IDropDownBoxHandle, IDropDownBoxProps<T>>
-  >;
+  <T extends object>(
+    props: IDropDownBoxProps<T> & React.RefAttributes<IDropDownBoxHandle>,
+  ): ReturnType<React.ForwardRefRenderFunction<IDropDownBoxHandle, IDropDownBoxProps<T>>>;
 }
 
 export const DropDownTableBox: IDropDownTableBoxComponent = forwardRef(
@@ -58,7 +58,7 @@ export const DropDownTableBox: IDropDownTableBoxComponent = forwardRef(
   ) => {
     const boxRef = useRef<DxDropDownBox>(null);
     const boxContentRef = useRef<IDropDownBoxContentHandle>(null);
-    const valueRef = useRef(null);
+    const valueRef = useRef<unknown>(null);
     const labelRef = useRef<string>();
     const labelSelectedRef = useRef<string>();
 
@@ -70,15 +70,17 @@ export const DropDownTableBox: IDropDownTableBoxComponent = forwardRef(
           boxRef.current?.instance.close();
           const data = e.selectedRowsData[0];
           if (data && data instanceof Object && valueExpr) {
-            const v = typeof valueExpr === 'function' ? valueExpr(data) : data[valueExpr as keyof T];
-            const t = (typeof displayExpr === 'function' ? displayExpr(data) : data[displayExpr as keyof T]) as string;
+            const v = typeof valueExpr === 'function' ? valueExpr(data) : data[valueExpr as keyof typeof data];
+            const t = (
+              typeof displayExpr === 'function' ? displayExpr(data) : data[displayExpr as keyof typeof data]
+            ) as string;
             if (v && t) {
               labelRef.current = t;
               labelSelectedRef.current = labelRef.current;
               valueRef.current = v;
             }
           }
-          onChange(e.selectedRowsData[0]);
+          onChange(e.selectedRowsData[0] as T);
         }
       },
       [onChange, displayExpr, valueExpr],

@@ -1,4 +1,4 @@
-import React, { memo, createElement } from 'react';
+import React, { memo, createElement, ReactNode } from 'react';
 import AutoSizer from 'react-virtualized-auto-sizer';
 import type { HeightAndWidthProps, Size } from 'react-virtualized-auto-sizer';
 
@@ -23,10 +23,26 @@ export type TSizePartial = {
 } & Pick<Partial<Size>, 'scaledHeight' | 'scaledWidth'>;
 
 export const AutoSize = <T extends object = {}, K extends object = {}>(props: TAutoSizeProps<T, K>) => {
-  const { component, renderOnZero, disableHeight, disableWidth, componentRef, ...rest } = props;
+  const {
+    component,
+    renderOnZero,
+    disableHeight,
+    disableWidth,
+    componentRef,
+    defaultHeight,
+    defaultWidth,
+    onResize,
+    ...rest
+  } = props;
 
   return (
-    <AutoSizer disableHeight={disableHeight as false} disableWidth={disableWidth as false} {...rest}>
+    <AutoSizer
+      disableHeight={disableHeight as false}
+      disableWidth={disableWidth as false}
+      defaultHeight={defaultHeight}
+      defaultWidth={defaultWidth}
+      onResize={onResize}
+    >
       {({ height, width, scaledHeight, scaledWidth }: Size) => {
         if (!renderOnZero) {
           if ((!height && !width) || (disableWidth && !height) || (disableHeight && !width)) {
@@ -45,5 +61,47 @@ export const AutoSize = <T extends object = {}, K extends object = {}>(props: TA
     </AutoSizer>
   );
 };
+
+export const AutoSizeRender = memo(
+  (props: Omit<TAutoSizeProps, 'componentRef' | 'component'> & { render: (v: TSizePartial) => ReactNode }) => {
+    const {
+      renderOnZero,
+      disableHeight,
+      disableWidth,
+      defaultHeight,
+      defaultWidth,
+      className,
+      style,
+      onResize,
+      render,
+    } = props;
+
+    return (
+      <AutoSizer
+        disableHeight={disableHeight as false}
+        disableWidth={disableWidth as false}
+        defaultHeight={defaultHeight}
+        defaultWidth={defaultWidth}
+        className={className}
+        style={style}
+        onResize={onResize}
+      >
+        {({ height, width, scaledHeight, scaledWidth }: Size) => {
+          if (!renderOnZero) {
+            if ((!height && !width) || (disableWidth && !height) || (disableHeight && !width)) {
+              return <span />;
+            }
+          }
+          return render({
+            autoWidth: width,
+            autoHeight: Math.max(height || 0),
+            scaledHeight,
+            scaledWidth,
+          } as TSizePartial);
+        }}
+      </AutoSizer>
+    );
+  },
+);
 
 export const AutoSizeMemo = memo(AutoSize) as typeof AutoSize;
