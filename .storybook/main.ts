@@ -10,31 +10,38 @@ const cfg: StorybookConfig = {
       shouldExtractLiteralValuesFromEnum: true,
       savePropValueAsString: true,
       shouldRemoveUndefinedFromOptional: true,
-      propFilter: prop => {
+      propFilter: (prop) => {
         return true;
-      }
-    }
+      },
+    },
   },
-  addons: ['@storybook/addon-links', '@storybook/addon-essentials', '@storybook/addon-interactions', '@storybook/preset-create-react-app', "storybook-addon-react-router-v6"],
-  stories: ['../src/**/*.stories.tsx'],  
+  addons: [
+    '@storybook/addon-links',
+    '@storybook/addon-essentials',
+    '@storybook/addon-interactions',
+    '@storybook/preset-create-react-app',
+    'storybook-addon-react-router-v6',
+  ],
+  stories: ['../src/**/*.stories.tsx'],
+  core: {
+    disableTelemetry: true, // 👈 Disables telemetry
+  },
   features: {
-    storyStoreV7: true
-  },  
+    storyStoreV7: true,
+  },
   docs: {
-    autodocs: true
+    autodocs: true,
   },
   framework: {
     name: '@storybook/react-webpack5',
     options: {
       builder: {
         fsCache: true,
-        lazyCompilation: true
-      }
-    }
+        lazyCompilation: true,
+      },
+    },
   },
-  webpackFinal: async (config, {
-    configType
-  }) => {        
+  webpackFinal: async (config, { configType }) => {
     config.resolve = config.resolve || {};
     config.resolve.alias = config.resolve.alias || {};
     config.resolve.alias['@utils'] = path.resolve(__dirname, '../src/utils/');

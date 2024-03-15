@@ -1,18 +1,24 @@
-import React, { useCallback, useRef, useImperativeHandle, useState, MouseEvent, Dispatch, SetStateAction } from 'react';
+import React, { useCallback, useRef, useImperativeHandle, useState, Dispatch, SetStateAction } from 'react';
+
+import { IResponseError } from '@utils/api';
 
 export interface IUseDialogProps<T> {
   ref: React.Ref<IDialogHandle<T>>;
   text?: string;
   resetStateOnHide?: boolean;
+  resetPopupStateOnHide?: boolean;
+  initialState?: T;
   onHiding?: () => void;
-  onSubmit?: (e: MouseEvent, state: Partial<T> & IDialogState) => void;
+  onSubmit?: (state: T) => void;
   onDecline?: () => void;
 }
 
 export interface IDialogHandle<T = object> {
-  open: (props?: Partial<T> & IDialogState) => Promise<Partial<T> & IDialogState>;
-  getState: () => Partial<T> & IDialogState;
-  setState: Dispatch<SetStateAction<Partial<T> & IDialogState>>;
+  open: (props?: Partial<T> | null, popupProps?: IDialogState) => Promise<T>;
+  getState: () => T;
+  setState: Dispatch<SetStateAction<T>>;
+  getPopupState: () => IDialogState;
+  setPopupState: Dispatch<SetStateAction<IDialogState>>;
   close: () => void;
   resolve: () => void;
 }
@@ -24,27 +30,30 @@ export interface IDialogState {
 }
 
 interface IDialogRefs<T> {
-  reject: null | (() => void);
+  reject: null | ((e: Pick<IResponseError, 'aborted'>) => void);
   resolve: null | ((e: T) => void);
 }
 
 export const useDialog = <T = IDialogState>({
   ref,
   text: textFromProps,
-  resetStateOnHide,
+  resetStateOnHide = true,
+  resetPopupStateOnHide = true,
+  initialState,
   onHiding,
   onSubmit,
   onDecline,
 }: IUseDialogProps<T>) => {
-  type UnionT = Partial<T> & IDialogState;
-  const dialogRef = useRef<IDialogRefs<UnionT>>({
+  const dialogRef = useRef<IDialogRefs<T>>({
     resolve: null,
     reject: null,
   });
-  const [state, setState] = useState<UnionT>({
+  const [popupState, setPopupState] = useState<IDialogState>({
     visible: false,
     text: textFromProps,
-  } as UnionT);
+    loading: false,
+  });
+  const [state, setState] = useState<T>(initialState || ({} as T));
 
   const handleHiding = useCallback(() => {
     if (onHiding) {
@@ -52,20 +61,23 @@ export const useDialog = <T = IDialogState>({
       return;
     }
     if (resetStateOnHide) {
-      setState({ visible: false } as UnionT);
-    } else {
-      setState((prev) => ({ ...prev, visible: false }) as UnionT);
+      setState(initialState || ({} as T));
     }
-    dialogRef.current.reject && dialogRef.current.reject();
-  }, [onHiding, resetStateOnHide]);
+    if (resetPopupStateOnHide) {
+      setPopupState({ visible: false });
+    } else {
+      setPopupState((prev) => ({ ...prev, visible: false }));
+    }
+    dialogRef.current.reject?.({ aborted: true });
+  }, [onHiding, resetStateOnHide, resetPopupStateOnHide, initialState]);
 
   const handleSubmit = useCallback(
-    (e: MouseEvent, v: Partial<T> & IDialogState) => {
+    (v: T) => {
       if (onSubmit) {
-        onSubmit(e, v);
+        onSubmit(v);
         return;
       }
-      dialogRef.current.resolve && dialogRef.current.resolve(v);
+      dialogRef.current.resolve?.(v);
       handleHiding();
     },
     [onSubmit, handleHiding],
@@ -76,15 +88,18 @@ export const useDialog = <T = IDialogState>({
       onDecline();
       return;
     }
-    dialogRef.current.reject && dialogRef.current.reject();
+    dialogRef.current.reject?.({ aborted: true });
     handleHiding();
   }, [onDecline, handleHiding]);
 
   useImperativeHandle(
     ref,
     () => ({
-      open: async (props = {}) => {
-        setState((prev) => ({ ...prev, ...props, visible: true }));
+      open: async (props, popupProps = {}) => {
+        setPopupState((prev) => ({ ...prev, ...popupProps, visible: true }));
+        if (props) {
+          setState((prev) => ({ ...prev, ...props }));
+        }
         return new Promise((resolve, reject) => {
           dialogRef.current.resolve = resolve;
           dialogRef.current.reject = reject;
@@ -92,16 +107,20 @@ export const useDialog = <T = IDialogState>({
       },
       getState: () => state,
       setState,
+      getPopupState: () => popupState,
+      setPopupState,
       close: handleHiding,
       resolve: () => {
-        dialogRef.current.resolve && dialogRef.current.resolve(state);
+        dialogRef.current.resolve?.(state);
         handleHiding();
       },
     }),
-    [state, handleHiding],
+    [state, popupState, handleHiding],
   );
   return {
+    popupState,
     state,
+    setPopupState,
     setState,
     handleHiding,
     handleSubmit,

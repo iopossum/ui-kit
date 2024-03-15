@@ -67,7 +67,7 @@ export interface ILoopbackWhereCondition {
   like?: string;
   nlike?: string;
   between?: string[];
-  inq?: (string | null)[];
+  inq?: (string | number | null)[];
   regexp?: string;
 }
 

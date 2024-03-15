@@ -1,5 +1,5 @@
 import React, { useCallback, memo } from 'react';
-import { useForm, SubmitHandler, SubmitErrorHandler } from 'react-hook-form';
+import { useForm, SubmitHandler, SubmitErrorHandler, Controller } from 'react-hook-form';
 import { Link } from 'react-router-dom';
 
 import cn from 'classnames';
@@ -32,6 +32,7 @@ const fieldsMap = getFieldsMap<ILoginFormData>(fields);
 
 export interface ILoginFormProps extends IWithStyles {
   hasRegLink?: boolean;
+  hasRemember?: boolean;
   regLink?: string;
   loginLabel?: string;
   onSubmit: SubmitHandler<ILoginFormData>;
@@ -42,6 +43,7 @@ export const LoginForm = ({
   className,
   style,
   hasRegLink,
+  hasRemember,
   regLink,
   loginLabel,
   onSubmit,
@@ -58,11 +60,10 @@ export const LoginForm = ({
   );
 
   const {
-    register,
     formState: { errors, isSubmitting },
+    control,
     handleSubmit,
     setValue,
-    watch,
   } = useForm<ILoginFormData>({
     defaultValues: initialValues,
     mode: 'onBlur',
@@ -75,43 +76,57 @@ export const LoginForm = ({
   return (
     <AuthWrapper className={cn('login', { [className as string]: !!className })} style={style} header="Авторизация">
       <form noValidate onSubmit={handleSubmit(onSubmit, handleValidationFailed)}>
-        <FloatLabelInput
-          label={loginLabel}
-          required
-          status={errors.login && 'error'}
-          value={watch('login')}
-          {...register('login', fieldsMap['login'].rules)}
-          autoComplete="login"
-          autoFocus
-          size="large"
-          fullWidth
-          onChange={(e) =>
-            setValue('login', e.target.value, { shouldValidate: true, shouldDirty: true, shouldTouch: true })
-          }
+        <Controller
+          name="login"
+          control={control}
+          rules={fieldsMap['login'].rules}
+          render={({ field: { ref, ...rest } }) => (
+            <FloatLabelInput
+              label={loginLabel}
+              required
+              status={errors.login && 'error'}
+              autoComplete="login"
+              autoFocus
+              size="large"
+              fullWidth
+              {...rest}
+            />
+          )}
         />
-        <FloatLabelInput
-          label="Пароль"
-          type="password"
-          required
-          fullWidth
-          size="large"
-          status={errors.password && 'error'}
-          value={watch('password')}
-          {...register('password', fieldsMap['password'].rules)}
-          autoComplete="password"
-          onChange={(e) =>
-            setValue('password', e.target.value, { shouldValidate: true, shouldDirty: true, shouldTouch: true })
-          }
+        <Controller
+          name="password"
+          control={control}
+          rules={fieldsMap['password'].rules}
+          render={({ field: { ref, ...rest } }) => (
+            <FloatLabelInput
+              label="Пароль"
+              type="password"
+              required
+              fullWidth
+              size="large"
+              status={errors.password && 'error'}
+              autoComplete="password"
+              {...rest}
+            />
+          )}
         />
-        <CheckBox
-          value={watch('remember')}
-          {...register('remember', fieldsMap['remember'].rules)}
-          label="Запомнить"
-          className="login__remember"
-          onChange={(e) =>
-            setValue('remember', e.target.checked, { shouldValidate: true, shouldDirty: true, shouldTouch: true })
-          }
-        />
+        {hasRemember && (
+          <Controller
+            name="remember"
+            control={control}
+            rules={fieldsMap['remember'].rules}
+            render={({ field: { ref, ...rest } }) => (
+              <CheckBox
+                {...rest}
+                label="Запомнить"
+                className="login__remember"
+                onChange={(e) =>
+                  setValue('remember', e.target.checked, { shouldValidate: true, shouldDirty: true, shouldTouch: true })
+                }
+              />
+            )}
+          />
+        )}
         <Button
           text="Войти"
           type="default"

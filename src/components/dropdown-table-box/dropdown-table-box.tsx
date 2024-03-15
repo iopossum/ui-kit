@@ -28,8 +28,8 @@ export interface IDropDownBoxContentProps extends Pick<IDataGridProps, 'selected
 export interface IDropDownBoxProps<T = object> extends Omit<IDropDownBoxOptions, 'onChange'> {
   dropDownContent: ReturnType<typeof forwardRef<IDropDownBoxContentHandle, IDropDownBoxContentProps>>;
   searchExpr?: string;
-  fetchByValue: (e: string | number) => Promise<T>;
-  onChange: (e: T) => void;
+  fetchByValue: (e: T[keyof T]) => Promise<T>;
+  onChange: (e: T | null) => void;
   convertValueOnInput?: (e: Parameters<TOnInput>[0]) => string | null;
   onSearch?: (e: { value: IDropDownBoxOptions['value']; label: string }) => void;
 }
@@ -39,6 +39,8 @@ export interface IDropDownTableBoxComponent extends FC<IDropDownBoxProps<object>
     props: IDropDownBoxProps<T> & React.RefAttributes<IDropDownBoxHandle>,
   ): ReturnType<React.ForwardRefRenderFunction<IDropDownBoxHandle, IDropDownBoxProps<T>>>;
 }
+
+const DxDropDownBoxMemo = memo(DxDropDownBox);
 
 export const DropDownTableBox: IDropDownTableBoxComponent = forwardRef(
   <T extends object>(
@@ -78,6 +80,13 @@ export const DropDownTableBox: IDropDownTableBoxComponent = forwardRef(
               labelRef.current = t;
               labelSelectedRef.current = labelRef.current;
               valueRef.current = v;
+              setTimeout(() => {
+                const input = boxRef.current?.instance?.field() as HTMLInputElement;
+                if (input) {
+                  input.value = labelRef.current!;
+                }
+                boxRef.current?.instance?.option('text', labelRef.current);
+              }, 0);
             }
           }
           onChange(e.selectedRowsData[0] as T);
@@ -121,19 +130,56 @@ export const DropDownTableBox: IDropDownTableBoxComponent = forwardRef(
       }, 100);
     }, []);
 
-    const fetchByValue = useCallback(async () => {
-      const data = await outerFetchByValue(value);
-      if (data && displayExpr) {
-        labelRef.current = (
-          typeof displayExpr === 'function' ? displayExpr(data) : data[displayExpr as keyof T]
-        ) as string;
-        labelSelectedRef.current = labelRef.current;
-        const input = boxRef.current?.instance?.field() as HTMLInputElement;
-        if (input) {
-          input.value = labelRef.current;
+    const handleDisplayExpr = useCallback(() => {
+      return labelRef.current || '';
+    }, []);
+
+    const handleContentRender = useCallback(() => {
+      return (
+        <DropDownContent
+          ref={boxContentRef}
+          searchValue={labelRef.current}
+          searchExpr={searchExpr}
+          selectedRowKeys={value ? [value] : []}
+          onSelectionChanged={handleChange}
+        />
+      );
+    }, [handleChange, value, searchExpr, DropDownContent]);
+
+    const handleValueChanged = useCallback<NonNullable<IDropDownBoxOptions['onValueChanged']>>(
+      (e) => {
+        if (e.value === null && value) {
+          valueRef.current = null;
+          labelRef.current = '';
+          boxRef.current?.instance?.option('text', labelRef.current);
+          onChange(null);
         }
+      },
+      [onChange, value],
+    );
+
+    const fetchByValue = useCallback(async () => {
+      if (value) {
+        try {
+          const data = await outerFetchByValue(value);
+          if (data && displayExpr) {
+            labelRef.current = (
+              typeof displayExpr === 'function' ? displayExpr(data) : data[displayExpr as keyof T]
+            ) as string;
+            labelSelectedRef.current = labelRef.current;
+            setTimeout(() => {
+              const input = boxRef.current?.instance?.field() as HTMLInputElement;
+              if (input) {
+                input.value = labelRef.current!;
+              }
+              boxRef.current?.instance?.option('text', labelRef.current);
+            }, 0);
+          }
+        } catch (error) {}
+      } else if (valueRef.current) {
+        valueRef.current = null;
+        labelRef.current = '';
         boxRef.current?.instance?.option('text', labelRef.current);
-        boxRef.current?.instance?.repaint();
       }
     }, [value, outerFetchByValue, displayExpr]);
 
@@ -152,7 +198,7 @@ export const DropDownTableBox: IDropDownTableBoxComponent = forwardRef(
     }, [value, fetchByValue]);
 
     return (
-      <DxDropDownBox
+      <DxDropDownBoxMemo
         acceptCustomValue
         value={value || ''}
         ref={boxRef}
@@ -164,18 +210,9 @@ export const DropDownTableBox: IDropDownTableBoxComponent = forwardRef(
         onInput={handleInput}
         onFocusOut={handleFocusOut}
         openOnFieldClick={true}
-        displayExpr={() => {
-          return labelRef.current || '';
-        }}
-        contentRender={() => (
-          <DropDownContent
-            ref={boxContentRef}
-            searchValue={labelRef.current}
-            searchExpr={searchExpr}
-            selectedRowKeys={value ? [value] : []}
-            onSelectionChanged={handleChange}
-          />
-        )}
+        onValueChanged={handleValueChanged}
+        displayExpr={handleDisplayExpr}
+        contentRender={handleContentRender}
         dataSource={undefined}
         {...props}
       />
@@ -185,15 +222,15 @@ export const DropDownTableBox: IDropDownTableBoxComponent = forwardRef(
 
 export const DropDownTableBoxMemo = memo(DropDownTableBox) as typeof DropDownTableBox;
 
-type TuseDropDownTableBoxContent = {
+type TUseDropDownTableBoxContent = {
   dataSource: DataSource;
-  searchValue: string;
   searchExpr: string;
+  searchValue?: string;
 };
 
 export const useDropDownTableBoxContent = (
   ref: React.Ref<IDropDownBoxContentHandle>,
-  { dataSource, searchValue, searchExpr }: TuseDropDownTableBoxContent,
+  { dataSource, searchValue, searchExpr }: TUseDropDownTableBoxContent,
 ) => {
   useEffect(() => {
     dataSource?.searchExpr(searchExpr);

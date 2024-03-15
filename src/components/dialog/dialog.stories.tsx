@@ -18,18 +18,18 @@ export default {
 } as Meta<typeof Dialog>;
 
 type Test = {
-  test: string;
+  test?: string;
 };
 
 const DialogWrapper = (props: IDialogProps) => {
   const ref = useRef<IDialogHandle<Test>>(null);
   return (
     <>
-      <Dialog<Test> ref={ref} showButtons showSubmitButton {...props} />
+      <Dialog<Test> ref={ref} showSubmitButton {...props} />
       <Button
         text="open"
         onClick={async () => {
-          const data = await ref.current?.open({ text: 'asdasd' });
+          const data = await ref.current?.open(null, { text: 'asdasd' });
           alert(JSON.stringify(data, null, 2));
         }}
       />
@@ -41,11 +41,11 @@ const DialogMemoWrapper = (props: IDialogProps) => {
   const ref = useRef<IDialogHandle<Test>>(null);
   return (
     <>
-      <DialogMemo<Test> ref={ref} showButtons showSubmitButton {...props} />
+      <DialogMemo<Test> ref={ref} showSubmitButton {...props} />
       <Button
         text="open"
         onClick={async () => {
-          const data = await ref.current?.open({ text: 'asdasd' });
+          const data = await ref.current?.open(null, { text: 'asdasd' });
           alert(JSON.stringify(data, null, 2));
         }}
       />
@@ -58,10 +58,10 @@ const TemplateMemo = (props: IDialogProps) => <DialogMemoWrapper {...props} />;
 
 export const Basic: StoryObj<typeof Dialog> = {
   render: Template,
-  args: {}
+  args: {},
 };
 
 export const Memo: StoryObj<typeof DialogMemo> = {
   render: TemplateMemo,
-  args: {}
+  args: {},
 };

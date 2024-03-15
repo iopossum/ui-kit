@@ -55,7 +55,7 @@ export const SecurePage = ({
           <Sidebar
             sidebar={!isDesktop ? 'sm' : sidebar}
             onChange={(v) => (!isDesktop ? setSidebarOpened(false) : onChange(v))}
-            onFollowRoute={(v) => (!isDesktop ? setSidebarOpened(false) : null)}
+            onFollowRoute={() => (!isDesktop ? setSidebarOpened(false) : null)}
             {...props}
           />
         }

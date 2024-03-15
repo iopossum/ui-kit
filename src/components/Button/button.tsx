@@ -11,16 +11,19 @@ import './button.scss';
 
 export interface IButtonProps extends Omit<IButtonOptions, 'style'>, IWithStyles {
   loading?: boolean;
+  allowLoading?: boolean;
   texts?: string[];
 }
 
 export const Button = (props: IButtonProps) => {
-  const { loading, text, texts, hint, disabled, className, ...rest } = props;
+  const { loading, allowLoading, text, texts, hint, disabled, className, ...rest } = props;
 
   let displayText = texts?.length ? texts[0] : text;
   if (loading && texts && texts.length > 1) {
     displayText = texts[1];
   }
+
+  // const canLoading = !rest.icon && allowLoading;
 
   return (
     <DxButton
@@ -30,9 +33,10 @@ export const Button = (props: IButtonProps) => {
         [className as string]: !!className,
         icon: !!rest.icon,
       })}
+      text={text}
       {...rest}
     >
-      {!rest.icon && (
+      {!rest.icon && allowLoading && (
         <>
           <LoadIndicator className="button-indicator" visible={loading} />
           <span className="dx-button-text">{displayText}</span>
@@ -46,6 +50,7 @@ Button.defaultProps = {
   texts: [],
   type: 'normal',
   stylingMode: 'contained',
+  allowLoading: true,
 };
 
 export const ButtonMemo = memo(Button);

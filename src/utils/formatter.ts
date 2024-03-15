@@ -138,14 +138,14 @@ const getGroupConds = <T = {}>(group: unknown, conds: TAndOr<T>[], prevCond?: st
   if (Array.isArray(group) && typeof group[1] === 'string') {
     if (Array.isArray(group[0])) {
       if (prevCond === group[1]) {
-        group.forEach((item, i) => {
+        group.forEach((item) => {
           getGroupConds(item, conds);
         });
       } else {
         const result = {
           [group[1]]: [],
         };
-        group.forEach((item, i) => {
+        group.forEach((item) => {
           getGroupConds(item, result[group[1]], group[1]);
         });
         conds.push(result);

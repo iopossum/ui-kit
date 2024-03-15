@@ -1,4 +1,5 @@
 import AbortController from 'abort-controller';
+import { notification } from 'antd';
 import { locale, loadMessages } from 'devextreme/localization';
 import ruMessages from 'devextreme/localization/messages/ru.json';
 import notify from 'devextreme/ui/notify';
@@ -236,13 +237,16 @@ export const buildToast = (message: string, type: NotifyType = 'info'): void => 
 };
 
 export const error = (message: string): void => {
-  buildToast(message, 'error');
+  notification.error({ message });
+  // buildToast(message, 'error');
 };
 
 export const success = (message: string): void => {
-  buildToast(message, 'success');
+  // buildToast(message, 'success');
+  notification.success({ message });
 };
 
 export const warning = (message: string): void => {
-  buildToast(message, 'warning');
+  notification.warning({ message });
+  // buildToast(message, 'warning');
 };

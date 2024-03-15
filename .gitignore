@@ -1,4 +1,8 @@
+.pnp.cjs
+.pnp.loader.mjs
+.yarn/install-state.gz
 .yarn/cache
+.yarn/unplugged
 dist
 .DS_Store
 node_modules/

@@ -2,7 +2,7 @@ import React, { forwardRef, useMemo, memo, useState, useCallback, FC } from 'rea
 
 import type { Column } from 'devextreme/ui/data_grid';
 import { DataGrid as DevexpressDataGrid } from 'devextreme-react/data-grid';
-import type { IDataGridOptions } from 'devextreme-react/data-grid';
+import type { IDataGridOptions, IColumnProps } from 'devextreme-react/data-grid';
 
 import type { IWithStyles } from '@types';
 
@@ -10,10 +10,12 @@ import './data-grid.scss';
 
 type OnOptionChanged = NonNullable<IDataGridOptions['onOptionChanged']>;
 
+export type TColumn<T extends object = {}> = IColumnProps & Column<T>;
+
 export interface IDataGridProps<T extends object = {}>
   extends Omit<IDataGridOptions<T>, 'style' | 'columns'>,
     IWithStyles {
-  columns: Column[];
+  columns: TColumn<T>[];
   dataSource: IDataGridOptions['dataSource'];
   stateStoringName?: string;
   loadPanelShading?: boolean;
@@ -31,8 +33,7 @@ export interface IDataGridComponent extends FC<IDataGridProps<object>> {
 export const DataGrid: IDataGridComponent = forwardRef(
   <T extends object = {}>(props: IDataGridProps<T>, ref: React.ForwardedRef<TDataGridHandle>) => {
     const { columns, stateStoringName, loadPanelShading, children, summaryColumn, onOptionChanged, ...rest } = props;
-    let { loadPanel, stateStoring } = rest;
-    const { summary } = rest;
+    const { summary, loadPanel, stateStoring } = rest;
 
     const multipleTotalSummary = summary?.totalItems && summary.totalItems.length > 1;
 
@@ -50,15 +51,6 @@ export const DataGrid: IDataGridComponent = forwardRef(
       filtered = columns.filter((v) => v.visible);
       return filtered.length ? filtered[0].dataField : columns[0].dataField;
     });
-
-    const summaryMemo = useMemo(() => {
-      if (!multipleTotalSummary && summary?.totalItems?.length) {
-        if (!summary.totalItems.some((v) => v.column === summaryColumnKey)) {
-          summary.totalItems[0].column = summaryColumnKey as string;
-        }
-      }
-      return { ...summary };
-    }, [summary, summaryColumnKey, multipleTotalSummary]);
 
     const handleOptionChanged = useCallback<OnOptionChanged>(
       (e) => {
@@ -93,38 +85,39 @@ export const DataGrid: IDataGridComponent = forwardRef(
       [columns, summaryColumnKey, summaryColumn, onOptionChanged],
     );
 
-    if (loadPanelShading) {
-      loadPanel = Object.assign(
-        {
-          enabled: true,
-          shading: true,
-          shadingColor: 'rgba(0, 0, 0, 0.1)',
-        },
-        loadPanel || {},
-      );
-    }
-
-    if (stateStoringName) {
-      stateStoring = Object.assign(
-        {
-          storageKey: stateStoringName,
-          type: 'localStorage',
-          enabled: true,
-        },
-        stateStoring || {},
-      );
-    }
+    const memoProps = useMemo(() => {
+      const result: Pick<IDataGridProps<T>, 'summary' | 'loadPanel' | 'stateStoring'> = {};
+      if (!multipleTotalSummary && summary?.totalItems?.length) {
+        if (!summary.totalItems.some((v) => v.column === summaryColumnKey)) {
+          summary.totalItems[0].showInColumn = summaryColumnKey as string;
+        }
+        result.summary = summary;
+      }
+      if (loadPanelShading) {
+        result.loadPanel = Object.assign(
+          {
+            enabled: true,
+            shading: true,
+            shadingColor: 'rgba(0, 0, 0, 0.1)',
+          },
+          loadPanel || {},
+        );
+      }
+      if (stateStoringName) {
+        result.stateStoring = Object.assign(
+          {
+            storageKey: stateStoringName,
+            type: 'localStorage',
+            enabled: true,
+          },
+          stateStoring || {},
+        );
+      }
+      return result;
+    }, [multipleTotalSummary, stateStoring, stateStoringName, summary, summaryColumnKey, loadPanelShading, loadPanel]);
 
     return (
-      <DevexpressDataGrid<T>
-        ref={ref}
-        {...rest}
-        loadPanel={loadPanel}
-        stateStoring={stateStoring}
-        columns={columns}
-        summary={summaryMemo}
-        onOptionChanged={handleOptionChanged}
-      >
+      <DevexpressDataGrid<T> ref={ref} {...rest} {...memoProps} columns={columns} onOptionChanged={handleOptionChanged}>
         {children}
       </DevexpressDataGrid>
     );

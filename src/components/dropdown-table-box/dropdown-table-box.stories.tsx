@@ -70,8 +70,8 @@ const DropDownTableBoxWrapper = (props: IDropDownBoxProps) => {
       dropDownContent={DropDownTableBoxContent}
       displayExpr={'CompanyName'}
       valueExpr={'ID'}
-      fetchByValue={async (e) => Promise.resolve(data[0])}
-      onChange={(e) => setValue(e.ID)}
+      fetchByValue={async () => Promise.resolve(data[0])}
+      onChange={(e) => setValue(e?.ID)}
     />
   );
 };
@@ -85,8 +85,8 @@ const DropDownTableBoxMemoWrapper = (props: IDropDownBoxProps) => {
       dropDownContent={DropDownTableBoxContent}
       displayExpr={'CompanyName'}
       valueExpr={'ID'}
-      fetchByValue={async (e) => Promise.resolve(data[0])}
-      onChange={(e) => setValue(e.ID)}
+      fetchByValue={async () => Promise.resolve(data[0])}
+      onChange={(e) => setValue(e?.ID)}
     />
   );
 };
@@ -96,10 +96,10 @@ const TemplateMemo = (props: IDropDownBoxProps) => <DropDownTableBoxMemoWrapper 
 
 export const Basic: StoryObj<typeof DropDownTableBox> = {
   render: Template,
-  args: {}
+  args: {},
 };
 
 export const Memo: StoryObj<typeof DropDownTableBoxMemo> = {
   render: TemplateMemo,
-  args: {}
+  args: {},
 };

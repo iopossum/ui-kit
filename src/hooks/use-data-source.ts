@@ -44,9 +44,11 @@ export const useDataSource: IUseDataSource = ({
 
   const dataSource = useRef(
     new DataSource({
+      loadMode,
       store: new CustomStore({
         key: tableKey,
         ...rest,
+        loadMode,
         load: (props) => {
           if (!abortLoad) {
             return load(props);

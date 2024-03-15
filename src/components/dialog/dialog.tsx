@@ -47,7 +47,7 @@ export const Dialog: IDialogComponent = forwardRef(
     }: IDialogProps<T>,
     ref: React.Ref<IDialogHandle<T>>,
   ) => {
-    const { state, handleDecline, handleSubmit } = useDialog<T>({
+    const { popupState, handleDecline, handleSubmit } = useDialog<T>({
       ref,
       text: textFromProps,
       onDecline,
@@ -55,7 +55,7 @@ export const Dialog: IDialogComponent = forwardRef(
       onSubmit,
     });
 
-    const { visible, text } = state;
+    const { visible, text, loading } = popupState;
 
     const toolbarItems = useMemo(() => {
       const result: Array<IToolbarItemProps> = [];
@@ -79,10 +79,10 @@ export const Dialog: IDialogComponent = forwardRef(
             widget: 'dxButton',
             toolbar: 'bottom',
             location: 'after',
-            disabled: state.loading,
+            disabled: loading,
             options: {
               stylingMode: 'contained',
-              type: 'normal',
+              type: 'default',
               text: submitText,
               onClick: handleSubmit,
               ...submitButtonProps,
@@ -96,7 +96,7 @@ export const Dialog: IDialogComponent = forwardRef(
       showDeclineButton,
       handleSubmit,
       handleDecline,
-      state.loading,
+      loading,
       declineText,
       submitText,
       declineButtonProps,
