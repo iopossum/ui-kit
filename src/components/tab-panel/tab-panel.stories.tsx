@@ -63,10 +63,10 @@ const TemplateMemo = (props: ITabPanelProps<Test>) => (
 
 export const Basic: StoryObj<typeof TabPanel<Test>> = {
   render: Template,
-  args: {}
+  args: {},
 };
 
 export const Memo: StoryObj<typeof TabPanelMemo<Test>> = {
   render: TemplateMemo,
-  args: {}
+  args: {},
 };

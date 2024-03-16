@@ -10,7 +10,7 @@ import { useDataSource } from '@hooks/use-data-source';
 export default {
   title: 'DataGrid',
   component: DataGrid,
-  decorators: [    
+  decorators: [
     (Story) => (
       <div style={{ display: 'flex', flex: 1 }}>
         <Story />
@@ -61,14 +61,14 @@ const TemplateMemo = (props: IDataGridProps) => {
   );
 };
 
-const TemplateAutoSize= (props: IDataGridProps) => {
+const TemplateAutoSize = (props: IDataGridProps) => {
   const dataSource = useDataSource({
     load: () => data,
   });
   return (
     <AutoSize<IDataGridProps>
       component={DataGrid}
-      {...props}      
+      {...props}
       onKeyDown={() => ''}
       dataSource={dataSource}
       columns={columns}
@@ -78,15 +78,15 @@ const TemplateAutoSize= (props: IDataGridProps) => {
 
 export const Basic: StoryObj<typeof DataGrid> = {
   render: Template,
-  args: {}
+  args: {},
 };
 
 export const Memo: StoryObj<typeof DataGridMemo> = {
   render: TemplateMemo,
-  args: {}
+  args: {},
 };
 
 export const AutoSizeGrid: StoryObj<typeof DataGrid> = {
   render: TemplateAutoSize,
-  args: {}
+  args: {},
 };

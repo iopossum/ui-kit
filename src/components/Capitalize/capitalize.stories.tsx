@@ -23,12 +23,12 @@ export const Basic: StoryObj<typeof Capitalize> = {
   render: Template,
   args: {
     text: 'один два',
-  }
+  },
 };
 
 export const Memo: StoryObj<typeof CapitalizeMemo> = {
   render: TemplateMemo,
   args: {
     text: 'один два',
-  }
+  },
 };

@@ -14,10 +14,10 @@ const TemplateMemo = (props: IFooterProps) => <FooterMemo {...props}>children</F
 
 export const Basic: StoryObj<typeof Footer> = {
   render: Template,
-  args: {}
+  args: {},
 };
 
 export const Memo: StoryObj<typeof FooterMemo> = {
   render: TemplateMemo,
-  args: {}
+  args: {},
 };

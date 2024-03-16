@@ -27,12 +27,12 @@ const TemplateMemo = (props: IDateRangeProps) => {
 
 export const Basic: StoryObj<typeof DateRange> = {
   render: Template,
-  args: {}
+  args: {},
 };
 
 export const Memo: StoryObj<typeof DateRangeMemo> = {
   render: TemplateMemo,
-  args: {}
+  args: {},
 };
 
 export const Disabled: StoryObj<typeof DateRange> = {
@@ -41,5 +41,5 @@ export const Disabled: StoryObj<typeof DateRange> = {
   args: {
     toDate: new Date(),
     disabled: [{ from: new Date() }],
-  }
+  },
 };

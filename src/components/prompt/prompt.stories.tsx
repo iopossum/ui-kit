@@ -2,7 +2,7 @@ import React from 'react';
 
 import { Meta, StoryObj } from '@storybook/react';
 
-import { withRouter } from 'storybook-addon-react-router-v6';
+import { withRouter } from 'storybook-addon-remix-react-router';
 
 import { Card, BackLink } from '@components/card';
 import { Prompt, IPromptProps, PromptMemo } from '@components/prompt';
@@ -22,17 +22,13 @@ export default {
 
 const Template = (props: IPromptProps) => (
   <>
-    <Card header={<BackLink />}>
-      Контент
-    </Card>
+    <Card header={<BackLink />}>Контент</Card>
     <Prompt {...props} />
   </>
 );
 const TemplateMemo = (props: IPromptProps) => (
   <>
-    <Card header={<BackLink />}>
-      Контент
-    </Card>
+    <Card header={<BackLink />}>Контент</Card>
     <PromptMemo {...props} />
   </>
 );
@@ -41,13 +37,13 @@ export const Basic: StoryObj<typeof Prompt> = {
   render: Template,
   args: {
     message: 'Сообщение',
-    when: true
-  }
+    when: true,
+  },
 };
 
 export const Memo: StoryObj<typeof PromptMemo> = {
   render: TemplateMemo,
   args: {
     message: 'Сообщение',
-  }
+  },
 };

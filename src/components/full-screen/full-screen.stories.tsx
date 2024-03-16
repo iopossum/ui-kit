@@ -37,10 +37,10 @@ const TemplateMemo = (props: IFullScreenProps) => {
 
 export const Basic: StoryObj<typeof FullScreen> = {
   render: Template,
-  args: {}
+  args: {},
 };
 
 export const Memo: StoryObj<typeof FullScreenMemo> = {
   render: TemplateMemo,
-  args: {}
+  args: {},
 };

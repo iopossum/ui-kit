@@ -23,10 +23,10 @@ const TemplateMemo = (props: ITooltipProps) => (
 
 export const Basic: StoryObj<typeof Tooltip> = {
   render: Template,
-  args: {}
+  args: {},
 };
 
 export const Memo: StoryObj<typeof TooltipMemo> = {
   render: TemplateMemo,
-  args: {}
+  args: {},
 };

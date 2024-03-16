@@ -5,7 +5,7 @@ import type { SidebarProps } from 'react-sidebar';
 import cn from 'classnames';
 
 import { Page } from '@components/page';
-import { Sidebar, SidebarToggle, SIDEBAR_SIZE } from '@components/sidebar';
+import { SidebarMemo, SidebarToggle, SIDEBAR_SIZE } from '@components/sidebar';
 import type { TSidebarSize, ISidebarProps } from '@components/sidebar';
 import { useMediaQuery } from '@hooks/use-media-query';
 import { getCookie, setCookie } from '@utils/cookie';
@@ -15,6 +15,7 @@ import './secure-page.scss';
 export interface ISecurePageProps extends PropsWithChildren, Omit<ISidebarProps, 'sidebar'> {
   cookiePrefix: string;
   reactSidebarProps?: SidebarProps;
+  onSidebarChange?: (v: TSidebarSize) => void;
 }
 
 export const SecurePage = ({
@@ -23,6 +24,8 @@ export const SecurePage = ({
   cookiePrefix,
   children,
   reactSidebarProps,
+  onFollowRoute,
+  onSidebarChange,
   ...props
 }: ISecurePageProps) => {
   const [sidebar, setSidebar] = useState<TSidebarSize>(() => {
@@ -33,12 +36,26 @@ export const SecurePage = ({
 
   const isDesktop = useMediaQuery('(min-width: 960px)');
 
-  const onChange = useCallback<NonNullable<ISidebarProps['onChange']>>(
+  const handleChange = useCallback<NonNullable<ISidebarProps['onChange']>>(
     (value) => {
+      if (!isDesktop) {
+        setSidebarOpened(false);
+      }
       setSidebar(value);
       setCookie(`${cookiePrefix}sidebar`, value);
+      onSidebarChange?.(value);
     },
-    [cookiePrefix],
+    [cookiePrefix, isDesktop, onSidebarChange],
+  );
+
+  const handleFollowRoute = useCallback<NonNullable<ISidebarProps['onFollowRoute']>>(
+    (value) => {
+      if (!isDesktop) {
+        setSidebarOpened(false);
+      }
+      onFollowRoute?.(value);
+    },
+    [isDesktop, onFollowRoute],
   );
 
   return (
@@ -52,10 +69,10 @@ export const SecurePage = ({
       <ReactSidebar
         docked={isDesktop}
         sidebar={
-          <Sidebar
+          <SidebarMemo
             sidebar={!isDesktop ? 'sm' : sidebar}
-            onChange={(v) => (!isDesktop ? setSidebarOpened(false) : onChange(v))}
-            onFollowRoute={() => (!isDesktop ? setSidebarOpened(false) : null)}
+            onChange={handleChange}
+            onFollowRoute={handleFollowRoute}
             {...props}
           />
         }

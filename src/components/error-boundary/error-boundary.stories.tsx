@@ -17,7 +17,7 @@ const Template = () => (
 
 export const Basic: StoryObj<typeof ErrorBoundary> = {
   render: Template,
-  args: {}
+  args: {},
 };
 
 const Test = () => {

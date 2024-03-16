@@ -5,7 +5,7 @@ const cfg: StorybookConfig = {
   typescript: {
     check: false,
     checkOptions: {},
-    reactDocgen: 'react-docgen-typescript',
+
     reactDocgenTypescriptOptions: {
       shouldExtractLiteralValuesFromEnum: true,
       savePropValueAsString: true,
@@ -14,20 +14,19 @@ const cfg: StorybookConfig = {
         return true;
       },
     },
+
+    reactDocgen: 'react-docgen-typescript',
   },
   addons: [
     '@storybook/addon-links',
     '@storybook/addon-essentials',
     '@storybook/addon-interactions',
     '@storybook/preset-create-react-app',
-    'storybook-addon-react-router-v6',
+    'storybook-addon-remix-react-router',
   ],
   stories: ['../src/**/*.stories.tsx'],
   core: {
     disableTelemetry: true, // 👈 Disables telemetry
-  },
-  features: {
-    storyStoreV7: true,
   },
   docs: {
     autodocs: true,

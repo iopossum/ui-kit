@@ -32,7 +32,7 @@ export const Basic: StoryObj<typeof CheckBox> = {
   args: {
     label: 'asd',
     className: 'test',
-  }
+  },
 };
 
 export const Memo: StoryObj<typeof CheckBoxMemo> = {
@@ -40,5 +40,5 @@ export const Memo: StoryObj<typeof CheckBoxMemo> = {
   args: {
     label: 'asd',
     className: 'test',
-  }
+  },
 };

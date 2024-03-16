@@ -14,10 +14,10 @@ const TemplateMemo = (props: IPageProps) => <PageMemo {...props} />;
 
 export const Basic: StoryObj<typeof Page> = {
   render: Template,
-  args: {}
+  args: {},
 };
 
 export const Memo: StoryObj<typeof PageMemo> = {
   render: TemplateMemo,
-  args: {}
+  args: {},
 };

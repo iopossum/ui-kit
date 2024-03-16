@@ -6,7 +6,7 @@ import { AuthWrapper, AuthWrapperMemo, IAuthWrapperProps } from '@components/aut
 
 export default {
   title: 'AuthWrapper',
-  component: AuthWrapper,  
+  component: AuthWrapper,
 } satisfies Meta<typeof AuthWrapper>;
 
 const Template = (props: IAuthWrapperProps) => <AuthWrapper {...props}>контент</AuthWrapper>;
@@ -16,12 +16,12 @@ export const Basic: StoryObj<typeof AuthWrapper> = {
   render: Template,
   args: {
     header: 'Авторизация',
-  }
+  },
 };
 
 export const Memo: StoryObj<typeof AuthWrapperMemo> = {
   render: TemplateMemo,
   args: {
     header: 'Авторизация',
-  }
+  },
 };

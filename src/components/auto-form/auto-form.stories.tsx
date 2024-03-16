@@ -5,18 +5,18 @@ import { observable } from 'mobx';
 
 import { Meta, StoryObj, Decorator } from '@storybook/react';
 
-import { withRouter } from 'storybook-addon-react-router-v6';
+import { withRouter } from 'storybook-addon-remix-react-router';
 
 import { TSimpleStoreItem } from '@.storybook/decorators';
 import { AutoFormObservable, AutoForm, AutoFormMemo, IAutoFormProps } from '@components/auto-form';
 import { Card } from '@components/card';
 
-const createSampleStore = () => {  
+const createSampleStore = () => {
   return {
-    data: {id: 1},
+    data: { id: 1 },
     onInsert: () => Promise.resolve({ id: 1 }),
     onUpdate: () => Promise.resolve({ id: 1 }),
-    onChange: function (data: Partial<TSimpleStoreItem>) {      
+    onChange: function (data: Partial<TSimpleStoreItem>) {
       this.data = { ...this.data, ...data };
     },
     columns: [
@@ -91,23 +91,52 @@ export default {
     showSuccess: false,
   },
   parameters: {
-    reactRouter: [{
-      routePath: '/test',      
-    }]
-  }
+    reactRouter: [
+      {
+        routePath: '/test',
+      },
+    ],
+  },
 } as Meta<typeof AutoForm>;
 
 const onSubmit = (e: unknown) => alert(JSON.stringify(e));
 
-const Template = (props: IAutoFormProps) => <AutoForm<TSimpleStoreItem> {...props} onSubmit={onSubmit} data={store.data} columns={store.columns} idKey="id" onUpdate={undefined} onInsert={undefined} />;
+const Template = (props: IAutoFormProps) => (
+  <AutoForm<TSimpleStoreItem>
+    {...props}
+    onSubmit={onSubmit}
+    data={store.data}
+    columns={store.columns}
+    idKey="id"
+    onUpdate={undefined}
+    onInsert={undefined}
+  />
+);
 const TemplateMemo = (props: IAutoFormProps) => (
-  <AutoFormMemo<TSimpleStoreItem> {...props} onSubmit={onSubmit} data={store.data} columns={store.columns} idKey="id" onUpdate={undefined} onInsert={undefined} />
+  <AutoFormMemo<TSimpleStoreItem>
+    {...props}
+    onSubmit={onSubmit}
+    data={store.data}
+    columns={store.columns}
+    idKey="id"
+    onUpdate={undefined}
+    onInsert={undefined}
+  />
 );
 const TemplateObservable = (props: IAutoFormProps) => {
-  const [data, setData] = useState(store.data);  
+  const [data, setData] = useState(store.data);
   return (
-    <AutoFormObservable<TSimpleStoreItem> {...props} onSubmit={onSubmit} columns={store.columns} onUpdate={undefined} onInsert={undefined} data={data} onChange={(e) => setData({...data, ...e})} idKey="id" />
-  )
+    <AutoFormObservable<TSimpleStoreItem>
+      {...props}
+      onSubmit={onSubmit}
+      columns={store.columns}
+      onUpdate={undefined}
+      onInsert={undefined}
+      data={data}
+      onChange={(e) => setData({ ...data, ...e })}
+      idKey="id"
+    />
+  );
 };
 
 export const Basic: StoryObj<typeof AutoForm> = {
@@ -141,5 +170,5 @@ export const WithPrompt: StoryObj<typeof AutoFormObservable> = {
         </div>
       </div>
     ),
-  ]
+  ],
 };

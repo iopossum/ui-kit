@@ -1,13 +1,12 @@
 import React, { useCallback, useState, useMemo, useEffect, memo } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
+import AutoSizer from 'react-virtualized-auto-sizer';
 
 import PoweroffOutlined from '@ant-design/icons/PoweroffOutlined';
 import cn from 'classnames';
 import TreeView from 'devextreme-react/tree-view';
 import type { ITreeViewOptions } from 'devextreme-react/tree-view';
 
-import { AutoSize } from '@components/auto-size';
-import type { TSizePartial } from '@components/auto-size';
 import type { IWithStyles, IRoute } from '@types';
 
 import { SidebarLink } from './sidebar-link';
@@ -56,10 +55,12 @@ export const Sidebar = ({
   const [routesDataSource, setRoutesDataSource] = useState<IRoute[]>([]);
 
   const onClick = useCallback<NonNullable<ITreeViewOptions['onItemClick']>>(
-    ({ itemData }) => {
+    (e) => {
+      const { itemData, event } = e;
       if (itemData) {
         if (itemData.onClick) {
-          return itemData.onClick;
+          itemData.onClick(event);
+          return;
         }
         if (!itemData.abstract) {
           if (onFollowRoute) {
@@ -130,12 +131,9 @@ export const Sidebar = ({
       </div>
       {username && <div className="sidebar__user">{username}</div>}
       <div className="sidebar__navigation">
-        <AutoSize<TSizePartial>
-          renderOnZero={false}
-          disableHeight={false}
-          disableWidth
-          component={({ autoHeight = 0 }) => {
-            let h = showLogout ? autoHeight - (logoutHeight || 0) : autoHeight;
+        <AutoSizer disableHeight={false} disableWidth>
+          {({ height }) => {
+            let h = showLogout ? height - (logoutHeight || 0) : height;
             if (versionHeight && versionComponent) {
               h = h - (versionHeight || 0);
             }
@@ -173,7 +171,7 @@ export const Sidebar = ({
               </>
             );
           }}
-        />
+        </AutoSizer>
       </div>
     </nav>
   );

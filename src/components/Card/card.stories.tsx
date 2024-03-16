@@ -2,7 +2,7 @@ import React from 'react';
 
 import { Meta, StoryObj } from '@storybook/react';
 
-import { withRouter } from 'storybook-addon-react-router-v6';
+import { withRouter } from 'storybook-addon-remix-react-router';
 
 import { Card, CardMemo, BackLink, CardContainer, ICardProps, ICardContainerProps } from '@components/card';
 
@@ -41,25 +41,25 @@ export const Basic: StoryObj<typeof Card> = {
   render: Template,
   args: {
     header: 'Заголовок',
-  }
+  },
 };
 
 export const Memo: StoryObj<typeof CardMemo> = {
   render: TemplateMemo,
   args: {
     header: 'Заголовок',
-  }
+  },
 };
 
 export const WithBackLink: StoryObj<typeof Card> = {
   render: TemplateWithBackLink,
   name: 'Basic with back link',
-  args: {}
+  args: {},
 };
 
 export const Container: StoryObj<typeof CardContainer> = {
   render: TemplateCardContainer,
   args: {
     direction: 'column',
-  }
+  },
 };

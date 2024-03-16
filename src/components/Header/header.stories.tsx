@@ -14,10 +14,10 @@ const TemplateMemo = (props: IHeaderProps) => <HeaderMemo {...props} />;
 
 export const Basic: StoryObj<typeof Header> = {
   render: Template,
-  args: {}
+  args: {},
 };
 
 export const Memo: StoryObj<typeof HeaderMemo> = {
   render: TemplateMemo,
-  args: {}
+  args: {},
 };

@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 
 import { Meta, StoryObj } from '@storybook/react';
 
-import { withRouter } from 'storybook-addon-react-router-v6';
+import { withRouter } from 'storybook-addon-remix-react-router';
 
 import { routes } from '@.storybook/decorators';
 import { Sidebar, SidebarMemo, TSidebarSize, ISidebarProps } from '@components/sidebar';
@@ -32,10 +32,10 @@ const TemplateMemo = (props: ISidebarProps) => {
 
 export const Basic: StoryObj<typeof Sidebar> = {
   render: Template,
-  args: {}
+  args: {},
 };
 
 export const Memo: StoryObj<typeof SidebarMemo> = {
   render: TemplateMemo,
-  args: {}
+  args: {},
 };

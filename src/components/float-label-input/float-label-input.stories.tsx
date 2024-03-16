@@ -31,12 +31,12 @@ export const Basic: StoryObj<typeof FloatLabelInput> = {
   render: Template,
   args: {
     placeholder: 'asd',
-  }
+  },
 };
 
 export const Memo: StoryObj<typeof FloatLabelInputMemo> = {
   render: TemplateMemo,
   args: {
     placeholder: 'asd',
-  }
+  },
 };
