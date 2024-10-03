@@ -1,4 +1,3 @@
-
 import React, { useMemo, memo, forwardRef, FC } from 'react';
 
 import Form, { GroupItem, SimpleItem } from 'devextreme-react/form';
@@ -63,7 +62,7 @@ const getAttrs = (v: IFormItem) => {
   if (v.patternType) {
     switch (v.patternType) {
       case 'email':
-        attrs.validationRules.push({
+        attrs.validationRules?.push({
           type: 'email',
           message: 'Неверный формат',
         });
@@ -71,7 +70,7 @@ const getAttrs = (v: IFormItem) => {
     }
   }
   if (v.required) {
-    attrs.validationRules.push({
+    attrs.validationRules?.push({
       type: 'required',
       message: 'Не заполнено поле',
     });
@@ -102,25 +101,33 @@ export interface IFormDataProps<T = object> extends IFormOptions {
   data: Partial<T>;
   grouped?: boolean;
   dataPropCanChanged?: string | string[];
-  onChange: (e: Record<keyof T, T[keyof T]>) => void;
+  onChange?: (e: Record<keyof T, T[keyof T]>) => void;
 }
 
-export type FormDataHandle = Form;
+export interface IFormDataHandle extends Form {}
 
 interface IFormDataWithRef extends FC<IFormDataProps<object>> {
-  <T extends object>(props: IFormDataProps<T> & React.RefAttributes<Form>): ReturnType<
-    React.ForwardRefRenderFunction<Form, IFormDataProps<T>>
-  >;
+  <T extends object>(
+    props: IFormDataProps<T> & React.RefAttributes<IFormDataHandle>,
+  ): ReturnType<React.ForwardRefRenderFunction<IFormDataHandle, IFormDataProps<T>>>;
 }
 
 const FormDataWithRef: IFormDataWithRef = forwardRef(
   <T extends object>(
-    { filteredColumns, data, grouped, onChange, ...rest }: IFormDataProps<T>,
-    ref: React.ForwardedRef<Form>,
+    { filteredColumns = [], data, labelLocation = 'left', grouped, onChange, ...rest }: IFormDataProps<T>,
+    ref: React.ForwardedRef<IFormDataHandle>,
   ) => {
     const groups = useMemo(() => {
       return !grouped || (grouped && !filteredColumns.some((v) => v.group)) ? {} : groupBy(filteredColumns, 'group');
     }, [filteredColumns, grouped]);
+
+    const handleFieldDataChanged: IFormOptions['onFieldDataChanged'] = (e) => {
+      if (typeof e.value !== 'undefined') {
+        const b = {} as Record<keyof T, T[keyof T]>;
+        b[e.dataField as keyof T] = e.value;
+        onChange?.(b);
+      }
+    };
 
     return (
       <Form
@@ -131,20 +138,15 @@ const FormDataWithRef: IFormDataWithRef = forwardRef(
         readOnly={false}
         showColonAfterLabel={true}
         showValidationSummary={false}
-        onFieldDataChanged={(e) => {          
-          if (typeof e.value !== 'undefined') {
-            const b = {} as Record<keyof T, T[keyof T]>;
-            b[e.dataField as keyof T] = e.value;
-            onChange(b);
-          }
-        }}
+        onFieldDataChanged={handleFieldDataChanged}
         minColWidth={233}
+        labelLocation={labelLocation}
         {...rest}
       >
         {Object.keys(groups).length > 0
           ? Object.keys(groups).map((key) => {
               return (
-                <GroupItem key={key} caption={key !== 'undefined' ? key : null}>
+                <GroupItem key={key} caption={key !== 'undefined' ? key : undefined}>
                   {groups[key].map((v) => {
                     const attrs = getAttrs(v);
                     return <SimpleItem {...attrs} key={v.dataField} />;
@@ -160,11 +162,6 @@ const FormDataWithRef: IFormDataWithRef = forwardRef(
     );
   },
 );
-
-FormDataWithRef.defaultProps = {
-  filteredColumns: [],
-  labelLocation: 'left',
-};
 
 export const FormData = memo(FormDataWithRef, (prev, cur) => {
   let notChanged = prev.labelLocation === cur.labelLocation;

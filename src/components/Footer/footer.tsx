@@ -14,7 +14,15 @@ export interface IFooterProps extends IWithStyles {
   onInitialized?: (e: HTMLDivElement) => void;
 }
 
-export const Footer = ({ className, style, yearFrom, yearTo, label, children, onInitialized }: IFooterProps) => {
+export const Footer = ({
+  className,
+  style,
+  yearFrom = 2018,
+  yearTo = new Date().getFullYear(),
+  label = 'Все права защищены, ООО "ФАРМАСОФТ"',
+  children,
+  onInitialized,
+}: IFooterProps) => {
   const ref = useCallback(
     (node: HTMLDivElement) => {
       if (node !== null) {
@@ -25,15 +33,12 @@ export const Footer = ({ className, style, yearFrom, yearTo, label, children, on
   );
   return (
     <div ref={ref} style={style} className={cn('page-footer', { [className as string]: !!className })}>
-      {children}<span>© {yearFrom}-{yearTo} {label}</span>
+      {children}
+      <span>
+        © {yearFrom}-{yearTo} {label}
+      </span>
     </div>
   );
-};
-
-Footer.defaultProps = {
-  label: 'Все права защищены, ООО "ФАРМАСОФТ"',
-  yearFrom: 2018,
-  yearTo: new Date().getFullYear(),
 };
 
 export const FooterMemo = memo(Footer);

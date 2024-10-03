@@ -1,125 +1,89 @@
-import { useStores } from '@stores/index';
 import { getCookie, setCookie, removeCookie } from '@utils/cookie';
 
-export type SidebarSize = 'sm' | 'lg';
-export interface IAppStore {
-  _token: IToken | null;
-  _loading: boolean;
-  sidebar: SidebarSize;
-  cookiePrefix: string;
+export type TSidebarSize = 'sm' | 'lg';
+
+export interface IAppStoreState {
+  token: string | null;
   loading: boolean;
-  token: IToken;
-  removeToken: () => void;
-  setEntity: <T extends IAppStore>(name: keyof T, value: unknown) => void;
-  toggleSidebar: () => void;
-  getFooterHeight: () => number;
+  sidebar: TSidebarSize;
+  cookiePrefix: string;
   footer?: null | HTMLDivElement;
   userIdField?: string;
   matches?: Record<string, unknown>;
 }
+export interface IAppStore<T extends object = {}, K extends object = {}> {
+  state: IAppStoreState & T;
+  logout: () => void;
+  setToken: (t: IToken) => void;
+  toggleSidebar: () => void;
+  getFooterHeight: () => number;
+  setEntity: <Key extends keyof IAppStore<T, K>['state']>(key: Key, value: IAppStore<T, K>['state'][Key]) => void;
+}
 
-export type AppStoreProps = {
-  cookiePrefix: string;
-  userIdField?: string;
-};
+export type TAppStoreProps<T extends object = {}, K extends object = {}> = {
+  state?: Partial<IAppStoreState> & {
+    loginPath?: string;
+  } & T;
+} & Partial<Pick<IAppStore<T, K>, 'getFooterHeight' | 'logout' | 'setEntity' | 'setToken' | 'toggleSidebar'>> &
+  K;
 
 export interface IToken {
   id: string;
   [s: string]: string;
 }
 
-export const createAppStore = <T extends AppStoreProps>(props: T) => {
-  const { cookiePrefix, ...rest } = props;
-  const token = getCookie(`${cookiePrefix}token`);
+export const createAppStore = <T extends object = {}, K extends object = {}>(props: TAppStoreProps<T, K>) => {
+  const { state, ...rest } = props;
+  const { cookiePrefix, loginPath = '/login', ...stateRest } = state || {};
+  const cookieToken = getCookie(`${cookiePrefix}token`);
   const cookieSidebar = getCookie(`${cookiePrefix}sidebar`);
   (window as typeof window & { cookiePrefix?: string }).cookiePrefix = cookiePrefix;
-  const store: IAppStore = {
-    _token: token !== 'undefined' ? token : null,
-    _loading: false,
-    sidebar: cookieSidebar !== 'undefined' ? cookieSidebar : 'lg',
-    footer: null,
-    cookiePrefix,
+  const store: IAppStore<T, K> = {
+    state: {
+      token: cookieToken !== 'undefined' ? cookieToken : null,
+      loading: false,
+      sidebar: cookieSidebar !== 'undefined' ? cookieSidebar : 'lg',
+      footer: null,
+      cookiePrefix,
 
-    matches: {},
+      matches: {},
+      ...stateRest,
+    } as IAppStore<T, K>['state'],
 
-    get loading() {
-      return this._loading;
-    },
-    set loading(v) {
-      this._loading = v;
-    },
-
-    get token() {
-      return this._token as IToken;
-    },
-    set token(t: IToken) {
-      this._token = t;
+    setToken: function (t: IToken) {
+      this.state.token = t.id;
       setCookie(`${cookiePrefix}token`, t.id);
-      if (this.userIdField && t[this.userIdField]) {
-        setCookie(`${cookiePrefix}user`, t[this.userIdField]);
+      if (this.state.userIdField && t[this.state.userIdField]) {
+        setCookie(`${cookiePrefix}user`, t[this.state.userIdField]);
       }
     },
 
-    removeToken: function () {
-      this._token = null;
-      removeCookie(`${cookiePrefix}token`);
-      if (this.userIdField) {
-        removeCookie(`${cookiePrefix}user`);
+    logout: function () {
+      if (window.location.pathname !== loginPath) {
+        this.state.token = null;
+        removeCookie(`${cookiePrefix}token`);
+        if (this.state.userIdField) {
+          removeCookie(`${cookiePrefix}user`);
+        }
+        window.location.replace(loginPath);
       }
+    },
+
+    toggleSidebar: function () {
+      this.state.sidebar = this.state.sidebar === 'lg' ? 'sm' : 'lg';
+      setCookie(`${cookiePrefix}sidebar`, this.state.sidebar);
+    },
+
+    getFooterHeight: function () {
+      return (this.state.footer && this.state.footer?.offsetHeight) || 42;
     },
 
     setEntity: function (name, value) {
       Object.assign(this, { [name]: value });
     },
-
-    toggleSidebar: function () {
-      this.sidebar = this.sidebar === 'lg' ? 'sm' : 'lg';
-      setCookie(`${cookiePrefix}sidebar`, this.sidebar);
-    },
-
-    getFooterHeight: function () {
-      return (this.footer && this.footer?.offsetHeight) || 42;
-    },
   };
   return {
     ...store,
     ...rest,
-  };
-};
-
-export const useAppStore = () => {
-  const stores = useStores<{ AppStore: IAppStore }>();
-  return stores.AppStore;
-};
-
-export const useAppStoreLoading = () => {
-  const AppStore = useAppStore();
-  return {
-    loading: AppStore.loading,
-  };
-};
-
-export const useAppStoreToken = () => {
-  const AppStore = useAppStore();
-  return {
-    token: AppStore.token,
-  };
-};
-
-export const useAppStoreElements = () => {
-  const AppStore = useAppStore();
-  return {
-    sidebar: AppStore.sidebar,
-    footer: AppStore.footer,
-    setEntity: AppStore.setEntity.bind(AppStore),
-    toggleSidebar: AppStore.toggleSidebar.bind(AppStore),
-    getFooterHeight: AppStore.getFooterHeight.bind(AppStore),
-  };
-};
-
-export const useAppStoreMedia = () => {
-  const AppStore = useAppStore();
-  return {
-    matches: AppStore.matches,
   };
 };

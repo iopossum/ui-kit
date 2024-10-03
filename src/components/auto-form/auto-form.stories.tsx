@@ -1,21 +1,23 @@
-import React from 'react';
+import React, { useState, CSSProperties } from 'react';
 import { Link } from 'react-router-dom';
 
-import { ComponentMeta, ComponentStory } from '@storybook/react';
+import { observable } from 'mobx';
 
-import { withRouter, withStores, TSimpleStoreItem } from '@.storybook/decorators';
-import { AutoFormObservable, AutoForm, AutoFormMemo } from '@components/auto-form';
+import { Meta, StoryObj, Decorator } from '@storybook/react';
+
+import { withRouter } from 'storybook-addon-remix-react-router';
+
+import { TSimpleStoreItem } from '@.storybook/decorators';
+import { AutoFormObservable, AutoForm, AutoFormMemo, IAutoFormProps } from '@components/auto-form';
 import { Card } from '@components/card';
-import { useStores } from '@stores/index';
 
-const useSampleStoreItem = () => {
-  const { SampleStore }: { SampleStore: any } = useStores();
+const createSampleStore = () => {
   return {
-    currentItem: SampleStore.currentItem,
-    insert: () => Promise.resolve({ id: 1 }),
-    update: () => Promise.resolve({ id: 1 }),
-    changeItem: (data: any) => {
-      SampleStore.currentItem = { ...SampleStore.currentItem, ...data };
+    data: { id: 1 },
+    onInsert: () => Promise.resolve({ id: 1 }),
+    onUpdate: () => Promise.resolve({ id: 1 }),
+    onChange: function (data: Partial<TSimpleStoreItem>) {
+      this.data = { ...this.data, ...data };
     },
     columns: [
       {
@@ -68,11 +70,14 @@ const useSampleStoreItem = () => {
   };
 };
 
-const decorators = [
-  withStores,
+const store = observable(createSampleStore());
+
+const STYLE: CSSProperties = { height: 300 };
+
+const decorators: Decorator[] = [
   withRouter,
   (Story: React.FC) => (
-    <Card style={{ height: 300 }}>
+    <Card style={STYLE}>
       <Story />
     </Card>
   ),
@@ -87,42 +92,88 @@ export default {
     className: 'sdf',
     showSuccess: false,
   },
-} as ComponentMeta<typeof AutoForm>;
+  parameters: {
+    reactRouter: [
+      {
+        routePath: '/test',
+      },
+    ],
+  },
+} as Meta<typeof AutoForm>;
 
-const Template: ComponentStory<typeof AutoForm> = (args) => <AutoForm<TSimpleStoreItem> {...args} useItem={useSampleStoreItem} idKey='id' />;
+const handleSubmit = (e: unknown) => alert(JSON.stringify(e));
 
-const TemplateMemo: ComponentStory<typeof AutoFormMemo> = (args) => <AutoFormMemo<TSimpleStoreItem> {...args} useItem={useSampleStoreItem} />;
+const handleUndefined = undefined;
 
-const TemplateObservable: ComponentStory<typeof AutoFormObservable> = (args) => (
-  <AutoFormObservable<TSimpleStoreItem> {...args} useItem={useSampleStoreItem} />
+const Template = (props: IAutoFormProps) => (
+  <AutoForm<TSimpleStoreItem>
+    {...props}
+    onSubmit={handleSubmit}
+    data={store.data}
+    columns={store.columns}
+    idKey="id"
+    onUpdate={handleUndefined}
+    onInsert={handleUndefined}
+  />
 );
-
-export const Basic = Template.bind({});
-Basic.args = {};
-
-export const Memo = TemplateMemo.bind({});
-Memo.args = {};
-
-export const WithGroups = Template.bind({});
-WithGroups.storyName = 'With group';
-WithGroups.args = {
-  grouped: true,
+const TemplateMemo = (props: IAutoFormProps) => (
+  <AutoFormMemo<TSimpleStoreItem>
+    {...props}
+    onSubmit={handleSubmit}
+    data={store.data}
+    columns={store.columns}
+    idKey="id"
+    onUpdate={handleUndefined}
+    onInsert={handleUndefined}
+  />
+);
+const TemplateObservable = (props: IAutoFormProps) => {
+  const [data, setData] = useState(store.data);
+  const handleChange: IAutoFormProps['onChange'] = (e) => setData({ ...data, ...e });
+  return (
+    <AutoFormObservable<TSimpleStoreItem>
+      {...props}
+      onSubmit={handleSubmit}
+      columns={store.columns}
+      onUpdate={handleUndefined}
+      onInsert={handleUndefined}
+      data={data}
+      onChange={handleChange}
+      idKey="id"
+    />
+  );
 };
 
-export const WithPrompt = TemplateObservable.bind({});
-WithPrompt.storyName = 'With Prompt';
-WithPrompt.play = async ({ canvasElement }) => {
-  // const canvas = within(canvasElement);
-  // const inputs = canvas.getAllByRole('textbox');
-  // await userEvent.type(inputs[0], 'email@provider.com');
+export const Basic: StoryObj<typeof AutoForm> = {
+  render: Template,
 };
-WithPrompt.decorators = [
-  (Story: React.FC) => (
-    <div>
-      <Link to={'/test'}>Смена роута</Link>
+
+export const Memo: StoryObj<typeof AutoFormMemo> = {
+  render: TemplateMemo,
+};
+
+export const WithGroups: StoryObj<typeof AutoForm> = {
+  name: 'With group',
+  render: Template,
+  args: {
+    grouped: true,
+  },
+};
+
+export const WithPrompt: StoryObj<typeof AutoFormObservable> = {
+  name: 'With Prompt',
+  render: TemplateObservable,
+  args: {
+    grouped: true,
+  },
+  decorators: [
+    (Story: React.FC) => (
       <div>
-        <Story />
+        <Link to={'/test'}>Смена роута</Link>
+        <div>
+          <Story />
+        </div>
       </div>
-    </div>
-  ),
-].concat(decorators as any);
+    ),
+  ],
+};

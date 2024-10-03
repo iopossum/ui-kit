@@ -1,8 +1,7 @@
-import React, { forwardRef, useImperativeHandle, useState } from 'react';
+import React, { forwardRef, useImperativeHandle, useState, CSSProperties } from 'react';
 
-import { ComponentMeta, ComponentStory } from '@storybook/react';
+import { Meta, StoryObj } from '@storybook/react';
 
-import { useDataSource } from '../../hooks/use-data-source';
 import { data, columns } from '@.storybook/decorators';
 import { DataGrid } from '@components/data-grid';
 import {
@@ -10,20 +9,23 @@ import {
   DropDownTableBoxMemo,
   IDropDownBoxProps,
   IDropDownBoxContentHandle,
-  IDropDownBoxContentProps
+  IDropDownBoxContentProps,
 } from '@components/dropdown-table-box';
+import { useDataSource } from '@hooks/use-data-source';
+
+const CONTAINER_STYLE: CSSProperties = { display: 'flex', alignItems: 'flex-start' };
 
 export default {
   title: 'DropDownTableBox',
   component: DropDownTableBox,
   decorators: [
     (Story) => (
-      <div style={{ display: 'flex', alignItems: 'flex-start' }}>
+      <div style={CONTAINER_STYLE}>
         <Story />
       </div>
     ),
   ],
-} as ComponentMeta<typeof DropDownTableBox>;
+} as Meta<typeof DropDownTableBox>;
 
 const DropDownTableBoxContent = forwardRef<IDropDownBoxContentHandle, IDropDownBoxContentProps>(
   ({ searchExpr, searchValue, ...rest }, ref) => {
@@ -63,6 +65,7 @@ type Test = Partial<(typeof data)[0]>;
 
 const DropDownTableBoxWrapper = (props: IDropDownBoxProps) => {
   const [value, setValue] = useState<number | undefined>(1);
+  const handleChange: IDropDownBoxProps<Test>['onChange'] = (e) => setValue(e?.ID);
   return (
     <DropDownTableBox<Test>
       {...props}
@@ -70,14 +73,15 @@ const DropDownTableBoxWrapper = (props: IDropDownBoxProps) => {
       dropDownContent={DropDownTableBoxContent}
       displayExpr={'CompanyName'}
       valueExpr={'ID'}
-      fetchByValue={async (e) => Promise.resolve(data[0])}
-      onChange={(e) => setValue(e.ID)}
+      fetchByValue={async () => Promise.resolve(data[0])}
+      onChange={handleChange}
     />
   );
 };
 
 const DropDownTableBoxMemoWrapper = (props: IDropDownBoxProps) => {
   const [value, setValue] = useState<number | undefined>(1);
+  const handleChange: IDropDownBoxProps<Test>['onChange'] = (e) => setValue(e?.ID);
   return (
     <DropDownTableBoxMemo<Test>
       {...props}
@@ -85,17 +89,21 @@ const DropDownTableBoxMemoWrapper = (props: IDropDownBoxProps) => {
       dropDownContent={DropDownTableBoxContent}
       displayExpr={'CompanyName'}
       valueExpr={'ID'}
-      fetchByValue={async (e) => Promise.resolve(data[0])}
-      onChange={(e) => setValue(e.ID)}
+      fetchByValue={async () => Promise.resolve(data[0])}
+      onChange={handleChange}
     />
   );
 };
 
-const Template: ComponentStory<typeof DropDownTableBox> = (args) => <DropDownTableBoxWrapper {...args} />;
-const TemplateMemo: ComponentStory<typeof DropDownTableBoxMemo> = (args) => <DropDownTableBoxMemoWrapper {...args} />;
+const Template = (props: IDropDownBoxProps) => <DropDownTableBoxWrapper {...props} />;
+const TemplateMemo = (props: IDropDownBoxProps) => <DropDownTableBoxMemoWrapper {...props} />;
 
-export const Basic = Template.bind({});
-Basic.args = {};
+export const Basic: StoryObj<typeof DropDownTableBox> = {
+  render: Template,
+  args: {},
+};
 
-export const Memo = TemplateMemo.bind({});
-Memo.args = {};
+export const Memo: StoryObj<typeof DropDownTableBoxMemo> = {
+  render: TemplateMemo,
+  args: {},
+};

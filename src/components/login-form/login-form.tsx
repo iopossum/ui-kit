@@ -1,89 +1,55 @@
-import React, { useCallback, memo } from 'react';
-import { Link, useHistory } from 'react-router-dom';
+import React, { useCallback, memo, ChangeEventHandler } from 'react';
+import { useForm, SubmitHandler, SubmitErrorHandler, Controller } from 'react-hook-form';
+import { Link } from 'react-router-dom';
 
 import cn from 'classnames';
-import Button from 'devextreme-react/button';
-import { useFormik } from 'formik';
-import type { FormikConfig } from 'formik';
 
-import type { IUseFormValidationCallback } from '../../hooks/use-form-validation-callback';
-import { useFormValidationCallback } from '../../hooks/use-form-validation-callback';
 import { AuthWrapper } from '@components/auth-wrapper';
+import { Button } from '@components/button';
 import { CheckBox } from '@components/checkbox';
 import { FloatLabelInput } from '@components/float-label-input';
-import { useStores, IAppStore, IUserStore, IToken } from '@stores/index';
 import { IWithStyles, IField } from '@types';
 import { warning } from '@utils/api';
-import { getInitialValues, createValidation } from '@utils/formik';
+import { getInitialValues, getFieldsMap } from '@utils/form';
 
 import './login-form.scss';
 
-interface ILoginFormData {
+export interface ILoginFormData {
   login: string;
   password: string;
   remember: boolean;
 }
 
 const fields: IField<ILoginFormData>[] = [
-  { field: 'login', defaultValue: '', required: true },
-  { field: 'password', defaultValue: '', required: true },
-  { field: 'remember', defaultValue: true, required: false },
+  { field: 'login', defaultValue: '', rules: { required: true } },
+  { field: 'password', defaultValue: '', rules: { required: true } },
+  { field: 'remember', defaultValue: true, rules: { required: false } },
 ];
 
 const initialValues = getInitialValues<ILoginFormData>(fields);
 
+const fieldsMap = getFieldsMap<ILoginFormData>(fields);
+
 export interface ILoginFormProps extends IWithStyles {
-  loginField?: string;
-  passwordField?: string;
   hasRegLink?: boolean;
+  hasRemember?: boolean;
   regLink?: string;
   loginLabel?: string;
-  defaultRedirectPath?: string;
-  onSubmit?: (e: ILoginFormData) => void;
-  onValidationFailed: IUseFormValidationCallback<ILoginFormData>['onValidationFailed'];
+  onSubmit: SubmitHandler<ILoginFormData>;
+  onValidationFailed?: SubmitErrorHandler<ILoginFormData>;
 }
 
 export const LoginForm = ({
   className,
   style,
-  loginField,
-  passwordField,
-  defaultRedirectPath,
   hasRegLink,
-  regLink,
-  loginLabel,
+  hasRemember,
+  regLink = '/reg',
+  loginLabel = 'Логин (e-mail)',
   onSubmit,
   onValidationFailed,
 }: ILoginFormProps) => {
-  const { AppStore, UserStore } = useStores<{ AppStore: IAppStore; UserStore: IUserStore<unknown> }>();
-  const history = useHistory();
-
-  const onSubmitFn = useCallback<FormikConfig<ILoginFormData>['onSubmit']>(
-    async (values) => {
-      if (onSubmit) {
-        return onSubmit(values);
-      }
-      AppStore.loading = true;
-      try {
-        const data = await UserStore.login<unknown, IToken>({
-          [passwordField as string]: values.password,
-          [loginField as string]: values.login,
-        });
-        AppStore.token = data?.body as NonNullable<IToken>;
-        if (!values.remember) {
-          window.onbeforeunload = AppStore.removeToken;
-        }
-        await UserStore.profile();
-        if (defaultRedirectPath) {
-          history.push(defaultRedirectPath);
-        }
-      } catch (e) {}
-      AppStore.loading = false;
-    },
-    [onSubmit, UserStore, AppStore, history, passwordField, loginField, defaultRedirectPath],
-  );
-
-  const handleValidationFailed = useCallback<IUseFormValidationCallback<ILoginFormData>['onValidationFailed']>(
+  const handleValidationFailed = useCallback<SubmitErrorHandler<ILoginFormData>>(
     (values) => {
       if (onValidationFailed) {
         return onValidationFailed(values);
@@ -93,75 +59,98 @@ export const LoginForm = ({
     [onValidationFailed],
   );
 
-  const { handleSubmit, handleChange, values, errors, validateForm } = useFormik<ILoginFormData>({
-    initialValues,
-    validate: createValidation<ILoginFormData>(fields),
-    onSubmit: onSubmitFn,
+  const {
+    formState: { errors, isSubmitting },
+    control,
+    handleSubmit,
+    setValue,
+  } = useForm<ILoginFormData>({
+    defaultValues: initialValues,
+    mode: 'onBlur',
+    values: fields.reduce((sum, v) => {
+      sum[v.field] = v.defaultValue;
+      return sum;
+    }, Object.create({})),
   });
 
-  const [handleSubmitWrapper] = useFormValidationCallback({
-    validateForm,
-    handleSubmit,
-    onValidationFailed: handleValidationFailed,
-  });
+  const handleChangeRemember = useCallback<ChangeEventHandler<HTMLInputElement>>(
+    (e) => {
+      setValue('remember', e.target.checked, { shouldValidate: true, shouldDirty: true, shouldTouch: true });
+    },
+    [setValue],
+  );
 
   return (
     <AuthWrapper className={cn('login', { [className as string]: !!className })} style={style} header="Авторизация">
-      <form noValidate onSubmit={handleSubmitWrapper}>
-        <FloatLabelInput
+      <form noValidate onSubmit={handleSubmit(onSubmit, handleValidationFailed)}>
+        <Controller<ILoginFormData>
           name="login"
-          label={loginLabel}
-          required
-          status={errors.login && 'error'}
-          value={values.login}
-          autoComplete="login"
-          autoFocus
-          size="large"
-          fullWidth
-          onChange={handleChange}
+          control={control}
+          rules={fieldsMap['login'].rules}
+          render={({ field: { ref, value, ...rest } }) => (
+            <FloatLabelInput
+              label={loginLabel}
+              required
+              status={errors.login ? 'error' : undefined}
+              autoComplete="login"
+              autoFocus
+              size="large"
+              fullWidth
+              value={value as string}
+              {...rest}
+            />
+          )}
         />
-        <FloatLabelInput
+        <Controller<ILoginFormData>
           name="password"
-          label="Пароль"
-          type="password"
-          required
-          fullWidth
-          size="large"
-          status={errors.password && 'error'}
-          value={values.password}
-          autoComplete="password"
-          onChange={handleChange}
+          control={control}
+          rules={fieldsMap['password'].rules}
+          render={({ field: { ref, value, ...rest } }) => (
+            <FloatLabelInput
+              label="Пароль"
+              type="password"
+              required
+              fullWidth
+              size="large"
+              status={errors.password ? 'error' : undefined}
+              autoComplete="password"
+              value={value as string}
+              {...rest}
+            />
+          )}
         />
-        <CheckBox
-          value={values.remember}
-          name="remember"
-          onChange={handleChange}
-          label="Запомнить"
-          className="login__remember"
-        />
+        {hasRemember ? (
+          <Controller<ILoginFormData>
+            name="remember"
+            control={control}
+            rules={fieldsMap['remember'].rules}
+            render={({ field: { ref, value, ...rest } }) => (
+              <CheckBox
+                {...rest}
+                label="Запомнить"
+                className="login__remember"
+                value={value as boolean}
+                onChange={handleChangeRemember}
+              />
+            )}
+          />
+        ) : null}
         <Button
           text="Войти"
           type="default"
           elementAttr={{ class: 'login__submit' }}
           stylingMode="outlined"
+          loading={isSubmitting}
           useSubmitBehavior
         />
-        {hasRegLink && (
+        {hasRegLink && !!regLink ? (
           <Link to={regLink} className="login__reg">
             Регистрация
           </Link>
-        )}
+        ) : null}
       </form>
     </AuthWrapper>
   );
-};
-
-LoginForm.defaultProps = {
-  loginField: 'email',
-  passwordField: 'password',
-  loginLabel: 'Логин (e-mail)',
-  defaultRedirectPath: '/',
-  regLink: '/reg',
 };
 
 export const LoginFormMemo = memo(LoginForm);

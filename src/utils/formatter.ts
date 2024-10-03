@@ -1,10 +1,9 @@
-import { add, format } from 'date-fns';
-import type { LoadOptions } from 'devextreme/data';
+import { add } from 'date-fns';
 import type { SelectedFilterOperation } from 'devextreme/ui/data_grid';
 import type { IColumnProps } from 'devextreme-react/data-grid';
-import { reduce } from 'lodash-es';
 
-import type { IField } from '@types';
+import { ILoadOptions, ILoopbackFilter, TAndOr } from '@types';
+import { getUTCDate } from '@utils/date';
 
 export interface IFullName {
   lastName: string;
@@ -12,23 +11,20 @@ export interface IFullName {
   middleName?: string;
 }
 
-export interface IRequestQueryProps {
-  limit?: number;
-  skip?: number;
-  order?: string | string[];
-  where: Record<string, unknown>;
-}
-
 interface IOrder {
   selector: string;
   desc: string;
 }
 
-export const formatDate = (date: Date, dateFormat: string) => {
-  if (!date) {
-    return date;
+export const prettyNumber = (num?: number | string) => {
+  if (!num) {
+    return num;
   }
-  return format(date, dateFormat);
+  const floatValue = parseFloat(num as string);
+  if (!isNaN(floatValue) && floatValue < 1000) {
+    return num;
+  }
+  return String(num).replace(/(\d)(?=(\d\d\d)+([^\d]|$))/g, '$1 ');
 };
 
 export const toFixed = (value: number, digits: number) => {
@@ -36,6 +32,32 @@ export const toFixed = (value: number, digits: number) => {
   const fixedValue = value ? value.toFixed(digits) : '0';
   return parseFloat(fixedValue);
 };
+
+export const getPercentDigits = (value: number) => {
+  let digits = 0;
+  if (value) {
+    if (value < 10) {
+      digits = 2;
+    } else if (value < 100) {
+      digits = 1;
+    }
+  }
+  return digits;
+};
+
+export const prettyNumberFixed = (value?: number, digits?: number) => {
+  let result: string | undefined;
+  if (typeof value !== 'undefined') {
+    result = value?.toFixed(digits);
+    if (digits! > 0) {
+      result = result.replace(/\.0+$/, '');
+    }
+  }
+  return prettyNumber(result);
+};
+
+export const prettyNumberFixedPercent = (value?: number, digits?: number) =>
+  value && prettyNumberFixed(value, digits || getPercentDigits(value));
 
 export const pluralize = (num: number, array: string[]) => {
   num = toFixed(num, 0);
@@ -77,53 +99,51 @@ export const isInt = (value: number | string) => {
   );
 };
 
+export function convertToInt(v?: string) {
+  if (!v) {
+    return undefined;
+  }
+  const intValue = parseInt(v, 10);
+  return isNaN(intValue) ? undefined : intValue;
+}
+
 export const convertDataGridCondition = (value: string, condition: SelectedFilterOperation) => {
   switch (condition) {
     case '=':
       return { eq: value };
-      break;
     case '<>':
       return { neq: value };
-      break;
     case '<':
       return { lt: value };
-      break;
     case '>':
       return { gt: value };
-      break;
     case '<=':
       return { lte: value };
-      break;
     case '>=':
       return { gte: value };
-      break;
     case 'contains':
       return { regexp: new RegExp(value, 'i').toString() };
-      break;
     case 'notcontains':
       return { nlike: new RegExp(value, 'i').toString() };
-      break;
     case 'startswith':
       return { regexp: new RegExp(`^${value}`, 'i').toString() };
-      break;
     case 'endswith':
       return { regexp: new RegExp(`${value}$`, 'i').toString() };
-      break;
   }
 };
 
-const getGroupConds = (group: unknown, conds: unknown[], prevCond?: unknown) => {
+const getGroupConds = <T = {}>(group: unknown, conds: TAndOr<T>[], prevCond?: string) => {
   if (Array.isArray(group) && typeof group[1] === 'string') {
     if (Array.isArray(group[0])) {
       if (prevCond === group[1]) {
-        group.forEach((item, i) => {
+        group.forEach((item) => {
           getGroupConds(item, conds);
         });
       } else {
         const result = {
           [group[1]]: [],
         };
-        group.forEach((item, i) => {
+        group.forEach((item) => {
           getGroupConds(item, result[group[1]], group[1]);
         });
         conds.push(result);
@@ -135,56 +155,45 @@ const getGroupConds = (group: unknown, conds: unknown[], prevCond?: unknown) => 
   }
 };
 
-export const convertDataGridOptions = (
-  opts: LoadOptions & { isLoadingAll?: boolean },
-  props: Record<string, unknown>,
+export const convertDataGridOptions = <T = {}>(
+  opts: ILoadOptions<T> & { isLoadingAll?: boolean },
+  props?: ILoopbackFilter<T>['where'],
 ) => {
   const { take, skip, isLoadingAll, searchValue, searchExpr, filter, userData, sort } = opts;
-  const query: IRequestQueryProps = {
+  const query: ILoopbackFilter<T> = {
     limit: take || 20,
     skip: skip || 0,
-    where: { and: [] },
+    where: {},
   };
   if (isLoadingAll) {
     delete query.limit;
     delete query.skip;
   }
+  let and: TAndOr<T>[] = [];
   try {
     if (searchValue && searchExpr) {
-      (query.where.and as Array<Record<string, unknown>>).push({
+      and.push({
         [searchExpr as string]: {
           regexp: new RegExp(searchValue, 'i').toString(),
         },
       });
     }
     if (filter && filter.length) {
-      getGroupConds(filter, query.where.and as Array<Record<string, unknown>>, 'and');
+      getGroupConds(filter, and, 'and');
     }
   } catch (e) {}
   if (userData && Object.keys(userData).length) {
-    if (userData.and) {
-      if (userData.and.length) {
-        query.where.and = query.where.and || [];
-        query.where.and = (query.where.and as Array<Record<string, unknown>>).concat(userData.and.slice());
-      }
+    if (userData.and?.length) {
+      and = and.concat(userData.and.slice());
     } else {
-      query.where.and = query.where.and || [];
-      query.where.and = (query.where.and as Array<Record<string, unknown>>).concat(
-        Object.keys(userData).map((key) => ({ [key]: userData[key] })),
-      );
+      and = and.concat(Object.keys(userData).map((key) => ({ [key]: userData[key as keyof typeof userData] })));
     }
   }
   if (props && Object.keys(props).length) {
-    if (props.and) {
-      if (Array.isArray(props.and) && props.and.length) {
-        query.where.and = query.where.and || [];
-        query.where.and = (query.where.and as Array<Record<string, unknown>>).concat(props.and.slice());
-      }
+    if (props.and && Array.isArray(props.and) && props.and.length) {
+      and = and.concat(props.and.slice());
     } else {
-      query.where.and = query.where.and || [];
-      query.where.and = (query.where.and as Array<Record<string, unknown>>).concat(
-        Object.keys(props).map((key) => ({ [key]: props[key] })),
-      );
+      and = and.concat(Object.keys(props).map((key) => ({ [key]: props[key as keyof typeof props] })));
     }
   }
   if (sort && Array.isArray(sort)) {
@@ -192,10 +201,12 @@ export const convertDataGridOptions = (
       typeof v === 'string' ? v : `${(v as IOrder).selector} ${(v as IOrder).desc ? 'DESC' : 'ASC'}`,
     );
   }
-  if ((query.where.and as Array<Record<string, unknown>>).length <= 1) {
-    const cond = (query.where.and as Array<Record<string, unknown>>)[0] || {};
-    Object.assign(query.where, cond);
-    delete query.where.and;
+  if (and.length) {
+    if (and.length === 1) {
+      query.where = and[0] as ILoopbackFilter<T>['where'];
+    } else {
+      query.where = { and } as ILoopbackFilter<T>['where'];
+    }
   }
   return query;
 };
@@ -205,8 +216,7 @@ export const calculateDateFilterExpression = function (
   value: Date,
   selectedFilterOperations: SelectedFilterOperation,
 ) {
-  const timezoneOffsett = value.getTimezoneOffset();
-  const adjustedDate = new Date(value.getTime() - timezoneOffsett * 60000);
+  const adjustedDate = getUTCDate(value);
   if (selectedFilterOperations === '=') {
     return [[this.dataField, '>=', adjustedDate], 'and', [this.dataField, '<', add(adjustedDate, { days: 1 })]];
   } else {
@@ -221,21 +231,3 @@ export const replaceFilterExpression = function (
 ) {
   return [this.dataFieldOriginal, selectedFilterOperations, value];
 };
-
-export const getFormValues = <T>(inputs: Record<keyof T, IField<T>>) => {
-  return reduce(
-    inputs,
-    (result, value, key) => {
-      if (!value.skippable) {
-        result[key as keyof T] = value.value;
-      }
-      return result;
-    },
-    {} as Record<keyof T, T[keyof T] | undefined>,
-  );
-};
-
-export const replaceRegexpE = (v: string) => v.replace(/е/gi, '(е|ё)');
-
-export const emailRegExp =
-  /^(([^<>()[]\\.,;:\s@"]+(\.[^<>()[]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;

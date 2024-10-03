@@ -1,4 +1,3 @@
-
 import React, { useState, memo } from 'react';
 
 import { Input } from 'antd';
@@ -24,18 +23,24 @@ export const FloatLabelInput = (props: IFloatLabelInputProps) => {
 
   const required = rest.required ? <span className="required">*</span> : null;
 
+  const handleFocus = () => setFocus(true);
+  const handleBlur = () => setFocus(false);
+
   return (
     <div
-      className={cn(['float-label', rest.size, rest.status], { focused: isOccupied, 'full-width': fullWidth })}
-      onBlur={() => setFocus(false)}
-      onFocus={() => setFocus(true)}
+      className={cn(['float-label', rest.size, rest.status], {
+        focused: isOccupied,
+        'full-width': fullWidth,
+      })}
+      onBlur={handleBlur}
+      onFocus={handleFocus}
     >
       <label>
         {label || placeholder}
         {required}
       </label>
       <div className="input-container">
-        <Input defaultValue={value} bordered={false} value={value} {...rest} />
+        <Input variant="borderless" type="text" value={value} {...rest} />
         <fieldset>
           <legend>
             <span>
@@ -47,10 +52,6 @@ export const FloatLabelInput = (props: IFloatLabelInputProps) => {
       </div>
     </div>
   );
-};
-
-FloatLabelInput.defaultProps = {
-  type: 'text',
 };
 
 export const FloatLabelInputMemo = memo(FloatLabelInput);

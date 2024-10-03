@@ -1,13 +1,13 @@
 import AbortController from 'abort-controller';
+import { notification } from 'antd';
 import { locale, loadMessages } from 'devextreme/localization';
 import ruMessages from 'devextreme/localization/messages/ru.json';
 import notify from 'devextreme/ui/notify';
-import { createBrowserHistory } from 'history';
 
 import { getCookie } from '@utils/cookie';
 
-const UNKNOWN_ERROR_MESSAGE = 'Неверная конфигурация сервера';
-const UNAUTHORIZED_ERROR_MESSAGE = 'Доступ запрещен или истек срок токена авторизации';
+export const UNKNOWN_ERROR_MESSAGE = 'Неверная конфигурация сервера';
+export const UNAUTHORIZED_ERROR_MESSAGE = 'Доступ запрещен или истек срок токена авторизации';
 
 export interface IErrorHandlerCfg {
   showToast?: boolean;
@@ -44,13 +44,15 @@ export interface IResponse<T> extends IResponseAdditional {
   body: T;
 }
 
+export interface IResponseError extends IResponse<IResponseErrorBody> {}
+
 export interface IRequestCfg {
   abortable?: boolean;
   abortName?: string;
   abortController?: InstanceType<typeof AbortController>;
   cached?: Record<string, unknown>;
   isText?: boolean;
-  autoLogout?: boolean;
+  host?: string;
 }
 
 export interface IRequestProps<T> extends Omit<Partial<Request>, 'cache' | 'body'>, IRequestCfg {
@@ -60,8 +62,8 @@ export interface IRequestProps<T> extends Omit<Partial<Request>, 'cache' | 'body
 
 export type NotifyType = 'info' | 'error' | 'success' | 'warning';
 
-const options = (method: Request['method']) => {
-  const headers = new Headers();
+const options = (method: Request['method'], h?: [string, string][]) => {
+  const headers = new Headers(h);
   headers.append('Content-type', 'application/json');
   const cookiePrefix = (window as typeof window & { cookiePrefix?: string }).cookiePrefix || '';
   const token = getCookie(`${cookiePrefix}token`);
@@ -79,8 +81,6 @@ export const initLocales = (): void => {
   loadMessages(ruMessages);
   locale('ru');
 };
-
-export const history = createBrowserHistory();
 
 export const getErrorMessages = (res: IResponse<IResponseErrorBody>, message?: string): string[] => {
   let messages: Array<string | undefined> = [];
@@ -103,8 +103,8 @@ export const getErrorMessages = (res: IResponse<IResponseErrorBody>, message?: s
     } else if (res.body.message || message) {
       messages = [res.body.message || message];
     }
-  } else if (message || res.message) {
-    messages = [message || res.message];
+  } else if (res.message || message) {
+    messages = [res.message || message];
   }
   return messages.filter(Boolean) as string[];
 };
@@ -156,12 +156,12 @@ export const abortAll = (): void => {
 };
 
 export const request = async <T, K>(props: IRequestProps<T>): Promise<IResponse<K>> => {
-  const { url, abortable, abortName, abortController, cached, isText, autoLogout, ...rest } = props;
+  const { url, abortable, abortName, abortController, cached, isText, host, ...rest } = props;
   if (cached && cached[url]) {
     return cached[url] as Promise<IResponse<K>>;
   }
   const abortKey = abortName || url;
-  if (abortable) {
+  if (abortable || abortController) {
     if (abortControllers[abortKey]) {
       abortControllers[abortKey].abort();
     }
@@ -172,9 +172,9 @@ export const request = async <T, K>(props: IRequestProps<T>): Promise<IResponse<
   let response = null;
   let parsedResponse = null;
   try {
-    response = await fetch(`${process.env.HOST}${url}`, rest as IRequestProps<T & URLSearchParams>);
+    response = await fetch(`${host || process.env.HOST || ''}${url}`, rest as IRequestProps<T & URLSearchParams>);
   } catch (err) {
-    return Promise.reject({
+    throw Object.assign(new Error(), {
       body: err,
       response,
       aborted: err instanceof DOMException,
@@ -192,16 +192,13 @@ export const request = async <T, K>(props: IRequestProps<T>): Promise<IResponse<
   }
 
   if (!response.status || response.status >= 400) {
+    let errorBody = parsedResponse;
     if (response.status === 401) {
       abortAll();
-      autoLogout && logout(history);
-      return Promise.reject({
-        body: parsedResponse || new Error(UNAUTHORIZED_ERROR_MESSAGE),
-        response,
-      });
+      errorBody = parsedResponse || new Error(UNAUTHORIZED_ERROR_MESSAGE);
     }
-    return Promise.reject({
-      body: parsedResponse || new Error(UNKNOWN_ERROR_MESSAGE),
+    throw Object.assign(new Error(), {
+      body: errorBody || new Error(UNKNOWN_ERROR_MESSAGE),
       response,
     });
   }
@@ -209,13 +206,6 @@ export const request = async <T, K>(props: IRequestProps<T>): Promise<IResponse<
     cached[url] = { body: parsedResponse, response };
   }
   return Promise.resolve({ body: parsedResponse, response });
-};
-
-export const logout = (history: ReturnType<typeof createBrowserHistory>, loginPath?: string): void => {
-  loginPath = loginPath || '/login';
-  if (history.location.pathname !== loginPath) {
-    history.push(loginPath);
-  }
 };
 
 export const buildToast = (message: string, type: NotifyType = 'info'): void => {
@@ -240,18 +230,21 @@ export const buildToast = (message: string, type: NotifyType = 'info'): void => 
     maxWidth: 300,
     type,
     displayTime: 5000,
-    elementAttr: { class: 'toast' },
+    wrapperAttr: { class: 'toast' },
   });
 };
 
 export const error = (message: string): void => {
-  buildToast(message, 'error');
+  notification.error({ message });
+  // buildToast(message, 'error');
 };
 
 export const success = (message: string): void => {
-  buildToast(message, 'success');
+  // buildToast(message, 'success');
+  notification.success({ message });
 };
 
 export const warning = (message: string): void => {
-  buildToast(message, 'warning');
+  notification.warning({ message });
+  // buildToast(message, 'warning');
 };

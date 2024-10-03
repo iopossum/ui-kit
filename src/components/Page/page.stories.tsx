@@ -1,19 +1,23 @@
 import React from 'react';
 
-import { ComponentMeta, ComponentStory } from '@storybook/react';
+import { Meta, StoryObj } from '@storybook/react';
 
-import { Page, PageMemo } from '@components/page';
+import { Page, PageMemo, IPageProps } from '@components/page';
 
 export default {
   title: 'Page',
   component: Page,
-} as ComponentMeta<typeof Page>;
+} as Meta<typeof Page>;
 
-const Template: ComponentStory<typeof Page> = (args) => <Page {...args} />;
-const TemplateMemo: ComponentStory<typeof PageMemo> = (args) => <PageMemo {...args} />;
+const Template = (props: IPageProps) => <Page {...props} />;
+const TemplateMemo = (props: IPageProps) => <PageMemo {...props} />;
 
-export const Basic = Template.bind({});
-Basic.args = {};
+export const Basic: StoryObj<typeof Page> = {
+  render: Template,
+  args: {},
+};
 
-export const Memo = TemplateMemo.bind({});
-Memo.args = {};
+export const Memo: StoryObj<typeof PageMemo> = {
+  render: TemplateMemo,
+  args: {},
+};

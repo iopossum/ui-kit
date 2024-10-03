@@ -1,16 +1,13 @@
+@import '../../styles/variables';
+
 .dx-datagrid {
-  font-size: 12px;
-  .dx-row {
-    td {
-      padding-top: 3px;
-      padding-bottom: 3px;
-    }
-  }
+  font-size: rem(12);
+
   .dx-texteditor-container {
     input {
-      height: 26px;
+      height: rem(26);
       min-height: inherit;
-      font-size: 12px;
+      font-size: rem(12);
     }
   }
 }

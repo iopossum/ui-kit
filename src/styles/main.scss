@@ -1,43 +1,13 @@
-@import "~devextreme/dist/css/dx.common.css";
-@import "~devextreme/dist/css/dx.light.css";
-@import "toast";
-
-@import "./variables";
-
-@mixin placeholder {
-  &::-webkit-input-placeholder {
-    @content;
-  }
-  &:-moz-placeholder {
-    @content;
-  }
-  &::-moz-placeholder {
-    @content;
-  }
-  &:-ms-input-placeholder {
-    @content;
-  }
-}
-
 html {
   height: 100%;
+
   body {
     margin: 0;
     padding: 0;
     min-height: 100vh;
     display: flex !important;
     background-color: #ddd;
-    font-family: "Segoe UI", "Helvetica Neue", "Trebuchet MS", "Verdana";
-    input {
-      @include placeholder {
-        color: $input-placeholder-color !important;
-      }
-    }
   }
-}
-
-.dx-widget {
-  font-family: "Segoe UI", "Helvetica Neue", "Trebuchet MS", "Verdana";
 }
 
 #root {
@@ -55,42 +25,4 @@ html {
 .flex1 {
   display: flex;
   flex: 1;
-}
-
-@keyframes slidein {
-  from {
-    transform: translateX(-200%);
-  }
-
-  to {
-    transform: translateX(0);
-  }
-}
-
-@keyframes slideout {
-  from {
-    transform: translateX(0);
-  }
-
-  to {
-    transform: translateX(200%);
-  }
-}
-
-@keyframes fade-out {
-  from {
-    opacity: 1;
-  }
-  to {
-    opacity: 0;
-  }
-}
-
-@keyframes fade-in {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
 }

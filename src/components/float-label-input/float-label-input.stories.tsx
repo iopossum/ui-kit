@@ -1,42 +1,46 @@
-import React, { useState } from 'react';
+import React, { useState, CSSProperties } from 'react';
 
-import { ComponentMeta, ComponentStory } from '@storybook/react';
+import { Meta, StoryObj } from '@storybook/react';
 
 import { Card } from '@components/card';
-import { FloatLabelInput, FloatLabelInputMemo } from '@components/float-label-input';
+import { FloatLabelInput, FloatLabelInputMemo, IFloatLabelInputProps } from '@components/float-label-input';
+
+const STYLE: CSSProperties = { height: 300 };
 
 export default {
   title: 'FloatLabelInput',
   component: FloatLabelInput,
   decorators: [
     (Story: React.FC) => (
-      <Card style={{ height: 300 }}>
+      <Card style={STYLE}>
         <Story />
       </Card>
     ),
-  ]
-} as ComponentMeta<typeof FloatLabelInput>;
+  ],
+} as Meta<typeof FloatLabelInput>;
 
-const Template: ComponentStory<typeof FloatLabelInput> = (args) => {
+const Template = (props: IFloatLabelInputProps) => {
   const [value, setValue] = useState('');
-  return (
-    <FloatLabelInput {...args} value={value} onChange={e => setValue(e.target.value)} />
-  )
+  const handleChange: IFloatLabelInputProps['onChange'] = (e) => setValue(e.target.value);
+  return <FloatLabelInput {...props} value={value} onChange={handleChange} />;
 };
 
-const TemplateMemo: ComponentStory<typeof FloatLabelInputMemo> = (args) => {
+const TemplateMemo = (props: IFloatLabelInputProps) => {
   const [value, setValue] = useState('');
-  return (
-    <FloatLabelInputMemo {...args} value={value} onChange={e => setValue(e.target.value)} />
-  )
+  const handleChange: IFloatLabelInputProps['onChange'] = (e) => setValue(e.target.value);
+  return <FloatLabelInputMemo {...props} value={value} onChange={handleChange} />;
 };
 
-export const Basic = Template.bind({});
-Basic.args = {
-  placeholder: 'asd'
+export const Basic: StoryObj<typeof FloatLabelInput> = {
+  render: Template,
+  args: {
+    placeholder: 'asd',
+  },
 };
 
-export const Memo = TemplateMemo.bind({});
-Memo.args = {
-  placeholder: 'asd'
+export const Memo: StoryObj<typeof FloatLabelInputMemo> = {
+  render: TemplateMemo,
+  args: {
+    placeholder: 'asd',
+  },
 };

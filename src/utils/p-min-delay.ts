@@ -4,7 +4,7 @@ import type { Options } from 'delay';
 export const pMinDelay = async (
   promise: Promise<unknown>,
   minimumDelay: number,
-  options?: Options & { delayRejection?: boolean },
+  options?: Options<number> & { delayRejection?: boolean },
 ) => {
   options = {
     delayRejection: true,

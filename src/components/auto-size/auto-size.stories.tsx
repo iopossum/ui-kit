@@ -1,20 +1,23 @@
-import React from 'react';
+import React, { CSSProperties } from 'react';
 
-import { ComponentMeta, ComponentStory } from '@storybook/react';
+import { Meta, StoryObj } from '@storybook/react';
 
 import { AutoSize, AutoSizeMemo, TAutoSizeProps } from '@components/auto-size';
+
+const CONTAINER_STYLE: CSSProperties = { display: 'flex', flex: 1 };
+const STYLE: CSSProperties = { border: '1px solid red' };
 
 export default {
   title: 'AutoSize',
   component: AutoSize,
   decorators: [
     (Story) => (
-      <div style={{ display: 'flex', flex: 1 }}>
+      <div style={CONTAINER_STYLE}>
         <Story />
       </div>
     ),
   ],
-} as ComponentMeta<typeof AutoSize>;
+} satisfies Meta<typeof AutoSize>;
 
 interface IBlock {
   test?: number;
@@ -25,7 +28,7 @@ const Block: TAutoSizeProps<IBlock>['component'] = ({ autoHeight, autoWidth, tes
       style={{
         height: Math.max(autoHeight as number, 20),
         width: autoWidth,
-        border: '1px solid red',
+        ...STYLE,
       }}
     >
       autosize {test}
@@ -33,35 +36,39 @@ const Block: TAutoSizeProps<IBlock>['component'] = ({ autoHeight, autoWidth, tes
   );
 };
 
-const Template: ComponentStory<typeof AutoSize> = (args) => (
-  <AutoSize<IBlock> {...args} test={2} component={Block} />
-);
+const Template = (props: TAutoSizeProps) => <AutoSize<IBlock> {...props} test={2} component={Block} />;
+const TemplateMemo = (props: TAutoSizeProps) => <AutoSizeMemo<IBlock> {...props} test={2} component={Block} />;
 
-const TemplateMemo: ComponentStory<typeof AutoSizeMemo> = (args) => (
-  <AutoSizeMemo<IBlock> {...args} test={2} component={Block} />
-);
-
-export const Basic = Template.bind({});
-Basic.args = {
-  disableWidth: false,
-  disableHeight: false,
+export const Basic: StoryObj<typeof AutoSize> = {
+  render: Template,
+  args: {
+    disableWidth: false,
+    disableHeight: false,
+  },
 };
 
-export const Memo = TemplateMemo.bind({});
-Memo.args = {
-  disableWidth: false,
-  disableHeight: false,
+export const Memo: StoryObj<typeof AutoSizeMemo> = {
+  render: TemplateMemo,
+  args: {
+    disableWidth: false,
+    disableHeight: false,
+  },
 };
 
-export const Height = Template.bind({});
-Height.storyName = 'Disable height';
-Height.args = {
-  disableHeight: true,
-  disableWidth: false,
+export const Height: StoryObj<typeof AutoSize> = {
+  render: Template,
+  name: 'Disable height',
+  args: {
+    disableWidth: false,
+    disableHeight: true,
+  },
 };
 
-export const Width = Template.bind({});
-Width.storyName = 'Disable width';
-Width.args = {
-  disableWidth: true,
+export const Width: StoryObj<typeof AutoSize> = {
+  render: Template,
+  name: 'Disable width',
+  args: {
+    disableWidth: true,
+    disableHeight: false,
+  },
 };

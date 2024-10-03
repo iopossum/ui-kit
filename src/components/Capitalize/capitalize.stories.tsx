@@ -1,30 +1,36 @@
-import React from 'react';
+import React, { CSSProperties } from 'react';
 
-import { ComponentMeta, ComponentStory } from '@storybook/react';
+import { Meta, StoryObj } from '@storybook/react';
 
-import { Capitalize, CapitalizeMemo } from '@components/capitalize';
+import { Capitalize, CapitalizeMemo, ICapitalizeProps } from '@components/capitalize';
+
+const CONTAINER_STYLE: CSSProperties = { display: 'flex', flex: 1 };
 
 export default {
   title: 'Capitalize',
   component: Capitalize,
   decorators: [
     (Story) => (
-      <div style={{ display: 'flex', flex: 1 }}>
+      <div style={CONTAINER_STYLE}>
         <Story />
       </div>
     ),
   ],
-} as ComponentMeta<typeof Capitalize>;
+} as Meta<typeof Capitalize>;
 
-const Template: ComponentStory<typeof Capitalize> = (args) => <Capitalize {...args} />;
-const TemplateMemo: ComponentStory<typeof CapitalizeMemo> = (args) => <CapitalizeMemo {...args} />;
+const Template = (props: ICapitalizeProps) => <Capitalize {...props} />;
+const TemplateMemo = (props: ICapitalizeProps) => <CapitalizeMemo {...props} />;
 
-export const Basic = Template.bind({});
-Basic.args = {
-  text: 'один два',
+export const Basic: StoryObj<typeof Capitalize> = {
+  render: Template,
+  args: {
+    text: 'один два',
+  },
 };
 
-export const Memo = TemplateMemo.bind({});
-Memo.args = {
-  text: 'один два',
+export const Memo: StoryObj<typeof CapitalizeMemo> = {
+  render: TemplateMemo,
+  args: {
+    text: 'один два',
+  },
 };

@@ -1,63 +1,69 @@
-import React, { useRef } from 'react';
+import React, { useRef, CSSProperties } from 'react';
 
-import { ComponentMeta, ComponentStory } from '@storybook/react';
+import { Meta, StoryObj } from '@storybook/react';
 
 import { Button } from '@components/button';
 import { Dialog, DialogMemo, IDialogProps, IDialogHandle } from '@components/dialog';
+
+const CONTAINER_STYLE: CSSProperties = { display: 'flex', alignItems: 'flex-start' };
 
 export default {
   title: 'Dialog',
   component: Dialog,
   decorators: [
     (Story) => (
-      <div style={{ display: 'flex', alignItems: 'flex-start' }}>
+      <div style={CONTAINER_STYLE}>
         <Story />
       </div>
     ),
   ],
-} as ComponentMeta<typeof Dialog>;
+} as Meta<typeof Dialog>;
 
 type Test = {
-  test: string;
-}
+  test?: string;
+};
 
 const DialogWrapper = (props: IDialogProps) => {
   const ref = useRef<IDialogHandle<Test>>(null);
+  const handleClick = async () => {
+    const [error, data] = await ref.current!.open(null, { text: 'asdasd' });
+    if (error) {
+      alert(error.message);
+    } else {
+      alert(JSON.stringify(data, null, 2));
+    }
+  };
   return (
     <>
-      <Dialog<Test> ref={ref} showButtons showSubmitButton {...props} />
-      <Button
-        text="open"
-        onClick={async () => {
-          const data = await ref.current?.open({ text: 'asdasd' });          
-          alert(JSON.stringify(data, null, 2));
-        }}
-      />
+      <Dialog<Test> ref={ref} showSubmitButton {...props} />
+      <Button text="open" onClick={handleClick} />
     </>
   );
 };
 
 const DialogMemoWrapper = (props: IDialogProps) => {
   const ref = useRef<IDialogHandle<Test>>(null);
+  const handleClick = async () => {
+    const data = await ref.current?.open(null, { text: 'asdasd' });
+    alert(JSON.stringify(data, null, 2));
+  };
   return (
     <>
-      <DialogMemo<Test> ref={ref} showButtons showSubmitButton {...props} />
-      <Button
-        text="open"
-        onClick={async () => {
-          const data = await ref.current?.open({ text: 'asdasd' });
-          alert(JSON.stringify(data, null, 2));
-        }}
-      />
+      <DialogMemo<Test> ref={ref} showSubmitButton {...props} />
+      <Button text="open" onClick={handleClick} />
     </>
   );
 };
 
-const Template: ComponentStory<typeof Dialog> = (args) => <DialogWrapper {...args} />;
-const TemplateMemo: ComponentStory<typeof DialogMemo> = (args) => <DialogMemoWrapper {...args} />;
+const Template = (props: IDialogProps) => <DialogWrapper {...props} />;
+const TemplateMemo = (props: IDialogProps) => <DialogMemoWrapper {...props} />;
 
-export const Basic = Template.bind({});
-Basic.args = {};
+export const Basic: StoryObj<typeof Dialog> = {
+  render: Template,
+  args: {},
+};
 
-export const Memo = TemplateMemo.bind({});
-Memo.args = {};
+export const Memo: StoryObj<typeof DialogMemo> = {
+  render: TemplateMemo,
+  args: {},
+};

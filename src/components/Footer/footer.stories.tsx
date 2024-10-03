@@ -1,19 +1,23 @@
 import React from 'react';
 
-import { ComponentMeta, ComponentStory } from '@storybook/react';
+import { Meta, StoryObj } from '@storybook/react';
 
-import { Footer, FooterMemo } from '@components/footer';
+import { Footer, FooterMemo, IFooterProps } from '@components/footer';
 
 export default {
   title: 'Footer',
   component: Footer,
-} as ComponentMeta<typeof Footer>;
+} as Meta<typeof Footer>;
 
-const Template: ComponentStory<typeof Footer> = (args) => <Footer {...args}>children</Footer>;
-const TemplateMemo: ComponentStory<typeof FooterMemo> = (args) => <FooterMemo {...args}>children</FooterMemo>;
+const Template = (props: IFooterProps) => <Footer {...props}>children</Footer>;
+const TemplateMemo = (props: IFooterProps) => <FooterMemo {...props}>children</FooterMemo>;
 
-export const Basic = Template.bind({});
-Basic.args = {};
+export const Basic: StoryObj<typeof Footer> = {
+  render: Template,
+  args: {},
+};
 
-export const Memo = TemplateMemo.bind({});
-Memo.args = {};
+export const Memo: StoryObj<typeof FooterMemo> = {
+  render: TemplateMemo,
+  args: {},
+};

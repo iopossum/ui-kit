@@ -2,6 +2,7 @@
   "exclude": ["dist", ".storybook"],
   "include": ["src"],
   "compilerOptions": {
+    "downlevelIteration": true,
     "noImplicitAny": true,
     "module": "esnext",
     "target": "es5",
@@ -16,14 +17,15 @@
     "moduleResolution": "node",
     "paths": {
       "@utils/*": ["./src/utils/*"],
-      "@hooks": ["./src/hooks"],
-      "@stores/*": ["./src/stores/*"],      
+      "@hooks/*": ["./src/hooks/*"],
+      "@stores": ["./src/stores/index"],
+      "@stores/*": ["./src/stores/*"],
       "@components/*": ["./src/components/*"],
       "@types": ["./src/types/index"],
       "@.storybook/decorators": ["./.storybook/decorators"]
     },
     "allowSyntheticDefaultImports": true,
-    "strictBindCallApply": true,    
+    "strictBindCallApply": true,
     "emitDeclarationOnly": true,
     "plugins": [{ "name": "typescript-plugin-css-modules" }],
     "declaration": true,

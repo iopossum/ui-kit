@@ -1,53 +1,51 @@
-const path = require('path');
+import type { StorybookConfig } from '@storybook/react-webpack5';
+import path from 'path';
 
-module.exports = {
+const cfg: StorybookConfig = {
   typescript: {
     check: false,
     checkOptions: {},
-    reactDocgen: 'react-docgen-typescript',
+
     reactDocgenTypescriptOptions: {
       shouldExtractLiteralValuesFromEnum: true,
       savePropValueAsString: true,
-      shouldRemoveUndefinedFromOptional: true,      
+      shouldRemoveUndefinedFromOptional: true,
       propFilter: (prop) => {
         return true;
       },
     },
-  },  
-  addons: ['@storybook/addon-links', '@storybook/addon-essentials', '@storybook/addon-interactions'],
-  stories: ['../src/**/*.stories.tsx'],  
-  framework: '@storybook/react',
+
+    reactDocgen: 'react-docgen-typescript',
+  },
+  addons: [
+    '@storybook/addon-links',
+    '@storybook/addon-essentials',
+    '@storybook/addon-interactions',
+    '@storybook/preset-create-react-app',
+    'storybook-addon-remix-react-router',
+  ],
+  stories: ['../src/**/*.stories.tsx'],
   core: {
-    builder: {
-      name: 'webpack5',
-      options: {
+    disableTelemetry: true, // 👈 Disables telemetry
+  },
+  docs: {
+    autodocs: true,
+  },
+  framework: {
+    name: '@storybook/react-webpack5',
+    options: {
+      builder: {
+        fsCache: true,
         lazyCompilation: true,
       },
     },
   },
-  features: {
-    storyStoreV7: true,
-  },
   webpackFinal: async (config, { configType }) => {
-    // `configType` has a value of 'DEVELOPMENT' or 'PRODUCTION'
-    // You can change the configuration based on that.
-    // 'PRODUCTION' is used when building the static version of storybook.
-
-    config.module.rules.push({
-      test: /\.scss/,
-      use: [
-        'style-loader',
-        'css-loader',
-        'sass-loader'
-      ],
-      include: path.resolve(__dirname, '../'),
-    });
-
     config.resolve = config.resolve || {};
     config.resolve.alias = config.resolve.alias || {};
     config.resolve.alias['@utils'] = path.resolve(__dirname, '../src/utils/');
     config.resolve.alias['@stores'] = path.resolve(__dirname, '../src/stores/');
-    config.resolve.alias['@hooks'] = path.resolve(__dirname, '../src/utils/Hooks');
+    config.resolve.alias['@hooks'] = path.resolve(__dirname, '../src/hooks');
     config.resolve.alias['@components'] = path.resolve(__dirname, '../src/components/');
     config.resolve.alias['@types'] = path.resolve(__dirname, '../src/types/index');
     config.resolve.alias['@.storybook/decorators'] = path.resolve(__dirname, './decorators');
@@ -59,3 +57,5 @@ module.exports = {
     return config;
   },
 };
+
+export default cfg;

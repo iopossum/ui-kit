@@ -1,6 +1,8 @@
-import React, { Component, ErrorInfo, ReactNode } from 'react';
+import React, { Component, ErrorInfo, ReactNode, CSSProperties } from 'react';
 
-interface IProps {
+const STYLE: CSSProperties = { whiteSpace: 'pre-wrap' };
+
+export interface IErrorBoundaryProps {
   children?: ReactNode;
 }
 
@@ -9,7 +11,7 @@ interface IState {
   errorInfo: ErrorInfo | null;
 }
 
-export class ErrorBoundary extends Component<IProps, IState> {
+export class ErrorBoundary extends Component<IErrorBoundaryProps, IState> {
   public state: IState = {
     error: null,
     errorInfo: null,
@@ -28,8 +30,8 @@ export class ErrorBoundary extends Component<IProps, IState> {
       return (
         <div className="main_page_heading">
           <h3>Что-то пошло не так... Обновите страницу или обратитесь в службу поддержки</h3>
-          <details style={{ whiteSpace: 'pre-wrap' }}>
-            {this.state.error && this.state.error.toString()}
+          <details style={STYLE}>
+            {this.state.error ? this.state.error.toString() : null}
             <br />
             {this.state.errorInfo.componentStack}
           </details>

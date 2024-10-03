@@ -1,4 +1,3 @@
-
 import React, { useRef, useEffect, useCallback, forwardRef, useImperativeHandle, useState, memo } from 'react';
 
 import FullscreenOutlined from '@ant-design/icons/FullscreenOutlined';
@@ -87,16 +86,16 @@ export const FullScreen = forwardRef<IFullScreenHandle, IFullScreenProps>(
         className={cn('fullscreen', {
           [className as string]: !!className,
           fullscreen_enabled: isEnabled,
-          'fullscreen_not-supported': !isSupported,
+          'fullscreen--not-supported': !isSupported,
         })}
         style={style}
         ref={wrapperRef}
       >
-        {!isSupported && isEnabled && (
+        {!isSupported && isEnabled ? (
           <div className="fullscreen__close" onClick={handleClose}>
             ×
           </div>
-        )}
+        ) : null}
         {children}
       </div>
     );

@@ -1,4 +1,4 @@
-import { useRef, useEffect, PropsWithChildren, ReactElement, memo } from 'react';
+import { useRef, useEffect, PropsWithChildren, ReactElement, memo, FC } from 'react';
 import { createPortal } from 'react-dom';
 
 /**
@@ -117,7 +117,7 @@ export const usePortal = ({ id, className, top, left, parentRef }: IUsePortal) =
  *   <p>Thinking with portals</p>
  * </Portal>
  */
-export const Portal = ({ children, ...props }: PropsWithChildren & IUsePortal) => {
+export const Portal: FC<PropsWithChildren & IUsePortal> = ({ children, ...props }) => {
   const target = usePortal(props);
   return createPortal(children, target);
 };

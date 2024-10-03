@@ -1,4 +1,3 @@
-
 import { useRef } from 'react';
 
 import type { LoadOptions } from 'devextreme/data';
@@ -7,9 +6,8 @@ import type { Options as CustomStoreOptions, ResolvedData } from 'devextreme/dat
 import DataSource from 'devextreme/data/data_source';
 import type { Options as DataSourceOptions } from 'devextreme/data/data_source';
 
+import { useAbortController } from '@hooks/use-abort-controller';
 import type { IAbortController } from '@types';
-
-import { useAbortController } from './use-abort-controller';
 
 interface IUseDataSource {
   (
@@ -46,9 +44,11 @@ export const useDataSource: IUseDataSource = ({
 
   const dataSource = useRef(
     new DataSource({
+      loadMode,
       store: new CustomStore({
         key: tableKey,
         ...rest,
+        loadMode,
         load: (props) => {
           if (!abortLoad) {
             return load(props);

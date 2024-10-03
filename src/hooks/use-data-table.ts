@@ -1,5 +1,5 @@
 import { useCallback } from 'react';
-import { useHistory, useRouteMatch } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 
 import DataSource from 'devextreme/data/data_source';
 import type { IDataGridOptions, IColumnProps } from 'devextreme-react/data-grid';
@@ -9,7 +9,6 @@ import type { ParseConfig as CsvParseConfig } from 'papaparse';
 
 import { errorHandler } from '@utils/api';
 import { readCSV, readXLS } from '@utils/file';
-
 
 interface IUseDataTable {
   (props: {
@@ -40,8 +39,8 @@ export const useDataTable: IUseDataTable = ({
   csvParseOptions,
   handleUpload,
 }) => {
-  const match = useRouteMatch();
-  const history = useHistory();
+  const { pathname } = useLocation();
+  const navigate = useNavigate();
 
   const onToolbarPreparing = useCallback<NonNullable<IDataGridOptions['onToolbarPreparing']>>(
     (e) => {
@@ -54,7 +53,7 @@ export const useDataTable: IUseDataTable = ({
             options: {
               icon: 'plus',
               hint: 'Создать',
-              onClick: () => history.push(createPath || `${match.url}/create`),
+              onClick: () => navigate(createPath || `${pathname}/create`),
             },
           });
         }
@@ -158,8 +157,8 @@ export const useDataTable: IUseDataTable = ({
       dataSource,
       dataGridToolbarIcons,
       createPath,
-      match,
-      history,
+      pathname,
+      navigate,
       columns,
       csvParseOptions,
       handleUpload,

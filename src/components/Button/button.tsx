@@ -1,4 +1,3 @@
-
 import React, { memo } from 'react';
 
 import cn from 'classnames';
@@ -12,11 +11,12 @@ import './button.scss';
 
 export interface IButtonProps extends Omit<IButtonOptions, 'style'>, IWithStyles {
   loading?: boolean;
+  allowLoading?: boolean;
   texts?: string[];
 }
 
 export const Button = (props: IButtonProps) => {
-  const { loading, text, texts, hint, disabled, className, ...rest } = props;
+  const { loading, allowLoading = true, text, texts = [], hint, disabled, className, ...rest } = props;
 
   let displayText = texts?.length ? texts[0] : text;
   if (loading && texts && texts.length > 1) {
@@ -27,23 +27,23 @@ export const Button = (props: IButtonProps) => {
     <DxButton
       hint={hint || text}
       disabled={disabled || loading}
-      className={cn('ph-button', { [className as string]: !!className, 'icon': !!rest.icon })}
+      className={cn('ph-button', {
+        [className as string]: !!className,
+        icon: !!rest.icon,
+      })}
+      type="normal"
+      stylingMode={'contained'}
+      text={text}
       {...rest}
-    > 
-      {!rest.icon && (
+    >
+      {!rest.icon && allowLoading ? (
         <>
           <LoadIndicator className="button-indicator" visible={loading} />
           <span className="dx-button-text">{displayText}</span>
         </>
-      )}
+      ) : null}
     </DxButton>
   );
-};
-
-Button.defaultProps = {
-  texts: [],
-  type: 'normal',
-  stylingMode: 'contained',
 };
 
 export const ButtonMemo = memo(Button);

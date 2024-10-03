@@ -1,54 +1,30 @@
-@import "~react-day-picker/dist/style.css";
-@import "../../styles/variables";
+@import '../../styles/variables';
 
 .date-range {
   position: relative;
+
   .card__body {
     padding: 0;
   }
-  .DayPicker-Day--selected:not(.DayPicker-Day--start):not(.DayPicker-Day--end):not(.DayPicker-Day--outside) {
-    background-color: #f0f8ff !important;
-    color: #4a90e2;
+
+  .rdp-months {
+    flex-wrap: nowrap;
   }
-  .DayPicker-Day {
-    border-radius: 0 !important;
-  }
-  .DayPicker-Day--start {
-    border-top-left-radius: 50% !important;
-    border-bottom-left-radius: 50% !important;
-  }
-  .DayPicker-Day--end {
-    border-top-right-radius: 50% !important;
-    border-bottom-right-radius: 50% !important;
-  }
-  .DayPickerInput-Overlay {
-    @media (max-width: $mobileMaxWidth) {
-      width: 265px;
-      position: fixed;
-      left: calc((100vw - 265px) / 2);
-    }
-    width: 550px;
-  }
-  &__to {
-    .DayPickerInput-Overlay {
-      margin-left: -198px;
-      @media (max-width: $mobileMaxWidth) {
-        margin-left: 0;
-      }
-    }
-  }
+
   &__label {
-    margin-right: 5px;
+    margin-right: rem(5);
   }
+
   input {
-    padding: .3em 0.5em;
-    border: 1px solid #ddd;
-    font-size: 14px;
+    padding: 0.3em 0.5em;
+    border: rem(1) solid #ddd;
+    font-size: rem(14);
     color: #656565;
     text-align: center;
     font-weight: 400;
-    @media (max-width: $mobileMaxWidth) {
-      width: 120px;
+
+    @media (max-width: $mobile-max-width) {
+      width: rem(120);
     }
   }
 }

@@ -1,37 +1,44 @@
+@import '../../styles/variables';
+
 .fullscreen {
   display: flex;
   background-color: #fff;
   flex: 1;
+
   .card__body {
-    padding-top: 30px;
+    padding-top: rem(30);
   }
+
   &_enabled {
-    &.fullscreen_not-supported {
+    &.fullscreen--not-supported {
       position: fixed !important;
       left: 0;
       bottom: 0;
       top: 0;
     }
+
     height: 100%;
     width: 100%;
     background-color: #fff;
     overflow-y: auto;
+
     .dx-overflow-hidden {
       overflow: inherit;
     }
   }
+
   &__close {
-    width: 25px;
-    height: 25px;
+    width: rem(25);
+    height: rem(25);
     display: flex;
     justify-content: center;
     line-height: 1;
     border-radius: 50%;
     background-color: #6b6262;
     color: #fff;
-    font-size: 20px;
+    font-size: rem(20);
     position: absolute;
-    right: 10px;
-    top: 10px;
+    right: rem(10);
+    top: rem(10);
   }
 }

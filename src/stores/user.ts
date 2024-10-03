@@ -1,50 +1,56 @@
-import { useStores } from '@stores/index';
 import { get, post, errorHandler, IResponse } from '@utils/api';
 import { getCookie } from '@utils/cookie';
 
-export interface IUserStore<IUser> {
+export interface IUserStoreState<IUser> {
   baseUrl: string;
-  _currentUser: IUser | null;
-  currentUser: IUser;
+  currentUser: IUser | null;
   cookiePrefix?: string;
-  profile: () => void;
+}
+
+export interface IUserStore<IUser, T extends object = {}, K extends object = {}> {
+  state: IUserStoreState<IUser> & T;
+  profile: () => Promise<void>;
   login: <T, K>(e: T) => Promise<IResponse<K> | undefined>;
   reg: <T, K>(e?: T) => Promise<IResponse<K> | undefined>;
   hasRole: (role: string, realmKey: string) => boolean;
+  setEntity: <Key extends keyof IUserStore<IUser, T, K>['state']>(
+    key: Key,
+    value: IUserStore<IUser, T, K>['state'][Key],
+  ) => void;
 }
 
-export type UserStoreProps = {
-  cookiePrefix: string;
-  baseUrl?: string;
-};
+export type TUserStoreProps<IUser, T extends object = {}, K extends object = {}> = {
+  state?: Partial<IUserStoreState<IUser>> & T;
+} & Partial<Pick<IUserStore<IUser, T, K>, 'profile' | 'login' | 'setEntity' | 'hasRole' | 'reg'>> &
+  K;
 
-export const createUserStore = <T extends UserStoreProps, IUser>(props?: T) => {
-  const { baseUrl = '/api/users', cookiePrefix = '', ...rest } = props || ({} as T);
-  const store: IUserStore<IUser> = {
-    baseUrl,
-    cookiePrefix,
-    _currentUser: null,
-    get currentUser() {
-      return this._currentUser as IUser;
-    },
-    set currentUser(u) {
-      this._currentUser = u;
-    },
+export const createUserStore = <IUser, T extends object = {}, K extends object = {}>(
+  props?: TUserStoreProps<IUser, T, K>,
+) => {
+  const { state, ...rest } = props || {};
+  const { baseUrl = '/api/users', cookiePrefix = '', ...stateRest } = state || {};
+  const store: IUserStore<IUser, T, K> = {
+    state: {
+      baseUrl,
+      cookiePrefix,
+      currentUser: null,
+      ...stateRest,
+    } as IUserStore<IUser, T, K>['state'],
     profile: async function () {
-      const id = getCookie(`${this.cookiePrefix}user`);
+      const id = getCookie(`${this.state.cookiePrefix}user`);
       if (!id) {
         throw new Error('');
       }
       try {
-        const data = await get<IUser>({ url: `${this.baseUrl}/${id}` });
-        this.currentUser = data.body as IUser;
+        const data = await get<IUser>({ url: `${this.state.baseUrl}/${id}` });
+        this.state.currentUser = data.body as IUser;
       } catch (e) {
         errorHandler({ showToast: true, throwable: true }, e);
       }
     },
     login: async function <T, K>(body: T) {
       try {
-        return await post<T, K>({ url: `${this.baseUrl}/login`, body });
+        return await post<T, K>({ url: `${this.state.baseUrl}/login`, body });
       } catch (e) {
         errorHandler<false>(
           {
@@ -64,23 +70,14 @@ export const createUserStore = <T extends UserStoreProps, IUser>(props?: T) => {
       }
     },
     hasRole: function (role, realmKey = 'realm') {
-      return this.currentUser && this.currentUser[realmKey as keyof IUser] === role;
+      return !!this.state.currentUser && this.state.currentUser[realmKey as keyof IUser] === role;
+    },
+    setEntity: function (name, value) {
+      Object.assign(this, { [name]: value });
     },
   };
   return {
     ...store,
     ...rest,
-  };
-};
-
-export const useUserStore = <T>() => {
-  const stores = useStores<{ UserStore: IUserStore<T> }>();
-  return stores.UserStore;
-};
-
-export const useUserStoreProfile = <T>() => {
-  const store = useUserStore<T>();
-  return {
-    currentUser: store.currentUser,
   };
 };

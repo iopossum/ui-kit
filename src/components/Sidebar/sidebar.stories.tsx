@@ -1,59 +1,43 @@
 import React, { useState } from 'react';
 
-import { ComponentMeta, ComponentStory } from '@storybook/react';
+import { Meta, StoryObj } from '@storybook/react';
 
-import { withRouter, routes } from '@.storybook/decorators';
+import { withRouter } from 'storybook-addon-remix-react-router';
+
+import { routes } from '@.storybook/decorators';
 import { Sidebar, SidebarMemo, TSidebarSize, ISidebarProps } from '@components/sidebar';
 
 export default {
   title: 'Sidebar',
   component: Sidebar,
-  decorators: [
-    withRouter
-  ]
-} as ComponentMeta<typeof Sidebar>;
+  decorators: [withRouter],
+} as Meta<typeof Sidebar>;
 
 const SidebarWrapper = (props: ISidebarProps) => {
   const [state, setState] = useState<TSidebarSize>('lg');
-  return (
-    <Sidebar
-      {...props}
-      sidebar={state}
-      routes={routes}
-      onChange={setState}
-    />
-  )
-}
+  const handleChange = setState;
+  return <Sidebar {...props} sidebar={state} routes={routes} onChange={handleChange} />;
+};
 
 const SidebarMemoWrapper = (props: ISidebarProps) => {
   const [state, setState] = useState<TSidebarSize>('lg');
-  return (
-    <SidebarMemo
-      {...props}
-      sidebar={state}
-      routes={routes}
-      onChange={setState}
-    />
-  )
-}
-
-const Template: ComponentStory<typeof Sidebar> = (args) => {  
-  return (
-    <SidebarWrapper
-      {...args}
-    />
-  )
-};
-const TemplateMemo: ComponentStory<typeof SidebarMemo> = (args) => {  
-  return (
-    <SidebarMemoWrapper
-      {...args}
-    />
-  )
+  const handleChange = setState;
+  return <SidebarMemo {...props} sidebar={state} routes={routes} onChange={handleChange} />;
 };
 
-export const Basic = Template.bind({});
-Basic.args = {};
+const Template = (props: ISidebarProps) => {
+  return <SidebarWrapper {...props} />;
+};
+const TemplateMemo = (props: ISidebarProps) => {
+  return <SidebarMemoWrapper {...props} />;
+};
 
-export const Memo = TemplateMemo.bind({});
-Memo.args = {};
+export const Basic: StoryObj<typeof Sidebar> = {
+  render: Template,
+  args: {},
+};
+
+export const Memo: StoryObj<typeof SidebarMemo> = {
+  render: TemplateMemo,
+  args: {},
+};

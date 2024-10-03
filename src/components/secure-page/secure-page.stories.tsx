@@ -1,50 +1,68 @@
 import React from 'react';
 
-import { ComponentMeta, ComponentStory } from '@storybook/react';
+import { Meta, StoryObj } from '@storybook/react';
 
-import { withRouter, routes } from '@.storybook/decorators';
+import { withRouter } from 'storybook-addon-remix-react-router';
+
+import { routes } from '@.storybook/decorators';
 import { Button } from '@components/button';
-import { Footer } from "@components/footer";
-import { SecurePage, SecurePageMemo } from '@components/secure-page';
+import { Footer } from '@components/footer';
+import { SecurePage, SecurePageMemo, ISecurePageProps } from '@components/secure-page';
 
 export default {
   title: 'SecurePage',
   component: SecurePage,
-  decorators: [
-    withRouter
-  ]
-} as ComponentMeta<typeof SecurePage>;
+  decorators: [withRouter],
+} as Meta<typeof SecurePage>;
 
-const Template: ComponentStory<typeof SecurePage> = (args) => (
+const Template = (props: ISecurePageProps) => (
   <SecurePage
     username={'asd'}
-    {...args}
+    {...props}
     routes={routes}
-    cookiePrefix='storybook'    
+    cookiePrefix="storybook"
     versionComponent={<>Build: 1.0.154</>}
   >
-    <div className="header"><Button icon="refresh" /></div>
-    <div className="content">{ Array.from({ length: 100 }).map((v, i) => <div key={i}>{i}</div>) }</div>
+    <div className="header">
+      <Button icon="refresh" />
+    </div>
+    <div className="content">
+      {Array.from({ length: 100 }).map((v, i) => (
+        <div key={i}>{i}</div>
+      ))}
+    </div>
     <Footer />
   </SecurePage>
 );
 
-const TemplateMemo: ComponentStory<typeof SecurePageMemo> = (args) => (
-  <SecurePageMemo
-    username={'asd'}
-    {...args}
-    routes={routes}
-    cookiePrefix='storybook'    
-    versionComponent={<>Build: 1.0.154</>}
-  >
-    <div className="header"><Button icon="refresh" /></div>
-    <div className="content">{ Array.from({ length: 100 }).map((v, i) => <div key={i}>{i}</div>) }</div>
-    <Footer />
-  </SecurePageMemo>
-);
+const TemplateMemo = (props: ISecurePageProps) => {
+  return (
+    <SecurePageMemo
+      username={'asd'}
+      {...props}
+      routes={routes}
+      cookiePrefix="storybook"
+      versionComponent={<>Build: 1.0.154</>}
+    >
+      <div className="header">
+        <Button icon="refresh" />
+      </div>
+      <div className="content">
+        {Array.from({ length: 100 }).map((v, i) => (
+          <div key={i}>{i}</div>
+        ))}
+      </div>
+      <Footer />
+    </SecurePageMemo>
+  );
+};
 
-export const Basic = Template.bind({});
-Basic.args = {};
+export const Basic: StoryObj<typeof SecurePage> = {
+  render: Template,
+  args: {},
+};
 
-export const Memo = TemplateMemo.bind({});
-Memo.args = {};
+export const Memo: StoryObj<typeof SecurePageMemo> = {
+  render: TemplateMemo,
+  args: {},
+};

@@ -1,19 +1,22 @@
-import React, { useCallback, useRef, useImperativeHandle } from 'react';
-
-import { useMergedState } from './use-merged-state';
+import React, { useCallback, useRef, useImperativeHandle, useState, Dispatch, SetStateAction } from 'react';
 
 export interface IUseDialogProps<T> {
   ref: React.Ref<IDialogHandle<T>>;
   text?: string;
+  resetStateOnHide?: boolean;
+  resetPopupStateOnHide?: boolean;
+  initialState?: T;
   onHiding?: () => void;
-  onSubmit?: (e: React.MouseEventHandler, state: Partial<T> & IDialogState) => void;
+  onSubmit?: (state: T) => void;
   onDecline?: () => void;
 }
 
 export interface IDialogHandle<T = object> {
-  open: (props?: Partial<T> & IDialogState) => Promise<Partial<T> & IDialogState>;
-  getState: () => Partial<T> & IDialogState;
-  setState: (data: Partial<T> & IDialogState) => void;
+  open: (props?: Partial<T> | null, popupProps?: IDialogState) => Promise<[Error | null, T] | [Error | null]>;
+  getState: () => T;
+  setState: Dispatch<SetStateAction<T>>;
+  getPopupState: () => IDialogState;
+  setPopupState: Dispatch<SetStateAction<IDialogState>>;
   close: () => void;
   resolve: () => void;
 }
@@ -25,43 +28,55 @@ export interface IDialogState {
 }
 
 interface IDialogRefs<T> {
-  reject: null | (() => void);
-  resolve: null | ((e: T) => void);
+  resolve: null | ((result: [Error | null, T] | [Error | null]) => void);
 }
 
 export const useDialog = <T = IDialogState>({
   ref,
   text: textFromProps,
+  resetStateOnHide = true,
+  resetPopupStateOnHide = true,
+  initialState,
   onHiding,
   onSubmit,
   onDecline,
 }: IUseDialogProps<T>) => {
-  type UnionT = Partial<T> & IDialogState;
-  const dialogRef = useRef<IDialogRefs<UnionT>>({ resolve: null, reject: null });
-  const { state, setMergedState } = useMergedState<UnionT>({
+  const dialogRef = useRef<IDialogRefs<T>>({
+    resolve: null,
+  });
+  const [popupState, setPopupState] = useState<IDialogState>({
     visible: false,
     text: textFromProps,
-  } as UnionT);
+    loading: false,
+  });
+  const [state, setState] = useState<T>(initialState || ({} as T));
 
   const handleHiding = useCallback(() => {
     if (onHiding) {
       onHiding();
       return;
     }
-    setMergedState({ visible: false } as UnionT);
-    dialogRef.current.reject && dialogRef.current.reject();
-  }, [onHiding, setMergedState]);
+    if (resetStateOnHide) {
+      setState(initialState || ({} as T));
+    }
+    if (resetPopupStateOnHide) {
+      setPopupState({ visible: false });
+    } else {
+      setPopupState((prev) => ({ ...prev, visible: false }));
+    }
+    dialogRef.current.resolve?.([new Error('hiding')]);
+  }, [onHiding, resetStateOnHide, resetPopupStateOnHide, initialState]);
 
   const handleSubmit = useCallback(
-    (e: React.MouseEventHandler) => {
+    (v?: T) => {
       if (onSubmit) {
-        onSubmit(e, state as UnionT);
+        onSubmit(v!);
         return;
       }
-      dialogRef.current.resolve && dialogRef.current.resolve(state);
+      dialogRef.current.resolve?.([null, v!]);
       handleHiding();
     },
-    [onSubmit, handleHiding, state],
+    [onSubmit, handleHiding],
   );
 
   const handleDecline = useCallback(() => {
@@ -69,35 +84,39 @@ export const useDialog = <T = IDialogState>({
       onDecline();
       return;
     }
-    dialogRef.current.reject && dialogRef.current.reject();
+    dialogRef.current.resolve?.([new Error('decline')]);
     handleHiding();
   }, [onDecline, handleHiding]);
 
   useImperativeHandle(
     ref,
     () => ({
-      open: async (props) => {
+      open: async (props, popupProps = {}) => {
+        setPopupState((prev) => ({ ...prev, ...popupProps, visible: true }));
         if (props) {
-          setMergedState(Object.assign(props, { visible: true }));
+          setState((prev) => ({ ...prev, ...props }));
         }
-        return new Promise((resolve, reject) => {
+        return new Promise<[Error | null, T] | [Error | null]>((resolve) => {
           dialogRef.current.resolve = resolve;
-          dialogRef.current.reject = reject;
         });
       },
       getState: () => state,
-      setState: (data) => setMergedState(data),
+      setState,
+      getPopupState: () => popupState,
+      setPopupState,
       close: handleHiding,
       resolve: () => {
-        dialogRef.current.resolve && dialogRef.current.resolve(state);
+        dialogRef.current.resolve?.([null, state]);
         handleHiding();
       },
     }),
-    [state, setMergedState, handleHiding],
+    [state, popupState, handleHiding],
   );
   return {
+    popupState,
     state,
-    setMergedState,
+    setPopupState,
+    setState,
     handleHiding,
     handleSubmit,
     handleDecline,

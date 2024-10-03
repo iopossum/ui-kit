@@ -8,24 +8,27 @@ import type { IWithStyles, IRoute } from '@types';
 
 export interface ISidebarLinkProps extends IWithStyles {
   allowTooltip: boolean;
-  data: IRoute;
+  data: Omit<IRoute, 'path'>;
 }
 
 export const SidebarLink = ({ data, allowTooltip, style, className }: ISidebarLinkProps) => {
+  const { title, icon, iconComponent, onClick: handleClick } = data;
   return (
-    <Tooltip            
-      placement="right"
-      disabled={!allowTooltip}
-      title={data.title}
-      style={style}      
-    >
-      <div className={cn(['navigation-item', className])} onClick={data.onClick}>
-        { data.icon || data.iconComponent ? (
-          <i className={cn(`dx-icon`, {[data.icon as string]: !!data.icon, 'dx-icon-component': !!data.iconComponent})}>{data.iconComponent}</i>
+    <Tooltip placement="right" disabled={!allowTooltip} title={title} style={style}>
+      <div className={cn(['navigation-item', className])} onClick={handleClick}>
+        {icon || iconComponent ? (
+          <i
+            className={cn(`dx-icon`, {
+              [icon as string]: !!icon,
+              'dx-icon-component': !!iconComponent,
+            })}
+          >
+            {iconComponent}
+          </i>
         ) : (
-          <Capitalize className="navigation-item__capitalize" text={data.title as string} />
-        )}      
-        <span className="navigation-item__text">{data.title}</span>      
+          <Capitalize className="navigation-item__capitalize" text={title as string} />
+        )}
+        <span className="navigation-item__text">{title}</span>
       </div>
     </Tooltip>
   );

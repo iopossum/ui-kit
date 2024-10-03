@@ -1,40 +1,48 @@
-import React, { useState } from 'react';
+import React, { useState, CSSProperties } from 'react';
 
-import { ComponentMeta, ComponentStory } from '@storybook/react';
+import { Meta, StoryObj } from '@storybook/react';
 
 import { Card } from '@components/card';
-import { CheckBox, CheckBoxMemo } from '@components/checkbox';
+import { CheckBox, CheckBoxMemo, ICheckBoxProps } from '@components/checkbox';
+
+const CONTAINER_STYLE: CSSProperties = { display: 'flex', flex: 1 };
 
 export default {
   title: 'CheckBox',
   component: CheckBox,
   decorators: [
     (Story) => (
-      <Card style={{ display: 'flex', flex: 1 }}>
+      <Card style={CONTAINER_STYLE}>
         <Story />
       </Card>
     ),
   ],
-} as ComponentMeta<typeof CheckBox>;
+} as Meta<typeof CheckBox>;
 
-const Template: ComponentStory<typeof CheckBox> = (args) => {
+const Template = (props: ICheckBoxProps) => {
   const [value, setValue] = useState(false);
-  return <CheckBox {...args} value={value} name="name" onChange={(e) => setValue(e.target.checked)} />;
+  const handleChange: ICheckBoxProps['onChange'] = (e) => setValue(e.target.checked);
+  return <CheckBox {...props} value={value} name="name" onChange={handleChange} />;
 };
 
-const TemplateMemo: ComponentStory<typeof CheckBoxMemo> = (args) => {
+const TemplateMemo = (props: ICheckBoxProps) => {
   const [value, setValue] = useState(false);
-  return <CheckBoxMemo {...args} value={value} name="name" onChange={(e) => setValue(e.target.checked)} />;
+  const handleChange: ICheckBoxProps['onChange'] = (e) => setValue(e.target.checked);
+  return <CheckBoxMemo {...props} value={value} name="name" onChange={handleChange} />;
 };
 
-export const Basic = Template.bind({});
-Basic.args = {
-  label: 'asd',
-  className: 'test',
+export const Basic: StoryObj<typeof CheckBox> = {
+  render: Template,
+  args: {
+    label: 'asd',
+    className: 'test',
+  },
 };
 
-export const Memo = TemplateMemo.bind({});
-Memo.args = {
-  label: 'asd',
-  className: 'test',
+export const Memo: StoryObj<typeof CheckBoxMemo> = {
+  render: TemplateMemo,
+  args: {
+    label: 'asd',
+    className: 'test',
+  },
 };

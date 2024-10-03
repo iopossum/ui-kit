@@ -1,34 +1,27 @@
 import React from 'react';
 
-import { ComponentMeta, ComponentStory } from '@storybook/react';
+import { Meta, StoryObj } from '@storybook/react';
 
-import { AuthWrapper, AuthWrapperMemo } from '@components/auth-wrapper';
+import { AuthWrapper, AuthWrapperMemo, IAuthWrapperProps } from '@components/auth-wrapper';
 
 export default {
   title: 'AuthWrapper',
   component: AuthWrapper,
-  argTypes: {},
-  args: {},
-} as ComponentMeta<typeof AuthWrapper>;
+} satisfies Meta<typeof AuthWrapper>;
 
-const Template: ComponentStory<typeof AuthWrapper> = (args) => (
-  <AuthWrapper {...args}>
-    контент
-  </AuthWrapper>
-);
+const Template = (props: IAuthWrapperProps) => <AuthWrapper {...props}>контент</AuthWrapper>;
+const TemplateMemo = (props: IAuthWrapperProps) => <AuthWrapperMemo {...props}>контент</AuthWrapperMemo>;
 
-const TemplateMemo: ComponentStory<typeof AuthWrapperMemo> = (args) => (
-  <AuthWrapperMemo {...args}>
-    контент
-  </AuthWrapperMemo>
-);
-
-export const Basic = Template.bind({});
-Basic.args = {
-  header: 'Авторизация',
+export const Basic: StoryObj<typeof AuthWrapper> = {
+  render: Template,
+  args: {
+    header: 'Авторизация',
+  },
 };
 
-export const Memo = TemplateMemo.bind({});
-Memo.args = {
-  header: 'Авторизация',
+export const Memo: StoryObj<typeof AuthWrapperMemo> = {
+  render: TemplateMemo,
+  args: {
+    header: 'Авторизация',
+  },
 };

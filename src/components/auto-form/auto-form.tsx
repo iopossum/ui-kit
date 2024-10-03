@@ -1,5 +1,5 @@
 import React, { useCallback, useMemo, useRef, memo } from 'react';
-import { Prompt, useRouteMatch } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 
 import { observer } from 'mobx-react-lite';
 
@@ -12,32 +12,31 @@ import { Tooltip as DxTooltip } from 'devextreme-react/tooltip';
 import type { ITooltipOptions } from 'devextreme-react/tooltip';
 import { isEqual, keyBy } from 'lodash-es';
 
-import { useMergedState } from '../../hooks/use-merged-state';
+import { Prompt } from '@components/prompt';
+import { useMergedState } from '@hooks/use-merged-state';
 import type { IWithStyles } from '@types';
-import { success, warning, history } from '@utils/api';
+import { success, warning } from '@utils/api';
 
 import type { IFormDataProps, IFormItem } from './form-data';
 import { FormData } from './form-data';
 
 import './auto-form.scss';
 
-type OnContentReady = NonNullable<IFormOptions['onContentReady']>;
-
-export interface IAutoFormProps<T = object> extends Omit<IFormDataProps<T>, 'style'>, IWithStyles {
+export interface IAutoFormProps<T = object>
+  extends Omit<IFormDataProps<T>, 'style' | 'filteredColumns' | 'onChange'>,
+    IWithStyles {
   idKey: keyof T;
+  data: T;
+  columns: IFormItem[];
   children?: React.ReactNode;
   autoRedirect?: boolean;
   showSuccess?: boolean;
   showSubmitButton?: boolean;
   redirectUrl?: string;
-  useItem: () => {
-    currentItem: T;
-    columns: IFormItem[];
-    changeItem: (e: Record<keyof T, T[keyof T]>) => void;
-    update: (key: string, e: Record<keyof T, T[keyof T]>) => Promise<T>;
-    insert: (e: Record<keyof T, T[keyof T]>) => Promise<T>;
-  };
-  onSubmit: (e: React.FormEvent<HTMLFormElement | HTMLDivElement>, data: T) => void;
+  onChange?: (e: Record<keyof T, T[keyof T]>) => void;
+  onUpdate?: (key: string, e: Record<keyof T, T[keyof T]>) => Promise<T>;
+  onInsert?: (e: Record<keyof T, T[keyof T]>) => Promise<T>;
+  onSubmit?: (e: React.FormEvent<HTMLFormElement | HTMLDivElement>, data: T) => void;
 }
 
 interface IState<T> {
@@ -47,73 +46,81 @@ interface IState<T> {
 
 export const AutoForm = <T extends object>({
   idKey = 'id' as keyof T,
+  data,
+  columns,
   className,
   style,
   autoRedirect,
   showSuccess,
-  showSubmitButton,
+  showSubmitButton = true,
+  labelLocation = 'left',
   redirectUrl,
-  useItem,
+  onChange: handleChange,
+  onUpdate,
+  onInsert,
   onSubmit,
   children,
   ...props
 }: IAutoFormProps<T>) => {
-  const { currentItem, changeItem, columns, update, insert } = useItem();
-  const match = useRouteMatch();
+  const navigate = useNavigate();
+  const { pathname } = useLocation();
 
   const {
     state: { wasItem, tooltips },
     setMergedState,
   } = useMergedState<IState<T>>({
-    wasItem: Object.assign({}, currentItem),
+    wasItem: Object.assign({}, data),
     tooltips: [],
   });
 
   const formRef = useRef<Form>(null);
 
   const handleSubmit = useCallback(
-    async (e: React.FormEvent<HTMLFormElement | HTMLDivElement>) => {      
+    async (e: React.FormEvent<HTMLFormElement | HTMLDivElement>) => {
       e.preventDefault();
       e.stopPropagation();
-      const validator = formRef.current?.instance.validate();
+      const validator = formRef.current?.instance?.validate();
       if (!validator?.isValid) {
         warning('Заполните обязательные поля');
         return false;
       }
       if (onSubmit) {
-        return onSubmit(e, currentItem);
+        return onSubmit(e, data);
       }
-      try {
-        const isNew = !currentItem[idKey];
-        const res = isNew ? await insert(currentItem) : await update(currentItem[idKey] as string, currentItem);
-        if (showSuccess) {
-          success('Данные успешно сохранены');
-        }
-        setMergedState({ wasItem: currentItem });
-        const id = res[idKey];
-        if (isNew) {
-          const b = {} as Record<keyof T, T[keyof T]>;
-          b[idKey] = id;
-          changeItem?.(b);
-        }
-        if (isNew && autoRedirect) {
-          history.push(redirectUrl ? `${redirectUrl}/${id}` : match.path.replace(':id', id as string));
-        }
-      } catch (e) {}
+      const isNew = !data[idKey];
+      if ((isNew && onInsert) || (!isNew && onUpdate)) {
+        try {
+          const res = isNew ? await onInsert?.(data) : await onUpdate?.(data[idKey] as string, data);
+          if (showSuccess) {
+            success('Данные успешно сохранены');
+          }
+          setMergedState({ wasItem: data });
+          const id = res?.[idKey] as T[keyof T];
+          if (isNew && !!id) {
+            const b = {} as Record<keyof T, T[keyof T]>;
+            b[idKey] = id;
+            handleChange?.(b);
+          }
+          if (isNew && autoRedirect) {
+            navigate(redirectUrl ? `${redirectUrl}/${id}` : pathname.replace(/\/([^/]*)$/, `/${id}`));
+          }
+        } catch (e) {}
+      }
     },
     [
-      match.path,
+      pathname,
+      navigate,
       setMergedState,
-      formRef,
-      currentItem,
-      showSuccess,
       autoRedirect,
+      formRef,
+      data,
+      showSuccess,
       redirectUrl,
       idKey,
-      changeItem,
+      handleChange,
       onSubmit,
-      insert,
-      update,
+      onInsert,
+      onUpdate,
     ],
   );
 
@@ -121,7 +128,7 @@ export const AutoForm = <T extends object>({
     return columns.filter((v) => !v.invisible && !v.editInvisible);
   }, [columns]);
 
-  const onContentReady = useCallback<OnContentReady>(
+  const handleContentReady = useCallback<NonNullable<IFormOptions['onContentReady']>>(
     ({ element }) => {
       const array = filteredColumns.filter((v) => v.tooltip);
       const columnsByKey = keyBy(array, 'dataField');
@@ -164,16 +171,17 @@ export const AutoForm = <T extends object>({
   return (
     <form onSubmit={handleSubmit} className={cn('auto-form', { [className as string]: !!className })} style={style}>
       <Prompt
-        when={!!wasItem[idKey] && !isEqual(wasItem, currentItem)}
-        message={() => 'Вы изменили данные, но не сохранили. Уверены, что хотите уйти со страницы без сохранения?'}
+        when={!!wasItem[idKey] && !isEqual(wasItem, data)}
+        message={'Вы изменили данные, но не сохранили. Уверены, что хотите уйти со страницы без сохранения?'}
       />
       <FormData<T>
         {...props}
+        labelLocation={labelLocation}
         filteredColumns={filteredColumns}
         ref={formRef}
-        data={{ ...currentItem }}
-        onChange={changeItem}
-        onContentReady={onContentReady}
+        data={data}
+        onChange={handleChange}
+        onContentReady={handleContentReady}
       />
 
       {tooltips.map((v) => (
@@ -183,21 +191,15 @@ export const AutoForm = <T extends object>({
       ))}
 
       <div className="auto-form__buttons">
-        {showSubmitButton && (
+        {showSubmitButton ? (
           <Tooltip title="Сохранить" placement="left">
             <Button type="primary" shape="circle" icon={<SaveOutlined />} htmlType="submit" />
           </Tooltip>
-        )}
+        ) : null}
         {children}
       </div>
     </form>
   );
-};
-
-AutoForm.defaultProps = {
-  autoRedirect: true,
-  showSubmitButton: true,
-  labelLocation: 'left',
 };
 
 export const AutoFormMemo = memo(AutoForm) as unknown as typeof AutoForm;

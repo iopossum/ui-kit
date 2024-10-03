@@ -1,28 +1,34 @@
 import React from 'react';
 
-import { ComponentMeta, ComponentStory } from '@storybook/react';
+import { Meta, StoryObj } from '@storybook/react';
 
-import { Tooltip, TooltipMemo } from '@components/tooltip';
+import { Tooltip, TooltipMemo, ITooltipProps } from '@components/tooltip';
 
 export default {
   title: 'Tooltip',
   component: Tooltip,
-} as ComponentMeta<typeof Tooltip>;
+} as Meta<typeof Tooltip>;
 
-const Template: ComponentStory<typeof Tooltip> = (args) => (
-  <Tooltip placement='right' title={'qwe'} {...args} >
-    <div style={{ alignSelf: 'flex-start' }}>asd</div>
+const style = { alignSelf: 'flex-start' };
+
+const Template = (props: ITooltipProps) => (
+  <Tooltip placement="right" title={'qwe'} {...props}>
+    <div style={style}>asd</div>
   </Tooltip>
 );
 
-const TemplateMemo: ComponentStory<typeof TooltipMemo> = (args) => (
-  <TooltipMemo placement='right' title={'qwe'} {...args} >
-    <div style={{ alignSelf: 'flex-start' }}>asd</div>
+const TemplateMemo = (props: ITooltipProps) => (
+  <TooltipMemo placement="right" title={'qwe'} {...props}>
+    <div style={style}>asd</div>
   </TooltipMemo>
 );
 
-export const Basic = Template.bind({});
-Basic.args = {};
+export const Basic: StoryObj<typeof Tooltip> = {
+  render: Template,
+  args: {},
+};
 
-export const Memo = TemplateMemo.bind({});
-Memo.args = {};
+export const Memo: StoryObj<typeof TooltipMemo> = {
+  render: TemplateMemo,
+  args: {},
+};

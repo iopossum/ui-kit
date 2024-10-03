@@ -1,15 +1,13 @@
-
-
 import React, { forwardRef, useMemo, PropsWithChildren, memo, FC } from 'react';
 
 import { Popup, IPopupOptions, IToolbarItemProps } from 'devextreme-react/popup';
 import ScrollView from 'devextreme-react/scroll-view';
 
-import type { IDialogHandle, IUseDialogProps } from '../../hooks/use-dialog';
-import { useDialog } from '../../hooks/use-dialog';
 import type { IButtonProps } from '@components/button';
+import type { IDialogHandle, IUseDialogProps } from '@hooks/use-dialog';
+import { useDialog } from '@hooks/use-dialog';
 
-export type { IDialogHandle, IDialogState } from '../../hooks/use-dialog';
+export type { IDialogHandle, IDialogState } from '@hooks/use-dialog';
 
 export interface IDialogProps<T = object>
   extends PropsWithChildren,
@@ -17,7 +15,6 @@ export interface IDialogProps<T = object>
     Omit<IPopupOptions, 'onHiding'> {
   submitText?: string;
   declineText?: string;
-  showButtons?: boolean;
   showSubmitButton?: boolean;
   showDeclineButton?: boolean;
   destroyOnHide?: boolean;
@@ -26,9 +23,9 @@ export interface IDialogProps<T = object>
 }
 
 export interface IDialogComponent extends FC<IDialogProps<object>> {
-  <T extends object>(props: IDialogProps<T> & React.RefAttributes<IDialogHandle<T>>): ReturnType<
-    React.ForwardRefRenderFunction<IDialogHandle<T>, IDialogProps<T>>
-  >;
+  <T extends object>(
+    props: IDialogProps<T> & React.RefAttributes<IDialogHandle<T>>,
+  ): ReturnType<React.ForwardRefRenderFunction<IDialogHandle<T>, IDialogProps<T>>>;
 }
 
 export const Dialog: IDialogComponent = forwardRef(
@@ -40,7 +37,6 @@ export const Dialog: IDialogComponent = forwardRef(
       onSubmit,
       onDecline,
       onHiding,
-      showButtons,
       showDeclineButton,
       showSubmitButton,
       destroyOnHide,
@@ -51,7 +47,7 @@ export const Dialog: IDialogComponent = forwardRef(
     }: IDialogProps<T>,
     ref: React.Ref<IDialogHandle<T>>,
   ) => {
-    const { state, handleDecline, handleSubmit } = useDialog<T>({
+    const { popupState, handleDecline, handleSubmit } = useDialog<T>({
       ref,
       text: textFromProps,
       onDecline,
@@ -59,11 +55,11 @@ export const Dialog: IDialogComponent = forwardRef(
       onSubmit,
     });
 
-    const { visible, text } = state;
+    const { visible, text, loading } = popupState;
 
     const toolbarItems = useMemo(() => {
       const result: Array<IToolbarItemProps> = [];
-      if (showButtons) {
+      if (showDeclineButton || showSubmitButton) {
         if (showDeclineButton) {
           result.push({
             widget: 'dxButton',
@@ -83,12 +79,12 @@ export const Dialog: IDialogComponent = forwardRef(
             widget: 'dxButton',
             toolbar: 'bottom',
             location: 'after',
-            disabled: state.loading,
+            disabled: loading,
             options: {
               stylingMode: 'contained',
-              type: 'normal',
+              type: 'default',
               text: submitText,
-              onClick: handleSubmit,
+              onClick: () => handleSubmit(),
               ...submitButtonProps,
             },
           });
@@ -98,10 +94,9 @@ export const Dialog: IDialogComponent = forwardRef(
     }, [
       showSubmitButton,
       showDeclineButton,
-      showButtons,
       handleSubmit,
       handleDecline,
-      state.loading,
+      loading,
       declineText,
       submitText,
       declineButtonProps,
@@ -113,7 +108,18 @@ export const Dialog: IDialogComponent = forwardRef(
     }
 
     return (
-      <Popup visible={visible} onHiding={handleDecline} dragEnabled={false} toolbarItems={toolbarItems} {...rest}>
+      <Popup
+        visible={visible}
+        onHiding={handleDecline}
+        dragEnabled={false}
+        toolbarItems={toolbarItems}
+        width={500}
+        height={150}
+        hideOnOutsideClick={false}
+        shading={false}
+        showTitle={false}
+        {...rest}
+      >
         <ScrollView width="100%" height="100%">
           <div>{text}</div>
           {children}
@@ -122,15 +128,5 @@ export const Dialog: IDialogComponent = forwardRef(
     );
   },
 );
-
-Dialog.defaultProps = {
-  submitText: 'Да',
-  declineText: 'Нет',
-  width: 500,
-  height: 150,
-  hideOnOutsideClick: true,
-  shading: false,
-  showTitle: false,
-};
 
 export const DialogMemo = memo(Dialog) as typeof Dialog;

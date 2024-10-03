@@ -1,28 +1,38 @@
-import React from 'react';
+import React, { CSSProperties } from 'react';
 
-import { ComponentMeta, ComponentStory } from '@storybook/react';
+import { Meta, StoryObj } from '@storybook/react';
 
 import { TabPanel, TabPanelMemo } from '@components/tab-panel';
-import type { ITabPanelItemProps } from '@components/tab-panel';
+import type { ITabPanelItemProps, ITabPanelProps } from '@components/tab-panel';
 
 export default {
   title: 'TabPanel',
   component: TabPanel,
-} as ComponentMeta<typeof TabPanel>;
+} as Meta<typeof TabPanel>;
 
-type Test = {
+interface ITest {
   test: string;
 }
 
-const TabComponent: ITabPanelItemProps<Test>['component'] = ({ padding, minHeight, maxHeight }) => {
+const STYLE: CSSProperties = { border: '1px solid red' };
+
+const TabComponent: ITabPanelItemProps<ITest>['component'] = ({ padding, minHeight, maxHeight }) => {
   return (
-    <div style={{ border: '1px solid red', padding, minHeight, maxHeight, height: maxHeight }}>
+    <div
+      style={{
+        ...STYLE,
+        padding,
+        minHeight,
+        maxHeight,
+        height: maxHeight,
+      }}
+    >
       {JSON.stringify({ padding, minHeight, maxHeight })}
     </div>
   );
 };
 
-const tabs: ITabPanelItemProps<Test>[] = [
+const tabs: ITabPanelItemProps<ITest>[] = [
   {
     title: 'Tab 1',
     component: (props) => (
@@ -41,20 +51,24 @@ const tabs: ITabPanelItemProps<Test>[] = [
   },
 ];
 
-const Template: ComponentStory<typeof TabPanel> = (args) => (
+const Template = (props: ITabPanelProps<ITest>) => (
   <div>
-    <TabPanel<Test> {...args} dataSource={tabs} height={280} />
+    <TabPanel<ITest> {...props} dataSource={tabs} height={280} />
   </div>
 );
 
-const TemplateMemo: ComponentStory<typeof TabPanelMemo> = (args) => (
+const TemplateMemo = (props: ITabPanelProps<ITest>) => (
   <div>
-    <TabPanelMemo<Test> {...args} dataSource={tabs} height={280} />
+    <TabPanelMemo<ITest> {...props} dataSource={tabs} height={280} />
   </div>
 );
 
-export const Basic = Template.bind({});
-Basic.args = {};
+export const Basic: StoryObj<typeof TabPanel<ITest>> = {
+  render: Template,
+  args: {},
+};
 
-export const Memo = TemplateMemo.bind({});
-Memo.args = {};
+export const Memo: StoryObj<typeof TabPanelMemo<ITest>> = {
+  render: TemplateMemo,
+  args: {},
+};

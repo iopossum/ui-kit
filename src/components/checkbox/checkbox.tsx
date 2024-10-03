@@ -1,4 +1,3 @@
-
 import React, { memo, ChangeEvent } from 'react';
 
 import { CheckBox as DxCheckbox } from 'devextreme-react/check-box';
@@ -18,22 +17,19 @@ export const CheckBox = ({ className, label, name, elementAttr, onChange, ...res
   if (className) {
     elementAttrs.class = className;
   }
+  const handleValueChanged: ICheckBoxOptions['onValueChanged'] = (e) =>
+    onChange({
+      target: { name, value: e.value, checked: e.value },
+    } as React.ChangeEvent<HTMLInputElement>);
   return (
     <DxCheckbox
       text={label}
       elementAttr={elementAttrs}
-      onValueChanged={(e) =>
-        onChange({
-          target: { name, value: e.value, checked: e.value },
-        } as React.ChangeEvent<HTMLInputElement>)
-      }
+      activeStateEnabled
+      onValueChanged={handleValueChanged}
       {...rest}
     />
   );
-};
-
-CheckBox.defaultProps = {
-  activeStateEnabled: true,
 };
 
 export const CheckBoxMemo = memo(CheckBox);

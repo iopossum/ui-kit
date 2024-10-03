@@ -1,39 +1,38 @@
 import React, { useState } from 'react';
 
-import { ComponentMeta, ComponentStory } from '@storybook/react';
+import { Meta, StoryObj } from '@storybook/react';
 
 import { DateRange, DateRangeMemo, IDateRangeProps } from '@components/date-range';
 
 export default {
   title: 'DateRange',
   component: DateRange,
-} as ComponentMeta<typeof DateRange>;
+} as Meta<typeof DateRange>;
 
-const Template: ComponentStory<typeof DateRange> = (args) => {
+const Template = (props: IDateRangeProps) => {
   const [value, setValue] = useState<Pick<IDateRangeProps, 'from' | 'to'>>({
     from: new Date(),
     to: undefined,
   });
-  return <DateRange {...args} from={value.from} to={value.to} onChange={(e) => setValue({ ...value, ...e })} />;
+  const handleChange: IDateRangeProps['onChange'] = (e) => setValue({ ...value, ...e });
+  return <DateRange {...props} from={value.from} to={value.to} onChange={handleChange} />;
 };
 
-const TemplateMemo: ComponentStory<typeof DateRangeMemo> = (args) => {
+const TemplateMemo = (props: IDateRangeProps) => {
   const [value, setValue] = useState<Pick<IDateRangeProps, 'from' | 'to'>>({
     from: new Date(),
     to: undefined,
   });
-  return <DateRangeMemo {...args} from={value.from} to={value.to} onChange={(e) => setValue({ ...value, ...e })} />;
+  const handleChange: IDateRangeProps['onChange'] = (e) => setValue({ ...value, ...e });
+  return <DateRangeMemo {...props} from={value.from} to={value.to} onChange={handleChange} />;
 };
 
-export const Basic = Template.bind({});
-Basic.args = {};
+export const Basic: StoryObj<typeof DateRange> = {
+  render: Template,
+  args: {},
+};
 
-export const Memo = TemplateMemo.bind({});
-Memo.args = {};
-
-export const Disabled = Template.bind({});
-Disabled.storyName = 'Disabled days';
-Disabled.args = {
-  toDate: new Date(),
-  disabled: [{ from: new Date() }],
+export const Memo: StoryObj<typeof DateRangeMemo> = {
+  render: TemplateMemo,
+  args: {},
 };

@@ -1,39 +1,46 @@
-import React from 'react';
+import React, { CSSProperties } from 'react';
 
-import { ComponentMeta, ComponentStory } from '@storybook/react';
+import { Meta, StoryObj } from '@storybook/react';
 
-import { Button, ButtonMemo } from '@components/button';
+import { Button, ButtonMemo, IButtonProps } from '@components/button';
 import { Card } from '@components/card';
+
+const CONTAINER_STYLE: CSSProperties = { display: 'flex', flex: 1 };
 
 export default {
   title: 'Button',
   component: Button,
   decorators: [
     (Story) => (
-      <Card style={{ display: 'flex', flex: 1 }}>
+      <Card style={CONTAINER_STYLE}>
         <Story />
       </Card>
     ),
   ],
-} as ComponentMeta<typeof Button>;
+} as Meta<typeof Button>;
 
-const Template: ComponentStory<typeof Button> = (args) => <Button height={'30px'} {...args} />;
-const TemplateMemo: ComponentStory<typeof ButtonMemo> = (args) => <ButtonMemo height={'30px'} {...args} />;
+const Template = (props: IButtonProps) => <Button height={'30px'} {...props} />;
+const TemplateMemo = (props: IButtonProps) => <ButtonMemo height={'30px'} {...props} allowLoading={false} />;
 
-export const Basic = Template.bind({});
-Basic.storyName = 'Basic';
-Basic.args = {
-  text: 'Кнопка',
+export const Basic: StoryObj<typeof Button> = {
+  render: Template,
+  args: {
+    text: 'Кнопка',
+  },
 };
 
-export const Memo = TemplateMemo.bind({});
-Memo.args = {
-  text: 'Кнопка',
+export const Memo: StoryObj<typeof ButtonMemo> = {
+  render: TemplateMemo,
+  args: {
+    text: 'Кнопка',
+  },
 };
 
-export const Texts = Template.bind({});
-Texts.storyName = 'Loading';
-Texts.args = {
-  loading: true,
-  texts: ['Кнопка', 'Кнопка...'],
+export const Texts: StoryObj<typeof Button> = {
+  render: Template,
+  name: 'Loading',
+  args: {
+    loading: true,
+    texts: ['Кнопка', 'Кнопка...'],
+  },
 };
