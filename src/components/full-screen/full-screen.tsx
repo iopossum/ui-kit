@@ -86,16 +86,16 @@ export const FullScreen = forwardRef<IFullScreenHandle, IFullScreenProps>(
         className={cn('fullscreen', {
           [className as string]: !!className,
           fullscreen_enabled: isEnabled,
-          'fullscreen_not-supported': !isSupported,
+          'fullscreen--not-supported': !isSupported,
         })}
         style={style}
         ref={wrapperRef}
       >
-        {!isSupported && isEnabled && (
+        {!isSupported && isEnabled ? (
           <div className="fullscreen__close" onClick={handleClose}>
             ×
           </div>
-        )}
+        ) : null}
         {children}
       </div>
     );

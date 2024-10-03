@@ -1,1 +1,2 @@
-npm run lint-push
+yarn lint:css
+yarn lint-push

@@ -1,16 +1,18 @@
-import React, { useState } from 'react';
+import React, { useState, CSSProperties } from 'react';
 
 import { Meta, StoryObj } from '@storybook/react';
 
 import { Card } from '@components/card';
 import { FloatLabelInput, FloatLabelInputMemo, IFloatLabelInputProps } from '@components/float-label-input';
 
+const STYLE: CSSProperties = { height: 300 };
+
 export default {
   title: 'FloatLabelInput',
   component: FloatLabelInput,
   decorators: [
     (Story: React.FC) => (
-      <Card style={{ height: 300 }}>
+      <Card style={STYLE}>
         <Story />
       </Card>
     ),
@@ -19,12 +21,14 @@ export default {
 
 const Template = (props: IFloatLabelInputProps) => {
   const [value, setValue] = useState('');
-  return <FloatLabelInput {...props} value={value} onChange={(e) => setValue(e.target.value)} />;
+  const handleChange: IFloatLabelInputProps['onChange'] = (e) => setValue(e.target.value);
+  return <FloatLabelInput {...props} value={value} onChange={handleChange} />;
 };
 
 const TemplateMemo = (props: IFloatLabelInputProps) => {
   const [value, setValue] = useState('');
-  return <FloatLabelInputMemo {...props} value={value} onChange={(e) => setValue(e.target.value)} />;
+  const handleChange: IFloatLabelInputProps['onChange'] = (e) => setValue(e.target.value);
+  return <FloatLabelInputMemo {...props} value={value} onChange={handleChange} />;
 };
 
 export const Basic: StoryObj<typeof FloatLabelInput> = {

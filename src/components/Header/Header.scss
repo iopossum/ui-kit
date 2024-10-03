@@ -1,13 +1,17 @@
+@import '../../styles/variables';
+
 .header {
   display: flex;
-  padding: 10px 0 10px 10px;
+  padding: rem(10) 0 rem(10) rem(10);
   justify-content: space-between;
   color: #242424;
-  min-height: 36px;
+  min-height: rem(36);
+
   &_no-children {
     justify-content: flex-end;
   }
+
   .dx-button {
-    height: 36px;
+    height: rem(36);
   }
 }

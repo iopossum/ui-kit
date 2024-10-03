@@ -99,38 +99,36 @@ export const isInt = (value: number | string) => {
   );
 };
 
+export function convertToInt(v?: string) {
+  if (!v) {
+    return undefined;
+  }
+  const intValue = parseInt(v, 10);
+  return isNaN(intValue) ? undefined : intValue;
+}
+
 export const convertDataGridCondition = (value: string, condition: SelectedFilterOperation) => {
   switch (condition) {
     case '=':
       return { eq: value };
-      break;
     case '<>':
       return { neq: value };
-      break;
     case '<':
       return { lt: value };
-      break;
     case '>':
       return { gt: value };
-      break;
     case '<=':
       return { lte: value };
-      break;
     case '>=':
       return { gte: value };
-      break;
     case 'contains':
       return { regexp: new RegExp(value, 'i').toString() };
-      break;
     case 'notcontains':
       return { nlike: new RegExp(value, 'i').toString() };
-      break;
     case 'startswith':
       return { regexp: new RegExp(`^${value}`, 'i').toString() };
-      break;
     case 'endswith':
       return { regexp: new RegExp(`${value}$`, 'i').toString() };
-      break;
   }
 };
 

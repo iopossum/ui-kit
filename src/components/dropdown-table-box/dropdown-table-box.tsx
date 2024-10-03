@@ -69,7 +69,7 @@ export const DropDownTableBox: IDropDownTableBoxComponent = forwardRef(
     const handleChange = useCallback<TOnSelectionChanged>(
       (e) => {
         if (e.currentSelectedRowKeys.length) {
-          boxRef.current?.instance.close();
+          boxRef.current?.instance?.close();
           const data = e.selectedRowsData[0];
           if (data && data instanceof Object && valueExpr) {
             const v = typeof valueExpr === 'function' ? valueExpr(data) : data[valueExpr as keyof typeof data];
@@ -126,7 +126,7 @@ export const DropDownTableBox: IDropDownTableBoxComponent = forwardRef(
 
     const handleOpened = useCallback<TOnOpened>(() => {
       setTimeout(() => {
-        boxRef.current?.instance.focus();
+        boxRef.current?.instance?.focus();
       }, 100);
     }, []);
 
@@ -222,15 +222,15 @@ export const DropDownTableBox: IDropDownTableBoxComponent = forwardRef(
 
 export const DropDownTableBoxMemo = memo(DropDownTableBox) as typeof DropDownTableBox;
 
-type TUseDropDownTableBoxContent = {
+interface IUseDropDownTableBoxContent {
   dataSource: DataSource;
   searchExpr: string;
   searchValue?: string;
-};
+}
 
 export const useDropDownTableBoxContent = (
   ref: React.Ref<IDropDownBoxContentHandle>,
-  { dataSource, searchValue, searchExpr }: TUseDropDownTableBoxContent,
+  { dataSource, searchValue, searchExpr }: IUseDropDownTableBoxContent,
 ) => {
   useEffect(() => {
     dataSource?.searchExpr(searchExpr);

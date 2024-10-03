@@ -174,7 +174,7 @@ export const request = async <T, K>(props: IRequestProps<T>): Promise<IResponse<
   try {
     response = await fetch(`${host || process.env.HOST || ''}${url}`, rest as IRequestProps<T & URLSearchParams>);
   } catch (err) {
-    return Promise.reject({
+    throw Object.assign(new Error(), {
       body: err,
       response,
       aborted: err instanceof DOMException,
@@ -192,15 +192,13 @@ export const request = async <T, K>(props: IRequestProps<T>): Promise<IResponse<
   }
 
   if (!response.status || response.status >= 400) {
+    let errorBody = parsedResponse;
     if (response.status === 401) {
       abortAll();
-      return Promise.reject({
-        body: parsedResponse || new Error(UNAUTHORIZED_ERROR_MESSAGE),
-        response,
-      });
+      errorBody = parsedResponse || new Error(UNAUTHORIZED_ERROR_MESSAGE);
     }
-    return Promise.reject({
-      body: parsedResponse || new Error(UNKNOWN_ERROR_MESSAGE),
+    throw Object.assign(new Error(), {
+      body: errorBody || new Error(UNKNOWN_ERROR_MESSAGE),
       response,
     });
   }

@@ -14,7 +14,8 @@ const Template = (props: IDateRangeProps) => {
     from: new Date(),
     to: undefined,
   });
-  return <DateRange {...props} from={value.from} to={value.to} onChange={(e) => setValue({ ...value, ...e })} />;
+  const handleChange: IDateRangeProps['onChange'] = (e) => setValue({ ...value, ...e });
+  return <DateRange {...props} from={value.from} to={value.to} onChange={handleChange} />;
 };
 
 const TemplateMemo = (props: IDateRangeProps) => {
@@ -22,7 +23,8 @@ const TemplateMemo = (props: IDateRangeProps) => {
     from: new Date(),
     to: undefined,
   });
-  return <DateRangeMemo {...props} from={value.from} to={value.to} onChange={(e) => setValue({ ...value, ...e })} />;
+  const handleChange: IDateRangeProps['onChange'] = (e) => setValue({ ...value, ...e });
+  return <DateRangeMemo {...props} from={value.from} to={value.to} onChange={handleChange} />;
 };
 
 export const Basic: StoryObj<typeof DateRange> = {
@@ -33,13 +35,4 @@ export const Basic: StoryObj<typeof DateRange> = {
 export const Memo: StoryObj<typeof DateRangeMemo> = {
   render: TemplateMemo,
   args: {},
-};
-
-export const Disabled: StoryObj<typeof DateRange> = {
-  render: Template,
-  name: 'Disabled days',
-  args: {
-    toDate: new Date(),
-    disabled: [{ from: new Date() }],
-  },
 };

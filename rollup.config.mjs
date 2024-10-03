@@ -18,7 +18,7 @@ import copy from 'rollup-plugin-copy';
 import dts from 'rollup-plugin-dts';
 import externals from 'rollup-plugin-peer-deps-external';
 import scss from 'rollup-plugin-scss';
-import styles from 'rollup-plugin-styles';
+import styles from 'rollup-plugin-styler';
 import * as terserModule from 'rollup-plugin-terser';
 import typescript2 from 'rollup-plugin-typescript2';
 import ts from 'typescript';
@@ -163,10 +163,7 @@ const config = [
       cleanup(),
       terser(),
       copy({
-        targets: [
-          { src: 'src/styles/icons/**/*', dest: 'dist/assets/icons' },
-          { src: 'src/styles/img/**/*', dest: 'dist/assets/img' },
-        ],
+        targets: [{ src: 'src/styles/*', dest: 'dist/assets' }],
       }),
     ],
     external,
@@ -219,7 +216,7 @@ const config = [
         },
       }),
       copy({
-        targets: [{ src: 'dist/types/types/index.d.ts', dest: 'dist/types/' }],
+        targets: [{ src: 'dist/types/types/*', dest: 'dist/types/' }],
       }),
     ],
     external: externalDts,

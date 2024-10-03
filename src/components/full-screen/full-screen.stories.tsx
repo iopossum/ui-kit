@@ -13,9 +13,10 @@ export default {
 
 const Template = (props: IFullScreenProps) => {
   const ref = useRef<IFullScreenHandle>(null);
+  const handleOpen = () => ref.current?.open();
   return (
     <div>
-      <Button component={Zoom} onClick={() => ref.current?.open()} />
+      <Button component={Zoom} onClick={handleOpen} />
       <FullScreen ref={ref} {...props}>
         text
       </FullScreen>
@@ -25,9 +26,10 @@ const Template = (props: IFullScreenProps) => {
 
 const TemplateMemo = (props: IFullScreenProps) => {
   const ref = useRef<IFullScreenHandle>(null);
+  const handleOpen = () => ref.current?.open();
   return (
     <div>
-      <Button component={Zoom} onClick={() => ref.current?.open()} />
+      <Button component={Zoom} onClick={handleOpen} />
       <FullScreenMemo ref={ref} {...props}>
         text
       </FullScreenMemo>

@@ -84,7 +84,7 @@ export const Dialog: IDialogComponent = forwardRef(
               stylingMode: 'contained',
               type: 'default',
               text: submitText,
-              onClick: handleSubmit,
+              onClick: () => handleSubmit(),
               ...submitButtonProps,
             },
           });
@@ -108,7 +108,18 @@ export const Dialog: IDialogComponent = forwardRef(
     }
 
     return (
-      <Popup visible={visible} onHiding={handleDecline} dragEnabled={false} toolbarItems={toolbarItems} {...rest}>
+      <Popup
+        visible={visible}
+        onHiding={handleDecline}
+        dragEnabled={false}
+        toolbarItems={toolbarItems}
+        width={500}
+        height={150}
+        hideOnOutsideClick={false}
+        shading={false}
+        showTitle={false}
+        {...rest}
+      >
         <ScrollView width="100%" height="100%">
           <div>{text}</div>
           {children}
@@ -117,15 +128,5 @@ export const Dialog: IDialogComponent = forwardRef(
     );
   },
 );
-
-Dialog.defaultProps = {
-  submitText: 'Да',
-  declineText: 'Нет',
-  width: 500,
-  height: 150,
-  hideOnOutsideClick: true,
-  shading: false,
-  showTitle: false,
-};
 
 export const DialogMemo = memo(Dialog) as typeof Dialog;

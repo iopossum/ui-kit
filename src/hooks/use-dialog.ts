@@ -1,7 +1,5 @@
 import React, { useCallback, useRef, useImperativeHandle, useState, Dispatch, SetStateAction } from 'react';
 
-import { IResponseError } from '@utils/api';
-
 export interface IUseDialogProps<T> {
   ref: React.Ref<IDialogHandle<T>>;
   text?: string;
@@ -14,7 +12,7 @@ export interface IUseDialogProps<T> {
 }
 
 export interface IDialogHandle<T = object> {
-  open: (props?: Partial<T> | null, popupProps?: IDialogState) => Promise<T>;
+  open: (props?: Partial<T> | null, popupProps?: IDialogState) => Promise<[Error | null, T] | [Error | null]>;
   getState: () => T;
   setState: Dispatch<SetStateAction<T>>;
   getPopupState: () => IDialogState;
@@ -30,8 +28,7 @@ export interface IDialogState {
 }
 
 interface IDialogRefs<T> {
-  reject: null | ((e: Pick<IResponseError, 'aborted'>) => void);
-  resolve: null | ((e: T) => void);
+  resolve: null | ((result: [Error | null, T] | [Error | null]) => void);
 }
 
 export const useDialog = <T = IDialogState>({
@@ -46,7 +43,6 @@ export const useDialog = <T = IDialogState>({
 }: IUseDialogProps<T>) => {
   const dialogRef = useRef<IDialogRefs<T>>({
     resolve: null,
-    reject: null,
   });
   const [popupState, setPopupState] = useState<IDialogState>({
     visible: false,
@@ -68,16 +64,16 @@ export const useDialog = <T = IDialogState>({
     } else {
       setPopupState((prev) => ({ ...prev, visible: false }));
     }
-    dialogRef.current.reject?.({ aborted: true });
+    dialogRef.current.resolve?.([new Error('hiding')]);
   }, [onHiding, resetStateOnHide, resetPopupStateOnHide, initialState]);
 
   const handleSubmit = useCallback(
-    (v: T) => {
+    (v?: T) => {
       if (onSubmit) {
-        onSubmit(v);
+        onSubmit(v!);
         return;
       }
-      dialogRef.current.resolve?.(v);
+      dialogRef.current.resolve?.([null, v!]);
       handleHiding();
     },
     [onSubmit, handleHiding],
@@ -88,7 +84,7 @@ export const useDialog = <T = IDialogState>({
       onDecline();
       return;
     }
-    dialogRef.current.reject?.({ aborted: true });
+    dialogRef.current.resolve?.([new Error('decline')]);
     handleHiding();
   }, [onDecline, handleHiding]);
 
@@ -100,9 +96,8 @@ export const useDialog = <T = IDialogState>({
         if (props) {
           setState((prev) => ({ ...prev, ...props }));
         }
-        return new Promise((resolve, reject) => {
+        return new Promise<[Error | null, T] | [Error | null]>((resolve) => {
           dialogRef.current.resolve = resolve;
-          dialogRef.current.reject = reject;
         });
       },
       getState: () => state,
@@ -111,7 +106,7 @@ export const useDialog = <T = IDialogState>({
       setPopupState,
       close: handleHiding,
       resolve: () => {
-        dialogRef.current.resolve?.(state);
+        dialogRef.current.resolve?.([null, state]);
         handleHiding();
       },
     }),

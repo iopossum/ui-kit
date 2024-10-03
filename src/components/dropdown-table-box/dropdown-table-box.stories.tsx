@@ -1,4 +1,4 @@
-import React, { forwardRef, useImperativeHandle, useState } from 'react';
+import React, { forwardRef, useImperativeHandle, useState, CSSProperties } from 'react';
 
 import { Meta, StoryObj } from '@storybook/react';
 
@@ -13,12 +13,14 @@ import {
 } from '@components/dropdown-table-box';
 import { useDataSource } from '@hooks/use-data-source';
 
+const CONTAINER_STYLE: CSSProperties = { display: 'flex', alignItems: 'flex-start' };
+
 export default {
   title: 'DropDownTableBox',
   component: DropDownTableBox,
   decorators: [
     (Story) => (
-      <div style={{ display: 'flex', alignItems: 'flex-start' }}>
+      <div style={CONTAINER_STYLE}>
         <Story />
       </div>
     ),
@@ -63,6 +65,7 @@ type Test = Partial<(typeof data)[0]>;
 
 const DropDownTableBoxWrapper = (props: IDropDownBoxProps) => {
   const [value, setValue] = useState<number | undefined>(1);
+  const handleChange: IDropDownBoxProps<Test>['onChange'] = (e) => setValue(e?.ID);
   return (
     <DropDownTableBox<Test>
       {...props}
@@ -71,13 +74,14 @@ const DropDownTableBoxWrapper = (props: IDropDownBoxProps) => {
       displayExpr={'CompanyName'}
       valueExpr={'ID'}
       fetchByValue={async () => Promise.resolve(data[0])}
-      onChange={(e) => setValue(e?.ID)}
+      onChange={handleChange}
     />
   );
 };
 
 const DropDownTableBoxMemoWrapper = (props: IDropDownBoxProps) => {
   const [value, setValue] = useState<number | undefined>(1);
+  const handleChange: IDropDownBoxProps<Test>['onChange'] = (e) => setValue(e?.ID);
   return (
     <DropDownTableBoxMemo<Test>
       {...props}
@@ -86,7 +90,7 @@ const DropDownTableBoxMemoWrapper = (props: IDropDownBoxProps) => {
       displayExpr={'CompanyName'}
       valueExpr={'ID'}
       fetchByValue={async () => Promise.resolve(data[0])}
-      onChange={(e) => setValue(e?.ID)}
+      onChange={handleChange}
     />
   );
 };

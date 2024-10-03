@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { CSSProperties } from 'react';
 
 import { Meta, StoryObj } from '@storybook/react';
 
@@ -7,13 +7,15 @@ import { withRouter } from 'storybook-addon-remix-react-router';
 import { Card, BackLink } from '@components/card';
 import { Prompt, IPromptProps, PromptMemo } from '@components/prompt';
 
+const CONTAINER_STYLE: CSSProperties = { display: 'flex', flex: 1 };
+
 export default {
   title: 'Prompt',
   component: Prompt,
   decorators: [
     withRouter,
     (Story) => (
-      <div style={{ display: 'flex', flex: 1 }}>
+      <div style={CONTAINER_STYLE}>
         <Story />
       </div>
     ),

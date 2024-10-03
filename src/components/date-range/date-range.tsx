@@ -1,6 +1,6 @@
 import React, { useCallback, useRef, useState, memo, useEffect } from 'react';
-import { DayPicker } from 'react-day-picker';
-import type { DateRange as DateRangeLibProps, SelectRangeEventHandler, DayPickerRangeProps } from 'react-day-picker';
+import { DayPicker, getDefaultClassNames } from 'react-day-picker';
+import type { DateRange as DateRangeLibProps, PropsRange } from 'react-day-picker';
 import { usePopper } from 'react-popper';
 
 import cn from 'classnames';
@@ -10,18 +10,28 @@ import { ru } from 'date-fns/locale';
 import { Card } from '@components/card';
 import { useOutsideClick } from '@hooks/use-outside-click';
 import type { IWithStyles } from '@types';
-// import { ru } from '@utils/locale';
+import { DATE_FORMAT } from '@utils/date';
 import { MOBILE_MAX_WIDTH } from '@utils/media';
 
+import 'react-day-picker/style.css';
 import './date-range.scss';
 
-export interface IDateRangeProps extends DateRangeLibProps, IWithStyles, Omit<DayPickerRangeProps, 'mode'> {
+export interface IDateRangeProps extends DateRangeLibProps, IWithStyles, Omit<PropsRange, 'mode'> {
   label?: string;
   dateFormat?: string;
   onChange: (e: { from?: Date; to?: Date }) => void;
 }
 
-export const DateRange = ({ className, style, label, from, to, dateFormat, onChange, ...rest }: IDateRangeProps) => {
+export const DateRange = ({
+  className,
+  style,
+  label,
+  from,
+  to,
+  dateFormat = DATE_FORMAT,
+  onChange,
+  ...rest
+}: IDateRangeProps) => {
   const inputFromRef = useRef<HTMLInputElement>(null);
 
   const [inputFromValue, setInputFromValue] = useState<string>('');
@@ -45,7 +55,7 @@ export const DateRange = ({ className, style, label, from, to, dateFormat, onCha
     setIsPopperOpen(true);
   }, []);
 
-  const handleRangeSelect = useCallback<SelectRangeEventHandler>(
+  const handleRangeSelect = useCallback<NonNullable<PropsRange['onSelect']>>(
     (range) => {
       onChange(range || { from: undefined, to: undefined });
     },
@@ -60,20 +70,23 @@ export const DateRange = ({ className, style, label, from, to, dateFormat, onCha
 
   const numberOfMonths = window.innerWidth <= MOBILE_MAX_WIDTH ? 1 : 2;
 
+  const defaultClassNames = getDefaultClassNames();
+
   return (
     <div className={cn('date-range', { [className as string]: !!className })} style={style}>
       {!!label && <span className="date-range__label">{label}</span>}
       <input size={10} placeholder="с" value={inputFromValue} onFocus={handleFocus} ref={inputFromRef} readOnly />
       —
       <input size={10} placeholder="по" value={inputToValue} onFocus={handleFocus} readOnly />
-      {isPopperOpen && (
+      {isPopperOpen ? (
         <div style={popper.styles.popper} {...popper.attributes.popper} ref={setPopperElement} role="dialog">
           <Card>
             <DayPicker
               locale={ru}
-              initialFocus={isPopperOpen}
+              autoFocus={isPopperOpen}
               numberOfMonths={numberOfMonths}
               defaultMonth={from || to || new Date()}
+              classNames={defaultClassNames}
               {...rest}
               mode="range"
               selected={{ from, to }}
@@ -81,13 +94,9 @@ export const DateRange = ({ className, style, label, from, to, dateFormat, onCha
             />
           </Card>
         </div>
-      )}
+      ) : null}
     </div>
   );
-};
-
-DateRange.defaultProps = {
-  dateFormat: 'dd.MM.yyyy',
 };
 
 export const DateRangeMemo = memo(DateRange);

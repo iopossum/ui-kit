@@ -1,4 +1,4 @@
-import React, { useCallback, useState, useMemo, useEffect, memo } from 'react';
+import React, { useCallback, useState, useMemo, useEffect, memo, CSSProperties } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import AutoSizer from 'react-virtualized-auto-sizer';
 
@@ -19,6 +19,8 @@ const TreeViewMemo = memo(TreeView);
 export const SIDEBAR_SIZE = ['lg', 'sm'] as const;
 export type TSidebarSize = (typeof SIDEBAR_SIZE)[number];
 
+const STYLE: CSSProperties = { position: 'relative' };
+
 export interface ISidebarProps extends IWithStyles, Omit<ITreeViewOptions, 'style'> {
   routes: IRoute[];
   sidebar: TSidebarSize;
@@ -36,13 +38,13 @@ export interface ISidebarProps extends IWithStyles, Omit<ITreeViewOptions, 'styl
 export const Sidebar = ({
   className,
   style,
-  showLogout,
-  routes,
+  showLogout = true,
+  routes = [],
   sidebar,
-  showLogo,
+  showLogo = true,
   username,
-  versionHeight,
-  logoutHeight,
+  versionHeight = 27,
+  logoutHeight = 45,
   versionComponent,
   onLogout,
   onChange,
@@ -54,7 +56,7 @@ export const Sidebar = ({
 
   const [routesDataSource, setRoutesDataSource] = useState<IRoute[]>([]);
 
-  const onClick = useCallback<NonNullable<ITreeViewOptions['onItemClick']>>(
+  const handleClick = useCallback<NonNullable<ITreeViewOptions['onItemClick']>>(
     (e) => {
       const { itemData, event } = e;
       if (itemData) {
@@ -107,14 +109,14 @@ export const Sidebar = ({
     setRoutesDataSource(enchantedRoutes);
   }, [enchantedRoutes]);
 
-  const onToggle = useCallback(() => {
+  const handleToggle = useCallback(() => {
     const value = sidebar === 'lg' ? 'sm' : 'lg';
     onChange?.(value);
   }, [sidebar, onChange]);
 
   const classes = cn('sidebar', `sidebar_${sidebar}`, {
     [className as string]: !!className,
-    'sidebar_with-user': !!username,
+    'sidebar--with-user': !!username,
   });
 
   return (
@@ -127,9 +129,9 @@ export const Sidebar = ({
         ) : (
           <div />
         )}
-        <SidebarToggle onClick={onToggle} />
+        <SidebarToggle onClick={handleToggle} />
       </div>
-      {username && <div className="sidebar__user">{username}</div>}
+      {username ? <div className="sidebar__user">{username}</div> : null}
       <div className="sidebar__navigation">
         <AutoSizer disableHeight={false} disableWidth>
           {({ height }) => {
@@ -151,11 +153,11 @@ export const Sidebar = ({
                   activeStateEnabled={false}
                   focusStateEnabled={false}
                   itemComponent={ItemComponent}
-                  onItemClick={onClick}
+                  onItemClick={handleClick}
                   {...rest}
                 />
-                {showLogout && (
-                  <div style={{ position: 'relative' }}>
+                {showLogout ? (
+                  <div style={STYLE}>
                     <SidebarLink
                       className="custom"
                       data={{
@@ -166,7 +168,7 @@ export const Sidebar = ({
                       allowTooltip={sidebar === 'sm'}
                     />
                   </div>
-                )}
+                ) : null}
                 {!!versionComponent && <div className="version">{versionComponent}</div>}
               </>
             );
@@ -175,14 +177,6 @@ export const Sidebar = ({
       </div>
     </nav>
   );
-};
-
-Sidebar.defaultProps = {
-  routes: [],
-  showLogout: true,
-  showLogo: true,
-  versionHeight: 27,
-  logoutHeight: 45,
 };
 
 export const SidebarMemo = memo(Sidebar);

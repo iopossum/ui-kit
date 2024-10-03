@@ -1,136 +1,158 @@
+@import '../../styles/variables';
 
 .float-label {
   position: relative;
-  display: inline-flex;  
-  flex-direction: column;  
+  display: inline-flex;
+  flex-direction: column;
   min-width: 0;
   padding: 0;
   margin: 0;
   border: 0;
   vertical-align: top;
   font-size: 1rem;
+
+  .required {
+    margin-left: rem(2);
+  }
+
+  .input-container {
+    cursor: text;
+    display: inline-flex;
+    align-items: center;
+    position: relative;
+    border-radius: rem(4);
+
+    fieldset {
+      text-align: left;
+      position: absolute;
+      inset: rem(-5) 0 0;
+      margin: 0;
+      padding: 0 0.6em;
+      pointer-events: none;
+      border-radius: inherit;
+      overflow: hidden;
+      min-width: 0%;
+      border-width: rem(1);
+      border-style: solid;
+      border-color: rgb(0 0 0 / 23%);
+
+      legend {
+        float: unset;
+        width: auto;
+        overflow: hidden;
+        display: block;
+        padding: 0;
+        height: rem(11);
+        font-size: 0.75em;
+        visibility: hidden;
+        white-space: nowrap;
+        max-width: rem(0.01);
+        transition: max-width 50ms cubic-bezier(0, 0, 0.2, 1) 0ms;
+
+        & > span {
+          padding-left: rem(5);
+          padding-right: rem(5);
+          display: inline-block;
+          opacity: 0;
+          visibility: visible;
+        }
+      }
+    }
+
+    &:hover {
+      fieldset {
+        border-color: rgb(0 0 0 / 87%);
+      }
+    }
+  }
+
+  > label {
+    color: rgb(0 0 0 / 40%);
+    font-weight: 400;
+    padding: 0;
+    display: block;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    left: 0;
+    top: 0;
+    transition:
+      color 200ms cubic-bezier(0, 0, 0.2, 1) 0ms,
+      transform 200ms cubic-bezier(0, 0, 0.2, 1) 0ms,
+      max-width 200ms cubic-bezier(0, 0, 0.2, 1) 0ms;
+    z-index: 1;
+    pointer-events: none;
+    position: absolute;
+    transform-origin: top left;
+    max-width: calc(100% - rem(24));
+    transform: translate(0.7em, 30%) scale(1);
+  }
+
   &.full-width {
     display: flex;
     flex: 1;
   }
+
   &.error {
     > label {
       color: #ff4d4f;
     }
+
     .input-container {
       fieldset {
         border-color: #ff4d4f !important;
       }
     }
   }
+
   &.warning {
     > label {
       color: #faad14;
     }
+
     .input-container {
       fieldset {
         border-color: #faad14 !important;
       }
     }
   }
+
   &.large {
     > label {
-      transform: translate(0.8em, 25%) scale(1);
+      transform: translate(0.8rem, 50%) scale(1);
     }
   }
+
   &.small {
     > label {
-      transform: translate(0.6em, -10%) scale(1);
+      transform: translate(0.6rem, 5%) scale(1);
     }
   }
+
   &.focused {
-    > label {      
+    > label {
       transform-origin: left top;
-      max-width: calc(133% - 32px);
-      transform: translate(0.85em, -0.6em) scale(0.75) !important;
+      max-width: calc(133% - rem(32));
+      transform: translate(0.85rem, -0.5rem) scale(0.75) !important;
     }
-    &:not(.error):not(.warning) {
+
+    &:not(.error, .warning) {
       > label {
-        color: rgba(0, 0, 0, 0.6);
+        color: rgb(0 0 0 / 60%);
       }
+
       .input-container {
         fieldset {
-          border-color: rgb(25, 118, 210) !important;
+          border-color: rgb(25 118 210) !important;
         }
       }
     }
+
     .input-container {
-      fieldset {        
+      fieldset {
         legend {
           max-width: 100%;
           transition: max-width 100ms cubic-bezier(0, 0, 0.2, 1) 50ms;
-        }
-      }
-    }
-  }
-  > label {
-    color: rgba(0, 0, 0, 0.4);
-    font-weight: 400;    
-    padding: 0px;
-    display: block;    
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;    
-    left: 0px;
-    top: 0px;
-    transition: color 200ms cubic-bezier(0, 0, 0.2, 1) 0ms, transform 200ms cubic-bezier(0, 0, 0.2, 1) 0ms, max-width 200ms cubic-bezier(0, 0, 0.2, 1) 0ms;
-    z-index: 1;
-    pointer-events: none;    
-    position: absolute;
-    transform-origin: top left;    
-    max-width: calc(100% - 24px);    
-    transform: translate(0.7em, 15%) scale(1);
-  }
-  .required {
-    margin-left: 2px;
-  }
-  .input-container {  
-    &:hover {
-      fieldset {
-        border-color: rgba(0, 0, 0, 0.87);
-      }    
-    }
-    cursor: text;
-    display: inline-flex;
-    align-items: center;
-    position: relative;
-    border-radius: 4px;
-    fieldset {
-      text-align: left;
-      position: absolute;
-      inset: -5px 0px 0px;
-      margin: 0px;
-      padding: 0px 0.6em;
-      pointer-events: none;
-      border-radius: inherit;
-      overflow: hidden;
-      min-width: 0%;  
-      border-width: 1px;
-      border-style: solid;
-      border-color: rgba(0, 0, 0, 0.23);
-      legend {
-        float: unset;
-        width: auto;
-        overflow: hidden;
-        display: block;
-        padding: 0px;
-        height: 11px;
-        font-size: 0.75em;
-        visibility: hidden;        
-        white-space: nowrap;
-        max-width: 0.01px;        
-        transition: max-width 50ms cubic-bezier(0.0, 0, 0.2, 1) 0ms;        
-        & > span {
-          padding-left: 5px;
-          padding-right: 5px;
-          display: inline-block;
-          opacity: 0;
-          visibility: visible;
         }
       }
     }

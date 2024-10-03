@@ -9,15 +9,17 @@ export default {
   component: Tooltip,
 } as Meta<typeof Tooltip>;
 
+const style = { alignSelf: 'flex-start' };
+
 const Template = (props: ITooltipProps) => (
   <Tooltip placement="right" title={'qwe'} {...props}>
-    <div style={{ alignSelf: 'flex-start' }}>asd</div>
+    <div style={style}>asd</div>
   </Tooltip>
 );
 
 const TemplateMemo = (props: ITooltipProps) => (
   <TooltipMemo placement="right" title={'qwe'} {...props}>
-    <div style={{ alignSelf: 'flex-start' }}>asd</div>
+    <div style={style}>asd</div>
   </TooltipMemo>
 );
 

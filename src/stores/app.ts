@@ -1,11 +1,11 @@
 import { getCookie, setCookie, removeCookie } from '@utils/cookie';
 
-export type SidebarSize = 'sm' | 'lg';
+export type TSidebarSize = 'sm' | 'lg';
 
 export interface IAppStoreState {
   token: string | null;
   loading: boolean;
-  sidebar: SidebarSize;
+  sidebar: TSidebarSize;
   cookiePrefix: string;
   footer?: null | HTMLDivElement;
   userIdField?: string;
@@ -20,7 +20,7 @@ export interface IAppStore<T extends object = {}, K extends object = {}> {
   setEntity: <Key extends keyof IAppStore<T, K>['state']>(key: Key, value: IAppStore<T, K>['state'][Key]) => void;
 }
 
-export type AppStoreProps<T extends object = {}, K extends object = {}> = {
+export type TAppStoreProps<T extends object = {}, K extends object = {}> = {
   state?: Partial<IAppStoreState> & {
     loginPath?: string;
   } & T;
@@ -32,7 +32,7 @@ export interface IToken {
   [s: string]: string;
 }
 
-export const createAppStore = <T extends object = {}, K extends object = {}>(props: AppStoreProps<T, K>) => {
+export const createAppStore = <T extends object = {}, K extends object = {}>(props: TAppStoreProps<T, K>) => {
   const { state, ...rest } = props;
   const { cookiePrefix, loginPath = '/login', ...stateRest } = state || {};
   const cookieToken = getCookie(`${cookiePrefix}token`);

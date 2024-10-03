@@ -1,4 +1,4 @@
-import React, { useCallback, memo } from 'react';
+import React, { useCallback, memo, ChangeEventHandler } from 'react';
 import { useForm, SubmitHandler, SubmitErrorHandler, Controller } from 'react-hook-form';
 import { Link } from 'react-router-dom';
 
@@ -44,8 +44,8 @@ export const LoginForm = ({
   style,
   hasRegLink,
   hasRemember,
-  regLink,
-  loginLabel,
+  regLink = '/reg',
+  loginLabel = 'Логин (e-mail)',
   onSubmit,
   onValidationFailed,
 }: ILoginFormProps) => {
@@ -73,60 +73,68 @@ export const LoginForm = ({
     }, Object.create({})),
   });
 
+  const handleChangeRemember = useCallback<ChangeEventHandler<HTMLInputElement>>(
+    (e) => {
+      setValue('remember', e.target.checked, { shouldValidate: true, shouldDirty: true, shouldTouch: true });
+    },
+    [setValue],
+  );
+
   return (
     <AuthWrapper className={cn('login', { [className as string]: !!className })} style={style} header="Авторизация">
       <form noValidate onSubmit={handleSubmit(onSubmit, handleValidationFailed)}>
-        <Controller
+        <Controller<ILoginFormData>
           name="login"
           control={control}
           rules={fieldsMap['login'].rules}
-          render={({ field: { ref, ...rest } }) => (
+          render={({ field: { ref, value, ...rest } }) => (
             <FloatLabelInput
               label={loginLabel}
               required
-              status={errors.login && 'error'}
+              status={errors.login ? 'error' : undefined}
               autoComplete="login"
               autoFocus
               size="large"
               fullWidth
+              value={value as string}
               {...rest}
             />
           )}
         />
-        <Controller
+        <Controller<ILoginFormData>
           name="password"
           control={control}
           rules={fieldsMap['password'].rules}
-          render={({ field: { ref, ...rest } }) => (
+          render={({ field: { ref, value, ...rest } }) => (
             <FloatLabelInput
               label="Пароль"
               type="password"
               required
               fullWidth
               size="large"
-              status={errors.password && 'error'}
+              status={errors.password ? 'error' : undefined}
               autoComplete="password"
+              value={value as string}
               {...rest}
             />
           )}
         />
-        {hasRemember && (
-          <Controller
+        {hasRemember ? (
+          <Controller<ILoginFormData>
             name="remember"
             control={control}
             rules={fieldsMap['remember'].rules}
-            render={({ field: { ref, ...rest } }) => (
+            render={({ field: { ref, value, ...rest } }) => (
               <CheckBox
                 {...rest}
                 label="Запомнить"
                 className="login__remember"
-                onChange={(e) =>
-                  setValue('remember', e.target.checked, { shouldValidate: true, shouldDirty: true, shouldTouch: true })
-                }
+                value={value as boolean}
+                onChange={handleChangeRemember}
               />
             )}
           />
-        )}
+        ) : null}
         <Button
           text="Войти"
           type="default"
@@ -135,19 +143,14 @@ export const LoginForm = ({
           loading={isSubmitting}
           useSubmitBehavior
         />
-        {hasRegLink && !!regLink && (
+        {hasRegLink && !!regLink ? (
           <Link to={regLink} className="login__reg">
             Регистрация
           </Link>
-        )}
+        ) : null}
       </form>
     </AuthWrapper>
   );
-};
-
-LoginForm.defaultProps = {
-  loginLabel: 'Логин (e-mail)',
-  regLink: '/reg',
 };
 
 export const LoginFormMemo = memo(LoginForm);

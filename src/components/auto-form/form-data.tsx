@@ -104,22 +104,30 @@ export interface IFormDataProps<T = object> extends IFormOptions {
   onChange?: (e: Record<keyof T, T[keyof T]>) => void;
 }
 
-export type FormDataHandle = Form;
+export interface IFormDataHandle extends Form {}
 
 interface IFormDataWithRef extends FC<IFormDataProps<object>> {
   <T extends object>(
-    props: IFormDataProps<T> & React.RefAttributes<Form>,
-  ): ReturnType<React.ForwardRefRenderFunction<Form, IFormDataProps<T>>>;
+    props: IFormDataProps<T> & React.RefAttributes<IFormDataHandle>,
+  ): ReturnType<React.ForwardRefRenderFunction<IFormDataHandle, IFormDataProps<T>>>;
 }
 
 const FormDataWithRef: IFormDataWithRef = forwardRef(
   <T extends object>(
-    { filteredColumns, data, grouped, onChange, ...rest }: IFormDataProps<T>,
-    ref: React.ForwardedRef<Form>,
+    { filteredColumns = [], data, labelLocation = 'left', grouped, onChange, ...rest }: IFormDataProps<T>,
+    ref: React.ForwardedRef<IFormDataHandle>,
   ) => {
     const groups = useMemo(() => {
       return !grouped || (grouped && !filteredColumns.some((v) => v.group)) ? {} : groupBy(filteredColumns, 'group');
     }, [filteredColumns, grouped]);
+
+    const handleFieldDataChanged: IFormOptions['onFieldDataChanged'] = (e) => {
+      if (typeof e.value !== 'undefined') {
+        const b = {} as Record<keyof T, T[keyof T]>;
+        b[e.dataField as keyof T] = e.value;
+        onChange?.(b);
+      }
+    };
 
     return (
       <Form
@@ -130,14 +138,9 @@ const FormDataWithRef: IFormDataWithRef = forwardRef(
         readOnly={false}
         showColonAfterLabel={true}
         showValidationSummary={false}
-        onFieldDataChanged={(e) => {
-          if (typeof e.value !== 'undefined') {
-            const b = {} as Record<keyof T, T[keyof T]>;
-            b[e.dataField as keyof T] = e.value;
-            onChange?.(b);
-          }
-        }}
+        onFieldDataChanged={handleFieldDataChanged}
         minColWidth={233}
+        labelLocation={labelLocation}
         {...rest}
       >
         {Object.keys(groups).length > 0
@@ -159,11 +162,6 @@ const FormDataWithRef: IFormDataWithRef = forwardRef(
     );
   },
 );
-
-FormDataWithRef.defaultProps = {
-  filteredColumns: [],
-  labelLocation: 'left',
-};
 
 export const FormData = memo(FormDataWithRef, (prev, cur) => {
   let notChanged = prev.labelLocation === cur.labelLocation;

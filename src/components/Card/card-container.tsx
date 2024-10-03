@@ -9,7 +9,7 @@ export interface ICardContainerProps extends IWithStyles {
   direction?: 'row' | 'column';
 }
 
-export const CardContainer = ({ className, style, direction, children }: ICardContainerProps) => {
+export const CardContainer = ({ className, style, direction = 'column', children }: ICardContainerProps) => {
   return (
     <div
       style={style}
@@ -20,10 +20,6 @@ export const CardContainer = ({ className, style, direction, children }: ICardCo
       {children || <div />}
     </div>
   );
-};
-
-CardContainer.defaultProps = {
-  direction: 'column',
 };
 
 export const CardContainerMemo = memo(CardContainer);

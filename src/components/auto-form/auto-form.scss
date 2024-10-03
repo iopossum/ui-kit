@@ -1,71 +1,77 @@
+@import '../../styles/variables';
+
 .auto-form {
-  margin-top: 20px;
+  margin-top: rem(20);
   display: flex;
   flex: 1;
   flex-direction: column;
+
   &__buttons {
     position: sticky;
-    bottom: 15px;
+    bottom: rem(15);
     display: flex;
     align-self: flex-end;
-  }
-  .dx-item {
-    .dx-invalid {
-    }
   }
 }
 
 .dx-form {
   .dx-item {
     .dx-box-item-content {
-      font-size: 12px;
+      font-size: rem(12);
+
       .dx-form-group {
         .dx-form-group-caption {
-          font-size: 15px;
+          font-size: rem(15);
           display: flex;
           background-color: #d4d9e3;
-          padding: 5px;
+          padding: rem(5);
         }
+
         .dx-form-group-content {
-          padding-bottom: 5px;
-          padding-top: 0;
           margin-top: 0;
-          border: 1px solid #ddd;
-          padding: 5px;
+          border: rem(1) solid #ddd;
+          padding: 0 rem(5) rem(5);
         }
       }
+
       .dx-field-item {
         align-items: center;
-        padding-top: 2px;
+        padding-top: rem(2);
+
         .dx-field-item-label {
-          max-width: 150px;
-          min-width: 150px;
+          max-width: rem(150);
+          min-width: rem(150);
           display: flex;
           align-self: flex-end;
-          padding-bottom: 5px;
+          padding-bottom: rem(5);
+
           .dx-field-item-label-content {
             width: auto !important;
             line-height: 0.9;
+
             .dx-field-item-label-text {
               white-space: normal;
             }
           }
+
           .dx-icon {
-            margin-left: 5px;
+            margin-left: rem(5);
             cursor: pointer;
             opacity: 0.5;
           }
         }
+
         .dx-texteditor {
           background: none;
           border: none;
-          border-bottom: 1px solid #d4d4d4;
+          border-bottom: rem(1) solid #d4d4d4;
           border-radius: 0;
-          font-size: 12px;
-          height: 26px;
+          font-size: rem(12);
+          height: rem(26);
+
           input {
             min-height: inherit;
-            height: 26px;
+            height: rem(26);
             padding: 0;
           }
         }

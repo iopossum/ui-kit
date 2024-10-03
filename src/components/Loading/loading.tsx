@@ -20,9 +20,9 @@ export const LOADING_GLOBAL_PROPS: ILoadingAttrs = {
   global: true,
 };
 
-export interface ILoadingProps extends ILoadingAttrs, IWithStyles {}
+export interface ILoadingProps extends Partial<ILoadingAttrs>, IWithStyles {}
 
-export const Loading = ({ className, style, type, global, ...rest }: ILoadingProps) => {
+export const Loading = ({ className, style, type = 'TailSpin', global, ...rest }: ILoadingProps) => {
   const styleObj = style ? { ...style } : {};
   if (global) {
     styleObj.position = 'fixed';
@@ -30,16 +30,9 @@ export const Loading = ({ className, style, type, global, ...rest }: ILoadingPro
   const Spinner = (ReactLoaderSpinner as Record<string, unknown>)[type as string] as React.FC<BaseProps>;
   return (
     <div className={`${className || 'loading'}`} style={styleObj}>
-      <Spinner {...rest} />
+      <Spinner color="#bf4e6a" height={40} width={40} {...rest} />
     </div>
   );
-};
-
-Loading.defaultProps = {
-  type: 'TailSpin',
-  color: '#bf4e6a',
-  height: 40,
-  width: 40,
 };
 
 export const LoadingMemo = memo(Loading);
@@ -57,7 +50,7 @@ export const LoadingContainer = ({ className, style, loading, children }: ILoadi
       })}
       style={style}
     >
-      {loading && <Loading />}
+      {loading ? <Loading /> : null}
       {children}
     </div>
   );

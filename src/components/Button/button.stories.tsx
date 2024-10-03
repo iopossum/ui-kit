@@ -1,16 +1,18 @@
-import React from 'react';
+import React, { CSSProperties } from 'react';
 
 import { Meta, StoryObj } from '@storybook/react';
 
 import { Button, ButtonMemo, IButtonProps } from '@components/button';
 import { Card } from '@components/card';
 
+const CONTAINER_STYLE: CSSProperties = { display: 'flex', flex: 1 };
+
 export default {
   title: 'Button',
   component: Button,
   decorators: [
     (Story) => (
-      <Card style={{ display: 'flex', flex: 1 }}>
+      <Card style={CONTAINER_STYLE}>
         <Story />
       </Card>
     ),

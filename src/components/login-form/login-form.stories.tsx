@@ -13,8 +13,10 @@ export default {
   decorators: [withRouter],
 } as Meta<typeof LoginForm>;
 
-const Template = (props: ILoginFormProps) => <LoginForm {...props} onSubmit={() => success('submit')} />;
-const TemplateMemo = (props: ILoginFormProps) => <LoginFormMemo {...props} onSubmit={() => success('submit')} />;
+const handleSubmit = () => success('submit');
+
+const Template = (props: ILoginFormProps) => <LoginForm {...props} onSubmit={handleSubmit} />;
+const TemplateMemo = (props: ILoginFormProps) => <LoginFormMemo {...props} onSubmit={handleSubmit} />;
 
 export const Basic: StoryObj<typeof LoginForm> = {
   render: Template,

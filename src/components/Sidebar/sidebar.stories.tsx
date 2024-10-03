@@ -15,12 +15,14 @@ export default {
 
 const SidebarWrapper = (props: ISidebarProps) => {
   const [state, setState] = useState<TSidebarSize>('lg');
-  return <Sidebar {...props} sidebar={state} routes={routes} onChange={setState} />;
+  const handleChange = setState;
+  return <Sidebar {...props} sidebar={state} routes={routes} onChange={handleChange} />;
 };
 
 const SidebarMemoWrapper = (props: ISidebarProps) => {
   const [state, setState] = useState<TSidebarSize>('lg');
-  return <SidebarMemo {...props} sidebar={state} routes={routes} onChange={setState} />;
+  const handleChange = setState;
+  return <SidebarMemo {...props} sidebar={state} routes={routes} onChange={handleChange} />;
 };
 
 const Template = (props: ISidebarProps) => {

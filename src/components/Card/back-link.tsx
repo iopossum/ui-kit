@@ -11,7 +11,7 @@ export interface IBackLinkProps extends IWithStyles {
   backUrl?: string;
 }
 
-export const BackLink = ({ className, style, linkTitle, backUrl, children }: IBackLinkProps) => {
+export const BackLink = ({ className, style, linkTitle = 'вернуться к списку', backUrl, children }: IBackLinkProps) => {
   const { pathname } = useLocation();
   const backUrlMemo = useMemo(() => {
     return backUrl || pathname.replace(/\/([^/]*)$/, '');
@@ -24,10 +24,6 @@ export const BackLink = ({ className, style, linkTitle, backUrl, children }: IBa
       </Link>
     </div>
   );
-};
-
-BackLink.defaultProps = {
-  linkTitle: 'вернуться к списку',
 };
 
 export const BackLinkMemo = memo(BackLink);

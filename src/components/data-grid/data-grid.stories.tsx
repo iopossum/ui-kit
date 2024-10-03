@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { CSSProperties } from 'react';
 
 import { Meta, StoryObj } from '@storybook/react';
 
@@ -7,12 +7,14 @@ import { AutoSize } from '@components/auto-size';
 import { DataGrid, DataGridMemo, IDataGridProps } from '@components/data-grid';
 import { useDataSource } from '@hooks/use-data-source';
 
+const CONTAINER_STYLE: CSSProperties = { display: 'flex', flex: 1 };
+
 export default {
   title: 'DataGrid',
   component: DataGrid,
   decorators: [
     (Story) => (
-      <div style={{ display: 'flex', flex: 1 }}>
+      <div style={CONTAINER_STYLE}>
         <Story />
       </div>
     ),
@@ -65,11 +67,12 @@ const TemplateAutoSize = (props: IDataGridProps) => {
   const dataSource = useDataSource({
     load: () => data,
   });
+  const handleKeyDown = () => '';
   return (
     <AutoSize<IDataGridProps>
       component={DataGrid}
       {...props}
-      onKeyDown={() => ''}
+      onKeyDown={handleKeyDown}
       dataSource={dataSource}
       columns={columns}
     />

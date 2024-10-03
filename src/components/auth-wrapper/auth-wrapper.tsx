@@ -1,4 +1,4 @@
-import React, { memo } from 'react';
+import React, { memo, CSSProperties } from 'react';
 
 import cn from 'classnames';
 
@@ -12,13 +12,13 @@ export interface IAuthWrapperProps extends IWithStyles {
   header?: ReactNode;
 }
 
-const customStyle = { margin: '0 auto' };
+const CUSTOM_STYLE: CSSProperties = { margin: '0 auto' };
 
 export const AuthWrapper: React.FC<IAuthWrapperProps> = ({ className, style, header, children }) => {
   return (
     <div
       className={cn('auth-wrapper', { [className as string]: !!className })}
-      style={Object.assign(customStyle, style)}
+      style={Object.assign(CUSTOM_STYLE, style)}
     >
       <Card header={header} className="card_flex1">
         <div className="auth-wrapper__form">{children}</div>

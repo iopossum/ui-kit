@@ -4,100 +4,33 @@
   display: flex;
   flex-direction: column;
   min-height: 100%;
-  width: 200px;
+  width: rem(200);
   transition: width 195ms cubic-bezier(0.4, 0, 0.6, 1) 0ms;
   position: relative;
   background-color: #e7e9ed;
-  @media (max-width: $mobileMaxWidth) {
+
+  @media (max-width: $mobile-max-width) {
     position: relative;
     min-height: 100%;
   }
+
   .navigation-item__text {
     font-weight: 500;
   }
-  &_sm {
-    .version {
-      padding-left: 0.5rem !important;
-      text-align: center;
-    }
-    width: 60px;
-    .sidebar__header {
-      justify-content: space-around;
-    }
-    .sidebar__toggle {
-      justify-content: space-around;
-    }
-    .sidebar__logo__container {
-      margin-left: -120px;
-      flex: 0;
-      opacity: 0;
-    }
-    .sidebar__user {
-      margin-left: -120px;
-      opacity: 0;
-    }
-    &.sidebar_with-user {
-      .sidebar__navigation {
-        margin-top: 0;
-      }
-    }
-    .sidebar__navigation {
-      .navigation-item {
-        &.custom {
-          display: flex;
-          justify-content: center;
-        }
-        padding-left: 0;
-        & > .navigation-item__text {
-          display: none;
-        }
-        & > .dx-icon {
-          margin-right: 0;
-        }
-        & > .navigation-item__capitalize {
-          display: flex;
-          color: #5c5d5f;
-          border: 1px solid #5c5d5f;
-          border-radius: 50%;
-          width: 23px;
-          justify-content: center;
-          font-size: 12px;
-          padding: 2px 3px;
-        }
-      }
-      .dx-treeview-expander-icon-stub {
-        width: 0.1rem !important;
-      }
-      .dx-treeview-item-content {
-        padding-left: 0;
-        flex: none;
-      }
-      .dx-treeview-node {
-        .dx-treeview-toggle-item-visibility {
-          margin-right: -0.9rem;
-        }
-        .dx-treeview-node-container-opened {
-          .dx-treeview-node {
-            .dx-treeview-item {
-              padding-left: 10px;
-            }
-          }
-        }
-        .dx-treeview-item {
-          padding-left: 0;
-          padding-right: 0;
-          display: flex;
-          justify-content: center;
-        }
-      }
-    }
-  }
+
   &__header {
     display: flex;
     justify-content: space-between;
-    padding-top: 10px;
+    padding-top: rem(10);
   }
+
   &__logo {
+    background: url('./assets/img/logo.svg');
+    background-size: contain;
+    background-repeat: no-repeat;
+    width: rem(120);
+    height: rem(30);
+
     &__container {
       display: flex;
       flex: 1;
@@ -106,112 +39,218 @@
       transition: all 0.4s ease-out;
       opacity: 1;
     }
-    background: url('./assets/img/logo.svg');
-    background-size: contain;
-    background-repeat: no-repeat;
-    width: 120px;
-    height: 30px;
   }
+
   &__toggle {
     display: flex;
     justify-content: flex-end;
-    padding: 0 5px 5px;
+    padding: 0 rem(5) rem(5);
+
     &_mobile {
       justify-content: flex-start;
-      padding: 10px 0 0 10px;
+      padding: rem(10) 0 0 rem(10);
     }
   }
+
   &__user {
     display: flex;
     justify-content: center;
-    margin-top: 30px;
+    margin-top: rem(30);
     transition: all 0.4s ease-out;
     opacity: 1;
-    padding: 0 10px;
+    padding: 0 rem(10);
     text-align: center;
     word-break: break-all;
     font-weight: bold;
     color: #818798;
   }
+
   &__navigation {
-    margin-top: 40px;
+    margin-top: rem(40);
     height: auto;
     transition: all 0.4s;
     display: flex;
     flex-direction: column;
     flex: 1;
+
     .version {
-      padding: 8px 8px 8px 20px;
-      font-size: 8px;
+      padding: rem(8) rem(8) rem(8) rem(20);
+      font-size: rem(8);
     }
+
     .navigation-item {
       display: flex;
       align-items: center;
+
       &.custom {
-        padding: 15px 20px 10px 20px;
+        padding: rem(15) rem(20) rem(10);
         font-weight: 400;
-        font-size: 14px;
+        font-size: rem(14);
         color: #333;
         cursor: pointer;
         animation: fade-in 1s;
       }
+
       .dx-icon-component > svg {
-        font-size: 20px;
+        font-size: rem(20);
       }
+
       & > .dx-icon {
-        margin-right: 8px;
+        margin-right: rem(8);
       }
+
       & > .navigation-item__capitalize {
         display: none;
         animation: fade-in 1s;
       }
     }
+
     .dx-treeview-item-content {
       display: flex;
       align-items: center;
-      padding-left: 10px;
+      padding-left: rem(10);
     }
+
     .dx-treeview-node {
       padding-left: 0;
-      .dx-treeview-item {
-        gap: 0;
-      }
+
       .dx-treeview-toggle-item-visibility {
         width: 1rem;
         order: 3;
+        right: rem(5);
+        left: auto;
+        height: rem(40);
+
+        &::before {
+          color: black;
+        }
       }
+
+      .dx-treeview-item {
+        padding: rem(10) rem(8) rem(10) rem(10);
+        border-bottom: rem(1) solid #c7c9cc;
+        gap: 0;
+      }
+
       .dx-treeview-expander-icon-stub {
         width: 1rem;
         order: 3;
       }
+
       &:not(.dx-treeview-node-is-leaf) > .dx-treeview-item {
         .dx-treeview-toggle-item-visibility {
           height: 1rem;
         }
       }
+
       &.dx-state-selected {
         & > .dx-treeview-item {
           background-color: #d5d8e0;
         }
       }
+
       .dx-treeview-node-container-opened {
         .dx-treeview-node {
           .dx-treeview-item {
-            padding-left: 20px;
+            padding-left: rem(20);
           }
         }
       }
-      .dx-treeview-item {
-        padding: 10px 8px 10px 10px;
-        border-bottom: 1px solid #c7c9cc;
+    }
+  }
+
+  &_sm {
+    .version {
+      padding-left: 0.5rem !important;
+      text-align: center;
+    }
+
+    width: rem(60);
+
+    .sidebar__header {
+      justify-content: space-around;
+    }
+
+    .sidebar__toggle {
+      justify-content: space-around;
+    }
+
+    .sidebar__logo {
+      &__container {
+        margin-left: rem(-120);
+        flex: 0;
+        opacity: 0;
       }
-      .dx-treeview-toggle-item-visibility {
-        right: 5px;
-        left: auto;
-        height: 40px;
-        &::before {
-          color: black;
+    }
+
+    .sidebar__user {
+      margin-left: rem(-120);
+      opacity: 0;
+    }
+
+    &.sidebar--with-user {
+      .sidebar__navigation {
+        margin-top: 0;
+      }
+    }
+
+    .sidebar__navigation {
+      .navigation-item {
+        padding-left: 0;
+
+        .dx-treeview-node {
+          .dx-treeview-item {
+            padding-left: 0;
+            padding-right: 0;
+            display: flex;
+            justify-content: center;
+          }
+
+          .dx-treeview-toggle-item-visibility {
+            margin-right: -0.9rem;
+          }
+
+          .dx-treeview-node-container-opened {
+            .dx-treeview-node {
+              .dx-treeview-item {
+                padding-left: rem(10);
+              }
+            }
+          }
         }
+
+        &.custom {
+          display: flex;
+          justify-content: center;
+        }
+
+        & > .navigation-item__text {
+          display: none;
+        }
+
+        & > .dx-icon {
+          margin-right: 0;
+        }
+
+        & > .navigation-item__capitalize {
+          display: flex;
+          color: #5c5d5f;
+          border: rem(1) solid #5c5d5f;
+          border-radius: 50%;
+          width: rem(23);
+          justify-content: center;
+          font-size: rem(12);
+          padding: rem(2) rem(3);
+        }
+      }
+
+      .dx-treeview-expander-icon-stub {
+        width: 0.1rem !important;
+      }
+
+      .dx-treeview-item-content {
+        padding-left: 0;
+        flex: none;
       }
     }
   }

@@ -8,9 +8,9 @@ import type { IWithStyles } from '@types';
 
 import './data-grid.scss';
 
-type OnOptionChanged = NonNullable<IDataGridOptions['onOptionChanged']>;
+type TColumn<T extends object = {}> = IColumnProps & Column<T>;
 
-export type TColumn<T extends object = {}> = IColumnProps & Column<T>;
+export interface IColumn<T extends object = {}> extends TColumn<T> {}
 
 export interface IDataGridProps<T extends object = {}>
   extends Omit<IDataGridOptions<T>, 'style' | 'columns'>,
@@ -22,17 +22,25 @@ export interface IDataGridProps<T extends object = {}>
   summaryColumn?: string;
 }
 
-export type TDataGridHandle = DevexpressDataGrid;
+export interface IDataGridHandle extends DevexpressDataGrid {}
 
 export interface IDataGridComponent extends FC<IDataGridProps<object>> {
   <T extends object>(
-    props: IDataGridProps<T> & React.RefAttributes<TDataGridHandle>,
-  ): ReturnType<React.ForwardRefRenderFunction<TDataGridHandle, IDataGridProps<T>>>;
+    props: IDataGridProps<T> & React.RefAttributes<IDataGridHandle>,
+  ): ReturnType<React.ForwardRefRenderFunction<IDataGridHandle, IDataGridProps<T>>>;
 }
 
 export const DataGrid: IDataGridComponent = forwardRef(
-  <T extends object = {}>(props: IDataGridProps<T>, ref: React.ForwardedRef<TDataGridHandle>) => {
-    const { columns, stateStoringName, loadPanelShading, children, summaryColumn, onOptionChanged, ...rest } = props;
+  <T extends object = {}>(props: IDataGridProps<T>, ref: React.ForwardedRef<IDataGridHandle>) => {
+    const {
+      columns = [],
+      stateStoringName,
+      loadPanelShading,
+      children,
+      summaryColumn,
+      onOptionChanged,
+      ...rest
+    } = props;
     const { summary, loadPanel, stateStoring } = rest;
 
     const multipleTotalSummary = summary?.totalItems && summary.totalItems.length > 1;
@@ -52,7 +60,7 @@ export const DataGrid: IDataGridComponent = forwardRef(
       return filtered.length ? filtered[0].dataField : columns[0].dataField;
     });
 
-    const handleOptionChanged = useCallback<OnOptionChanged>(
+    const handleOptionChanged = useCallback<NonNullable<IDataGridOptions['onOptionChanged']>>(
       (e) => {
         const { name, fullName, component, value } = e;
         if (name === 'columns') {
@@ -116,16 +124,8 @@ export const DataGrid: IDataGridComponent = forwardRef(
       return result;
     }, [multipleTotalSummary, stateStoring, stateStoringName, summary, summaryColumnKey, loadPanelShading, loadPanel]);
 
-    return (
-      <DevexpressDataGrid<T> ref={ref} {...rest} {...memoProps} columns={columns} onOptionChanged={handleOptionChanged}>
-        {children}
-      </DevexpressDataGrid>
-    );
-  },
-);
-
-DataGrid.defaultProps = {
-  id: 'data-grid',
+    /**
+ * 
   showBorders: true,
   repaintChangesOnly: true,
   allowColumnReordering: true,
@@ -133,10 +133,32 @@ DataGrid.defaultProps = {
   columnResizingMode: 'nextColumn',
   columnMinWidth: 50,
   columns: [],
-  hoverStateEnabled: false,
-  focusedRowEnabled: false,
-  wordWrapEnabled: false,
-  loadPanelShading: false,
-};
+  
+ * 
+ */
+
+    return (
+      <DevexpressDataGrid<T>
+        id="data-grid"
+        showBorders
+        repaintChangesOnly
+        allowColumnReordering
+        allowColumnResizing
+        columnResizingMode="nextColumn"
+        columnMinWidth={50}
+        hoverStateEnabled={false}
+        focusedRowEnabled={false}
+        wordWrapEnabled={false}
+        ref={ref}
+        {...rest}
+        {...memoProps}
+        columns={columns}
+        onOptionChanged={handleOptionChanged}
+      >
+        {children}
+      </DevexpressDataGrid>
+    );
+  },
+);
 
 export const DataGridMemo = memo(DataGrid) as typeof DataGrid;

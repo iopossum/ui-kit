@@ -58,12 +58,20 @@ export const SecurePage = ({
     [isDesktop, onFollowRoute],
   );
 
+  const handleOpen = useCallback(() => {
+    setSidebarOpened(true);
+  }, []);
+
+  const handleClose = useCallback(() => {
+    setSidebarOpened(false);
+  }, []);
+
   return (
     <Page
       style={style}
-      className={cn('page_secure', {
+      className={cn('page__secure', {
         [className as string]: !!className,
-        page_secure_lg: sidebar === 'sm',
+        page__secure_lg: sidebar === 'sm',
       })}
     >
       <ReactSidebar
@@ -73,11 +81,12 @@ export const SecurePage = ({
             sidebar={!isDesktop ? 'sm' : sidebar}
             onChange={handleChange}
             onFollowRoute={handleFollowRoute}
+            showLogout
             {...props}
           />
         }
         open={sidebarOpened}
-        onSetOpen={() => setSidebarOpened(false)}
+        onSetOpen={handleClose}
         styles={{
           sidebar: { position: 'fixed', zIndex: '3', overflow: 'hidden' },
           root: { position: 'initial' },
@@ -85,20 +94,11 @@ export const SecurePage = ({
         }}
         {...reactSidebarProps}
       >
-        {!isDesktop ? (
-          <SidebarToggle onClick={() => setSidebarOpened(true)} className="sidebar__toggle_mobile" />
-        ) : (
-          <div />
-        )}
+        {!isDesktop ? <SidebarToggle onClick={handleOpen} className="sidebar__toggle_mobile" /> : <div />}
       </ReactSidebar>
-      <div className="page_secure__content">{children}</div>
+      <div className="page__secure__content">{children}</div>
     </Page>
   );
-};
-
-SecurePage.defaultProps = {
-  routes: [],
-  showLogout: true,
 };
 
 export const SecurePageMemo = memo(SecurePage);

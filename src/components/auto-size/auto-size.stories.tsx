@@ -1,15 +1,18 @@
-import React from 'react';
+import React, { CSSProperties } from 'react';
 
 import { Meta, StoryObj } from '@storybook/react';
 
 import { AutoSize, AutoSizeMemo, TAutoSizeProps } from '@components/auto-size';
+
+const CONTAINER_STYLE: CSSProperties = { display: 'flex', flex: 1 };
+const STYLE: CSSProperties = { border: '1px solid red' };
 
 export default {
   title: 'AutoSize',
   component: AutoSize,
   decorators: [
     (Story) => (
-      <div style={{ display: 'flex', flex: 1 }}>
+      <div style={CONTAINER_STYLE}>
         <Story />
       </div>
     ),
@@ -25,7 +28,7 @@ const Block: TAutoSizeProps<IBlock>['component'] = ({ autoHeight, autoWidth, tes
       style={{
         height: Math.max(autoHeight as number, 20),
         width: autoWidth,
-        border: '1px solid red',
+        ...STYLE,
       }}
     >
       autosize {test}

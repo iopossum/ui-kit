@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { CSSProperties } from 'react';
 
 import { Meta, StoryObj } from '@storybook/react';
 
@@ -6,13 +6,15 @@ import { withRouter } from 'storybook-addon-remix-react-router';
 
 import { Card, CardMemo, BackLink, CardContainer, ICardProps, ICardContainerProps } from '@components/card';
 
+const CONTAINER_STYLE: CSSProperties = { display: 'flex', flex: 1 };
+
 export default {
   title: 'Card',
   component: Card,
   decorators: [
     withRouter,
     (Story) => (
-      <div style={{ display: 'flex', flex: 1 }}>
+      <div style={CONTAINER_STYLE}>
         <Story />
       </div>
     ),

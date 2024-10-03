@@ -22,15 +22,13 @@ import { FormData } from './form-data';
 
 import './auto-form.scss';
 
-type OnContentReady = NonNullable<IFormOptions['onContentReady']>;
-
 export interface IAutoFormProps<T = object>
   extends Omit<IFormDataProps<T>, 'style' | 'filteredColumns' | 'onChange'>,
     IWithStyles {
   idKey: keyof T;
   data: T;
-  columns: IFormItem[];  
-  children?: React.ReactNode;  
+  columns: IFormItem[];
+  children?: React.ReactNode;
   autoRedirect?: boolean;
   showSuccess?: boolean;
   showSubmitButton?: boolean;
@@ -51,19 +49,19 @@ export const AutoForm = <T extends object>({
   data,
   columns,
   className,
-  style,  
+  style,
   autoRedirect,
   showSuccess,
-  showSubmitButton,
+  showSubmitButton = true,
+  labelLocation = 'left',
   redirectUrl,
-  onChange,
+  onChange: handleChange,
   onUpdate,
-  onInsert,  
+  onInsert,
   onSubmit,
   children,
   ...props
 }: IAutoFormProps<T>) => {
-  
   const navigate = useNavigate();
   const { pathname } = useLocation();
 
@@ -81,7 +79,7 @@ export const AutoForm = <T extends object>({
     async (e: React.FormEvent<HTMLFormElement | HTMLDivElement>) => {
       e.preventDefault();
       e.stopPropagation();
-      const validator = formRef.current?.instance.validate();
+      const validator = formRef.current?.instance?.validate();
       if (!validator?.isValid) {
         warning('Заполните обязательные поля');
         return false;
@@ -90,8 +88,8 @@ export const AutoForm = <T extends object>({
         return onSubmit(e, data);
       }
       const isNew = !data[idKey];
-      if (isNew && onInsert || !isNew && onUpdate) {
-        try {        
+      if ((isNew && onInsert) || (!isNew && onUpdate)) {
+        try {
           const res = isNew ? await onInsert?.(data) : await onUpdate?.(data[idKey] as string, data);
           if (showSuccess) {
             success('Данные успешно сохранены');
@@ -101,13 +99,13 @@ export const AutoForm = <T extends object>({
           if (isNew && !!id) {
             const b = {} as Record<keyof T, T[keyof T]>;
             b[idKey] = id;
-            onChange?.(b);
+            handleChange?.(b);
           }
           if (isNew && autoRedirect) {
             navigate(redirectUrl ? `${redirectUrl}/${id}` : pathname.replace(/\/([^/]*)$/, `/${id}`));
-          }        
+          }
         } catch (e) {}
-      }      
+      }
     },
     [
       pathname,
@@ -116,10 +114,10 @@ export const AutoForm = <T extends object>({
       autoRedirect,
       formRef,
       data,
-      showSuccess,      
+      showSuccess,
       redirectUrl,
       idKey,
-      onChange,
+      handleChange,
       onSubmit,
       onInsert,
       onUpdate,
@@ -130,7 +128,7 @@ export const AutoForm = <T extends object>({
     return columns.filter((v) => !v.invisible && !v.editInvisible);
   }, [columns]);
 
-  const onContentReady = useCallback<OnContentReady>(
+  const handleContentReady = useCallback<NonNullable<IFormOptions['onContentReady']>>(
     ({ element }) => {
       const array = filteredColumns.filter((v) => v.tooltip);
       const columnsByKey = keyBy(array, 'dataField');
@@ -168,7 +166,7 @@ export const AutoForm = <T extends object>({
       } catch (e) {}
     },
     [filteredColumns, setMergedState],
-  );  
+  );
 
   return (
     <form onSubmit={handleSubmit} className={cn('auto-form', { [className as string]: !!className })} style={style}>
@@ -178,11 +176,12 @@ export const AutoForm = <T extends object>({
       />
       <FormData<T>
         {...props}
+        labelLocation={labelLocation}
         filteredColumns={filteredColumns}
         ref={formRef}
         data={data}
-        onChange={onChange}
-        onContentReady={onContentReady}
+        onChange={handleChange}
+        onContentReady={handleContentReady}
       />
 
       {tooltips.map((v) => (
@@ -192,20 +191,15 @@ export const AutoForm = <T extends object>({
       ))}
 
       <div className="auto-form__buttons">
-        {showSubmitButton && (
+        {showSubmitButton ? (
           <Tooltip title="Сохранить" placement="left">
             <Button type="primary" shape="circle" icon={<SaveOutlined />} htmlType="submit" />
           </Tooltip>
-        )}
+        ) : null}
         {children}
       </div>
     </form>
   );
-};
-
-AutoForm.defaultProps = {  
-  showSubmitButton: true,
-  labelLocation: 'left',
 };
 
 export const AutoFormMemo = memo(AutoForm) as unknown as typeof AutoForm;

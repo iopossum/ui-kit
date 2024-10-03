@@ -1,16 +1,18 @@
-import React, { useState } from 'react';
+import React, { useState, CSSProperties } from 'react';
 
 import { Meta, StoryObj } from '@storybook/react';
 
 import { Card } from '@components/card';
 import { CheckBox, CheckBoxMemo, ICheckBoxProps } from '@components/checkbox';
 
+const CONTAINER_STYLE: CSSProperties = { display: 'flex', flex: 1 };
+
 export default {
   title: 'CheckBox',
   component: CheckBox,
   decorators: [
     (Story) => (
-      <Card style={{ display: 'flex', flex: 1 }}>
+      <Card style={CONTAINER_STYLE}>
         <Story />
       </Card>
     ),
@@ -19,12 +21,14 @@ export default {
 
 const Template = (props: ICheckBoxProps) => {
   const [value, setValue] = useState(false);
-  return <CheckBox {...props} value={value} name="name" onChange={(e) => setValue(e.target.checked)} />;
+  const handleChange: ICheckBoxProps['onChange'] = (e) => setValue(e.target.checked);
+  return <CheckBox {...props} value={value} name="name" onChange={handleChange} />;
 };
 
 const TemplateMemo = (props: ICheckBoxProps) => {
   const [value, setValue] = useState(false);
-  return <CheckBoxMemo {...props} value={value} name="name" onChange={(e) => setValue(e.target.checked)} />;
+  const handleChange: ICheckBoxProps['onChange'] = (e) => setValue(e.target.checked);
+  return <CheckBoxMemo {...props} value={value} name="name" onChange={handleChange} />;
 };
 
 export const Basic: StoryObj<typeof CheckBox> = {

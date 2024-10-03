@@ -13,10 +13,6 @@ export const TabPanelCoreWithRef = forwardRef<DxTabPanel, ITabPanelOptions>((pro
 
 export const MemoizedTabPanelCoreWithRef = memo(TabPanelCoreWithRef);
 
-type TOnContentReady = NonNullable<ITabPanelOptions['onContentReady']>;
-type TOnOptionChanged = NonNullable<ITabPanelOptions['onOptionChanged']>;
-type TItemComponent = NonNullable<ITabPanelOptions['itemComponent']>;
-
 export interface ITabPanelItemExtendedProps {
   padding: number;
   minHeight: number;
@@ -41,9 +37,9 @@ export interface ITabPanelProps<T> extends Omit<ITabPanelOptions, 'dataSource'> 
 
 export const TabPanel = <T extends object>({
   height,
-  tabContentPadding,
-  tabContentMinHeight,
-  tabContentDefaultMaxHeight,
+  tabContentPadding = 10,
+  tabContentMinHeight = 100,
+  tabContentDefaultMaxHeight = 200,
   storageName,
   ...rest
 }: ITabPanelProps<T>) => {
@@ -55,7 +51,7 @@ export const TabPanel = <T extends object>({
     tabHeaderHeight: 0,
   }));
 
-  const onContentReady = useCallback<TOnContentReady>(
+  const handleContentReady = useCallback<NonNullable<ITabPanelOptions['onContentReady']>>(
     ({ element }) => {
       if (!tabHeaderHeight) {
         const h = element.querySelector<HTMLElement>('.dx-tabpanel-tabs');
@@ -67,7 +63,7 @@ export const TabPanel = <T extends object>({
     [tabHeaderHeight, setMergedState],
   );
 
-  const onChangeTab = useCallback<TOnOptionChanged>(
+  const handleChangeTab = useCallback<NonNullable<ITabPanelOptions['onOptionChanged']>>(
     (args) => {
       if (args.name === 'selectedIndex') {
         setMergedState({ currentTab: args.value });
@@ -79,7 +75,7 @@ export const TabPanel = <T extends object>({
     [setMergedState, storageName],
   );
 
-  const ItemComponent = useCallback<TItemComponent>(
+  const ItemComponent = useCallback<NonNullable<ITabPanelOptions['itemComponent']>>(
     ({ data }) => {
       const attrs: ITabPanelItemExtendedProps = {
         padding: tabContentPadding as number,
@@ -99,19 +95,12 @@ export const TabPanel = <T extends object>({
   return (
     <MemoizedTabPanelCoreWithRef
       selectedIndex={currentTab}
-      onOptionChanged={onChangeTab}
+      onOptionChanged={handleChangeTab}
       itemComponent={ItemComponent}
-      onContentReady={onContentReady}
+      onContentReady={handleContentReady}
       {...rest}
     />
   );
-};
-
-TabPanel.defaultProps = {
-  tabs: [],
-  tabContentPadding: 10,
-  tabContentMinHeight: 100,
-  tabContentDefaultMaxHeight: 200,
 };
 
 export const TabPanelMemo = memo(TabPanel) as unknown as typeof TabPanel;

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, CSSProperties } from 'react';
 import { Link } from 'react-router-dom';
 
 import { observable } from 'mobx';
@@ -72,10 +72,12 @@ const createSampleStore = () => {
 
 const store = observable(createSampleStore());
 
+const STYLE: CSSProperties = { height: 300 };
+
 const decorators: Decorator[] = [
   withRouter,
   (Story: React.FC) => (
-    <Card style={{ height: 300 }}>
+    <Card style={STYLE}>
       <Story />
     </Card>
   ),
@@ -99,41 +101,44 @@ export default {
   },
 } as Meta<typeof AutoForm>;
 
-const onSubmit = (e: unknown) => alert(JSON.stringify(e));
+const handleSubmit = (e: unknown) => alert(JSON.stringify(e));
+
+const handleUndefined = undefined;
 
 const Template = (props: IAutoFormProps) => (
   <AutoForm<TSimpleStoreItem>
     {...props}
-    onSubmit={onSubmit}
+    onSubmit={handleSubmit}
     data={store.data}
     columns={store.columns}
     idKey="id"
-    onUpdate={undefined}
-    onInsert={undefined}
+    onUpdate={handleUndefined}
+    onInsert={handleUndefined}
   />
 );
 const TemplateMemo = (props: IAutoFormProps) => (
   <AutoFormMemo<TSimpleStoreItem>
     {...props}
-    onSubmit={onSubmit}
+    onSubmit={handleSubmit}
     data={store.data}
     columns={store.columns}
     idKey="id"
-    onUpdate={undefined}
-    onInsert={undefined}
+    onUpdate={handleUndefined}
+    onInsert={handleUndefined}
   />
 );
 const TemplateObservable = (props: IAutoFormProps) => {
   const [data, setData] = useState(store.data);
+  const handleChange: IAutoFormProps['onChange'] = (e) => setData({ ...data, ...e });
   return (
     <AutoFormObservable<TSimpleStoreItem>
       {...props}
-      onSubmit={onSubmit}
+      onSubmit={handleSubmit}
       columns={store.columns}
-      onUpdate={undefined}
-      onInsert={undefined}
+      onUpdate={handleUndefined}
+      onInsert={handleUndefined}
       data={data}
-      onChange={(e) => setData({ ...data, ...e })}
+      onChange={handleChange}
       idKey="id"
     />
   );

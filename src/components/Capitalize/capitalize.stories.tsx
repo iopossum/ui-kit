@@ -1,15 +1,17 @@
-import React from 'react';
+import React, { CSSProperties } from 'react';
 
 import { Meta, StoryObj } from '@storybook/react';
 
 import { Capitalize, CapitalizeMemo, ICapitalizeProps } from '@components/capitalize';
+
+const CONTAINER_STYLE: CSSProperties = { display: 'flex', flex: 1 };
 
 export default {
   title: 'Capitalize',
   component: Capitalize,
   decorators: [
     (Story) => (
-      <div style={{ display: 'flex', flex: 1 }}>
+      <div style={CONTAINER_STYLE}>
         <Story />
       </div>
     ),

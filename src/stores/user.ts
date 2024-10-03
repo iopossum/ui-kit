@@ -19,13 +19,13 @@ export interface IUserStore<IUser, T extends object = {}, K extends object = {}>
   ) => void;
 }
 
-export type UserStoreProps<IUser, T extends object = {}, K extends object = {}> = {
+export type TUserStoreProps<IUser, T extends object = {}, K extends object = {}> = {
   state?: Partial<IUserStoreState<IUser>> & T;
 } & Partial<Pick<IUserStore<IUser, T, K>, 'profile' | 'login' | 'setEntity' | 'hasRole' | 'reg'>> &
   K;
 
 export const createUserStore = <IUser, T extends object = {}, K extends object = {}>(
-  props?: UserStoreProps<IUser, T, K>,
+  props?: TUserStoreProps<IUser, T, K>,
 ) => {
   const { state, ...rest } = props || {};
   const { baseUrl = '/api/users', cookiePrefix = '', ...stateRest } = state || {};

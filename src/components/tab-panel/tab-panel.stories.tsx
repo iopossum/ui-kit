@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { CSSProperties } from 'react';
 
 import { Meta, StoryObj } from '@storybook/react';
 
@@ -10,15 +10,17 @@ export default {
   component: TabPanel,
 } as Meta<typeof TabPanel>;
 
-type Test = {
+interface ITest {
   test: string;
-};
+}
 
-const TabComponent: ITabPanelItemProps<Test>['component'] = ({ padding, minHeight, maxHeight }) => {
+const STYLE: CSSProperties = { border: '1px solid red' };
+
+const TabComponent: ITabPanelItemProps<ITest>['component'] = ({ padding, minHeight, maxHeight }) => {
   return (
     <div
       style={{
-        border: '1px solid red',
+        ...STYLE,
         padding,
         minHeight,
         maxHeight,
@@ -30,7 +32,7 @@ const TabComponent: ITabPanelItemProps<Test>['component'] = ({ padding, minHeigh
   );
 };
 
-const tabs: ITabPanelItemProps<Test>[] = [
+const tabs: ITabPanelItemProps<ITest>[] = [
   {
     title: 'Tab 1',
     component: (props) => (
@@ -49,24 +51,24 @@ const tabs: ITabPanelItemProps<Test>[] = [
   },
 ];
 
-const Template = (props: ITabPanelProps<Test>) => (
+const Template = (props: ITabPanelProps<ITest>) => (
   <div>
-    <TabPanel<Test> {...props} dataSource={tabs} height={280} />
+    <TabPanel<ITest> {...props} dataSource={tabs} height={280} />
   </div>
 );
 
-const TemplateMemo = (props: ITabPanelProps<Test>) => (
+const TemplateMemo = (props: ITabPanelProps<ITest>) => (
   <div>
-    <TabPanelMemo<Test> {...props} dataSource={tabs} height={280} />
+    <TabPanelMemo<ITest> {...props} dataSource={tabs} height={280} />
   </div>
 );
 
-export const Basic: StoryObj<typeof TabPanel<Test>> = {
+export const Basic: StoryObj<typeof TabPanel<ITest>> = {
   render: Template,
   args: {},
 };
 
-export const Memo: StoryObj<typeof TabPanelMemo<Test>> = {
+export const Memo: StoryObj<typeof TabPanelMemo<ITest>> = {
   render: TemplateMemo,
   args: {},
 };

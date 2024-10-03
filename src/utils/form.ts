@@ -1,8 +1,20 @@
-import { FieldValues } from 'react-hook-form';
+import { FieldValues, useForm, Path, SetValueConfig } from 'react-hook-form';
 
 import { keyBy, reduce } from 'lodash-es';
 
 import { IField } from '@types';
+
+export const FIELD_UPDATE_OPTIONS: SetValueConfig = {
+  shouldValidate: true,
+  shouldDirty: true,
+  shouldTouch: true,
+} as const;
+
+export const updateForm = <T extends object = {}>(formData: T, setValue: ReturnType<typeof useForm<T>>['setValue']) => {
+  for (const [key, value] of Object.entries(formData)) {
+    setValue(key as Path<T>, value, FIELD_UPDATE_OPTIONS);
+  }
+};
 
 export const getInitialValues = <T extends object>(fields: IField<T>[]) => {
   return fields.reduce<T>((sum, item) => {
@@ -11,7 +23,7 @@ export const getInitialValues = <T extends object>(fields: IField<T>[]) => {
   }, {} as T);
 };
 
-export const getFormValues = <T>(inputs: Record<keyof T, IField<T>>) => {
+export const getFormValues = <T extends object>(inputs: Record<keyof T, IField<T>>) => {
   return reduce(
     inputs,
     (result, value, key) => {
@@ -38,4 +50,5 @@ export const getChangedFields = <T extends FieldValues>(
   return changedFieldValues;
 };
 
-export const getFieldsMap = <T>(fields: IField<T>[]) => keyBy(fields, 'field') as Record<keyof T, IField<T>>;
+export const getFieldsMap = <T extends object>(fields: IField<T>[]) =>
+  keyBy(fields, 'field') as Record<keyof T, IField<T>>;

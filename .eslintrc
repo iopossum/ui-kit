@@ -2,7 +2,7 @@
   "root": true,
   "parser": "@typescript-eslint/parser",
   "plugins": [
-    "prettier"
+    "prettier", "eslint-plugin-no-inline-styles"
   ],
   "extends": [
     "react-app",
@@ -13,8 +13,7 @@
   ],  
   "rules": {
     "no-undef": 1,
-    "no-console": 1,
-    "no-unused-vars": "off",
+    "no-console": 1,    
     "import/no-named-as-default": 0,
     "import/no-anonymous-default-export": 1,
     "import/no-named-as-default-member": 1,
@@ -73,12 +72,25 @@
     ],
     "@typescript-eslint/no-unused-vars": ["warn", { "vars": "all", "args": "after-used", "ignoreRestSiblings": true }],
     "@typescript-eslint/no-explicit-any": 1,
+    "no-unused-vars": 0, 
     "no-debugger": 1,
     "no-const-assign": 1,
     "no-eval": 1,
     "no-empty": [2, {"allowEmptyCatch": true}],
     "no-var": 1,
-    "require-await": "off"
+    "require-await": "off",
+    "no-inline-styles/no-inline-styles": 1,
+    "react/jsx-key": [1, { "checkFragmentShorthand": true }],
+    "react/jsx-handler-names": [1, {
+      "checkLocalVariables": true,
+      "checkInlineFunction": true,
+      "ignoreComponentNames": ["DxDropDownBoxMemo"]
+    }],
+    "react/jsx-no-constructed-context-values": 1,
+    "react/jsx-no-leaked-render": 1,
+    "react/jsx-no-useless-fragment": 1,
+    "react/jsx-pascal-case": 1,
+    "react/jsx-max-depth": [1, { "max": 5 }] 
   },
   "settings": {
     "import/resolver": {

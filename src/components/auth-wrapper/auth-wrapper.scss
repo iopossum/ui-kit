@@ -1,3 +1,5 @@
+@import '../../styles/variables';
+
 .auth-wrapper {
   display: flex !important;
   align-items: center;
@@ -6,17 +8,20 @@
   animation-name: slidein;
   transition: top 1s ease-out 0.5s;
   flex: 1;
-  max-width: 350px;
+  max-width: rem(350);
+
   & > .card {
     .card__header {
       text-transform: uppercase;
       text-align: center;
     }
   }
+
   &__form {
     width: 100%;
   }
+
   &__remember {
-    margin-top: 10px;
+    margin-top: rem(10);
   }
 }
