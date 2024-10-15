@@ -9,23 +9,20 @@ import type { Options as DataSourceOptions } from 'devextreme/data/data_source';
 import { useAbortController } from '@hooks/use-abort-controller';
 import type { IAbortController } from '@types';
 
-interface IUseDataSource {
-  (
-    props: {
-      tableKey?: string;
-      abortLoad?: boolean;
-      abortByKey?: boolean;
-      abortUpdate?: boolean;
-      abortInsert?: boolean;
-      abortRemove?: boolean;
-      load: (e: LoadOptions & IAbortController) => ResolvedData;
-      byKey?: (e: unknown, config?: IAbortController) => PromiseLike<unknown>;
-    } & CustomStoreOptions &
-      DataSourceOptions,
-  ): DataSource;
+export interface IUseDataSourceProps<T extends object = {}, TKey = unknown>
+  extends Omit<CustomStoreOptions<T, TKey>, 'load' | 'byKey'>,
+    DataSourceOptions<T> {
+  tableKey?: keyof T;
+  abortLoad?: boolean;
+  abortByKey?: boolean;
+  abortUpdate?: boolean;
+  abortInsert?: boolean;
+  abortRemove?: boolean;
+  load: (e: LoadOptions<T> & IAbortController) => ResolvedData;
+  byKey?: (e: TKey, config?: LoadOptions<T> & IAbortController) => PromiseLike<T>;
 }
 
-export const useDataSource: IUseDataSource = ({
+export const useDataSource = <T extends object = {}, TKey = unknown>({
   tableKey,
   abortLoad = true,
   abortByKey = true,
@@ -39,14 +36,14 @@ export const useDataSource: IUseDataSource = ({
   remove,
   byKey,
   ...rest
-}) => {
+}: IUseDataSourceProps<T, TKey>) => {
   const { createAbortControllers } = useAbortController();
 
   const dataSource = useRef(
-    new DataSource({
+    new DataSource<T, TKey>({
       loadMode,
-      store: new CustomStore({
-        key: tableKey,
+      store: new CustomStore<T, TKey>({
+        key: tableKey as string,
         ...rest,
         loadMode,
         load: (props) => {

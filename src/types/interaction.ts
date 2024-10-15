@@ -7,7 +7,7 @@ export interface IAbortController {
 
 export interface IILoopbackFilterInclude<T> {
   relation: keyof T;
-  scope?: ILoopbackFilter<T>;
+  scope?: ILoopbackFilter<unknown>;
 }
 
 export interface ILoopbackFilter<T> {
