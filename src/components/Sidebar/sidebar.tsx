@@ -94,11 +94,15 @@ export const Sidebar = ({
           children: v.children
             ? v.children
                 .filter((v) => !!v.path && v.displayOnSidebar)
-                .map((c) => ({
-                  ...c,
-                  path: `${v.path}${c.path}`,
-                  selected: location.pathname === `${v.path}${c.path}`,
-                }))
+                .map((c) => {
+                  const path = c.path.startsWith('/') ? c.path : `/${c.path}`;
+                  return {
+                    ...c,
+                    path: `${v.path}${path}`,
+                    selected: location.pathname.startsWith(`${v.path}${path}`),
+                    children: c.children?.filter((v) => !!v.path && v.displayOnSidebar),
+                  };
+                })
             : [],
         };
       });

@@ -15,8 +15,8 @@ export interface IColumn<T extends object = {}> extends TColumn<T> {}
 export interface IDataGridProps<T extends object = {}>
   extends Omit<IDataGridOptions<T>, 'style' | 'columns'>,
     IWithStyles {
-  columns: TColumn<T>[];
   dataSource: IDataGridOptions['dataSource'];
+  columns?: TColumn<T>[];
   stateStoringName?: string;
   loadPanelShading?: boolean;
   summaryColumn?: string;
@@ -32,15 +32,7 @@ export interface IDataGridComponent extends FC<IDataGridProps<object>> {
 
 export const DataGrid: IDataGridComponent = forwardRef(
   <T extends object = {}>(props: IDataGridProps<T>, ref: React.ForwardedRef<IDataGridHandle>) => {
-    const {
-      columns = [],
-      stateStoringName,
-      loadPanelShading,
-      children,
-      summaryColumn,
-      onOptionChanged,
-      ...rest
-    } = props;
+    const { columns, stateStoringName, loadPanelShading, children, summaryColumn, onOptionChanged, ...rest } = props;
     const { summary, loadPanel, stateStoring } = rest;
 
     const multipleTotalSummary = summary?.totalItems && summary.totalItems.length > 1;
@@ -63,13 +55,13 @@ export const DataGrid: IDataGridComponent = forwardRef(
     const handleOptionChanged = useCallback<NonNullable<IDataGridOptions['onOptionChanged']>>(
       (e) => {
         const { name, fullName, component, value } = e;
-        if (name === 'columns') {
+        if (name === 'columns' && fullName.endsWith('visible')) {
           const splits = fullName.split('.').filter((v) => v.indexOf('columns') > -1);
-          let columnContainer!: Column;
+          let columnContainer: Column | undefined;
           splits.forEach((v) => {
             const index = parseInt(v.replace(/[^0-9]/g, ''), 10);
-            columnContainer = columns[index];
-            if (columnContainer && columnContainer.columns && columnContainer.columns.length) {
+            columnContainer = columns?.[index];
+            if (columnContainer?.columns?.length) {
               columnContainer = columnContainer.columns[0] as Column;
             }
           });
@@ -123,19 +115,6 @@ export const DataGrid: IDataGridComponent = forwardRef(
       }
       return result;
     }, [multipleTotalSummary, stateStoring, stateStoringName, summary, summaryColumnKey, loadPanelShading, loadPanel]);
-
-    /**
- * 
-  showBorders: true,
-  repaintChangesOnly: true,
-  allowColumnReordering: true,
-  allowColumnResizing: true,
-  columnResizingMode: 'nextColumn',
-  columnMinWidth: 50,
-  columns: [],
-  
- * 
- */
 
     return (
       <DevexpressDataGrid<T>

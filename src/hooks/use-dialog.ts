@@ -5,6 +5,7 @@ export interface IUseDialogProps<T> {
   text?: string;
   resetStateOnHide?: boolean;
   resetPopupStateOnHide?: boolean;
+  closeOnSubmit?: boolean;
   initialState?: T;
   onHiding?: () => void;
   onSubmit?: (state: T) => void;
@@ -36,6 +37,7 @@ export const useDialog = <T = IDialogState>({
   text: textFromProps,
   resetStateOnHide = true,
   resetPopupStateOnHide = true,
+  closeOnSubmit = true,
   initialState,
   onHiding,
   onSubmit,
@@ -74,9 +76,11 @@ export const useDialog = <T = IDialogState>({
         return;
       }
       dialogRef.current.resolve?.([null, v!]);
-      handleHiding();
+      if (closeOnSubmit) {
+        handleHiding();
+      }
     },
-    [onSubmit, handleHiding],
+    [onSubmit, handleHiding, closeOnSubmit],
   );
 
   const handleDecline = useCallback(() => {
