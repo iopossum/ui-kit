@@ -1,4 +1,4 @@
-import { useRef } from 'react';
+import { useRef, useEffect, useCallback } from 'react';
 
 import type { LoadOptions } from 'devextreme/data';
 import CustomStore from 'devextreme/data/custom_store';
@@ -18,29 +18,34 @@ export interface IUseDataSourceProps<T extends object = {}, TKey = unknown>
   abortUpdate?: boolean;
   abortInsert?: boolean;
   abortRemove?: boolean;
+  canChange?: boolean;
   load: (e: LoadOptions<T> & IAbortController) => ResolvedData;
   byKey?: (e: TKey, config?: LoadOptions<T> & IAbortController) => PromiseLike<T>;
 }
 
 export const useDataSource = <T extends object = {}, TKey = unknown>({
-  tableKey,
-  abortLoad = true,
-  abortByKey = true,
-  abortInsert,
-  abortUpdate,
-  abortRemove,
-  loadMode = 'processed',
-  load,
-  insert,
-  update,
-  remove,
-  byKey,
-  ...rest
+  canChange,
+  ...props
 }: IUseDataSourceProps<T, TKey>) => {
   const { createAbortControllers } = useAbortController();
 
-  const dataSource = useRef(
-    new DataSource<T, TKey>({
+  const createDataSource = useCallback(() => {
+    const {
+      tableKey,
+      abortLoad = true,
+      abortByKey = true,
+      abortInsert,
+      abortUpdate,
+      abortRemove,
+      loadMode = 'processed',
+      load,
+      insert,
+      update,
+      remove,
+      byKey,
+      ...rest
+    } = props;
+    return new DataSource<T, TKey>({
       loadMode,
       store: new CustomStore<T, TKey>({
         key: tableKey as string,
@@ -91,8 +96,26 @@ export const useDataSource = <T extends object = {}, TKey = unknown>({
           : byKey,
       }),
       ...rest,
-    }),
-  );
+    });
+  }, [props, createAbortControllers]);
+
+  const dataSource = useRef(createDataSource());
+
+  useEffect(() => {
+    const d = canChange ? dataSource.current : undefined;
+    if (canChange) {
+      dataSource.current = createDataSource();
+    }
+    return () => {
+      d?.dispose();
+    };
+  }, [createDataSource, canChange]);
+
+  useEffect(() => {
+    return () => {
+      dataSource.current.dispose();
+    };
+  }, []);
 
   return dataSource.current;
 };
